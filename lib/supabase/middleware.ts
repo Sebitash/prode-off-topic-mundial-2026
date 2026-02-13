@@ -59,3 +59,6 @@ export async function updateSession(request: NextRequest) {
 
   return response
 }
+export async function middleware(request: NextRequest) {
+  return updateSession(request)
+}
