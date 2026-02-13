@@ -1,5 +1,5 @@
 # Prode Mundial 2026 Estados unidos - Canada - Mexico
-
+## By Juan Sebastian Makkos &
 App de prode para el Mundial 2026 hecha con Next.js 14 y Supabase.
 
 ## Que tiene
@@ -51,3 +51,4 @@ En Vercel agrega las variables de entorno y redeploy.
 
 - NEXT_PUBLIC_SUPABASE_URL
 - NEXT_PUBLIC_SUPABASE_ANON_KEY
+
