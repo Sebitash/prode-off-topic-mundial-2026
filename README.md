@@ -1,4 +1,4 @@
-# Prode Mundial 2026
+# Prode Mundial 2026 Estados unidos - Canada - Mexico
 
 App de prode para el Mundial 2026 hecha con Next.js 14 y Supabase.
 
