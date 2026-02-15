@@ -10,6 +10,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [loadingGoogle, setLoadingGoogle] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -26,7 +27,7 @@ export default function LoginPage() {
 
       if (error) throw error
 
-      router.push('/dashboard')
+      router.push('/matches')
       router.refresh()
     } catch (error: any) {
       setError(error.message)
@@ -35,27 +36,49 @@ export default function LoginPage() {
     }
   }
 
+  const handleGoogleLogin = async () => {
+    setError(null)
+    setLoadingGoogle(true)
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/matches`,
+        },
+      })
+
+      if (error) throw error
+    } catch (error: any) {
+      setError(error.message)
+      setLoadingGoogle(false)
+    }
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-900 dark:to-gray-800 px-4">
-      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Welcome Back!
+    <div className="min-h-screen bg-gradient-to-b from-sky-100 via-sky-50 to-sky-200 px-4 py-10">
+      <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
+        <div className="text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-300 to-blue-500 text-sm font-semibold text-white">
+            PM
+          </div>
+          <h1 className="mt-4 text-2xl font-semibold text-slate-900">
+            Prode Mundial 2026
           </h1>
-          <p className="text-gray-600 dark:text-gray-300">
-            Sign in to your Mundial 2026 account
+          <p className="mt-1 text-sm text-slate-500">
+            Ingresa a tu cuenta para participar
           </p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded">
+            <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600">
               {error}
             </div>
           )}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">
               Email
             </label>
             <input
@@ -64,14 +87,14 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-              placeholder="you@example.com"
+              className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
+              placeholder="tu@email.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Password
+            <label htmlFor="password" className="mb-2 block text-sm font-medium text-slate-700">
+              Contrasena
             </label>
             <input
               id="password"
@@ -79,7 +102,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
               placeholder="••••••••"
             />
           </div>
@@ -87,26 +110,36 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full rounded-lg bg-green-600 py-2 text-sm font-semibold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Ingresando...' : 'Iniciar Sesion'}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          <p className="text-gray-600 dark:text-gray-300">
-            Don't have an account?{' '}
-            <Link href="/auth/signup" className="text-blue-600 hover:text-blue-700 font-medium">
-              Sign up
-            </Link>
-          </p>
+        <div className="my-5 flex items-center gap-3 text-xs font-semibold text-slate-400">
+          <div className="h-px flex-1 bg-slate-200" />
+          O CONTINUA CON
+          <div className="h-px flex-1 bg-slate-200" />
         </div>
 
-        <div className="mt-4 text-center">
-          <Link href="/" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
-            ← Back to home
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          disabled={loadingGoogle}
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-green-500 py-2 text-sm font-semibold text-green-600 transition hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <span className="flex h-5 w-5 items-center justify-center rounded-full border border-green-500 text-[10px] font-bold">
+            G
+          </span>
+          {loadingGoogle ? 'Conectando...' : 'Continuar con Google'}
+        </button>
+
+        <p className="mt-5 text-center text-sm text-slate-500">
+          No tienes cuenta?{' '}
+          <Link href="/auth/signup" className="font-semibold text-sky-600 hover:text-sky-700">
+            Registrate aqui
           </Link>
-        </div>
+        </p>
       </div>
     </div>
   )
