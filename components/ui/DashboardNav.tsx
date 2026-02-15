@@ -17,7 +17,7 @@ export default function DashboardNav({ user }: { user: User }) {
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    router.push('/')
+    router.replace('/auth/login')
     router.refresh()
   }
 

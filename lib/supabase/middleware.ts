@@ -55,7 +55,31 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  const pathname = request.nextUrl.pathname
+  const isAuthRoute = pathname.startsWith('/auth')
+  const isProtectedRoute =
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/matches') ||
+    pathname.startsWith('/predictions') ||
+    pathname.startsWith('/ranking')
+
+  if (!user && isProtectedRoute) {
+    const redirectUrl = new URL('/auth/login', request.url)
+    const redirectResponse = NextResponse.redirect(redirectUrl)
+    response.cookies.getAll().forEach((cookie) => redirectResponse.cookies.set(cookie))
+    return redirectResponse
+  }
+
+  if (user && isAuthRoute) {
+    const redirectUrl = new URL('/dashboard/rules', request.url)
+    const redirectResponse = NextResponse.redirect(redirectUrl)
+    response.cookies.getAll().forEach((cookie) => redirectResponse.cookies.set(cookie))
+    return redirectResponse
+  }
 
   return response
 }
