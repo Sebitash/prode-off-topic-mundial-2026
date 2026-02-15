@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import logo from '../../c38ba24b5b87da3b6be5ebf465027ad8.png'
 export const dynamic = "force-dynamic";
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -59,8 +61,8 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-b from-sky-100 via-sky-50 to-sky-200 px-4 py-10">
       <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <div className="text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-300 to-blue-500 text-sm font-semibold text-white">
-            PM
+          <div className="mx-auto h-12 w-12 overflow-hidden rounded-full">
+            <Image src={logo} alt="Prode Mundial" width={48} height={48} className="h-12 w-12 object-cover" priority />
           </div>
           <h1 className="mt-4 text-2xl font-semibold text-slate-900">
             Prode Mundial 2026
