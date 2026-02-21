@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import DashboardNav from '@/components/ui/DashboardNav'
 
 export default async function RankingPage() {
   const supabase = await createClient()
@@ -21,72 +22,69 @@ export default async function RankingPage() {
     .limit(50)
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-          🏆 Leaderboard
-        </h1>
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100">
+      <DashboardNav user={user} />
+      <div className="mx-auto max-w-6xl px-4 py-8">
+        <div>
+          <h1 className="text-3xl font-semibold text-slate-900">Ranking</h1>
+          <p className="mt-2 text-sm text-slate-600">Posiciones actuales de todos los participantes</p>
+        </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-700">
+        <div className="mt-6 rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-slate-900">Tabla de Posiciones</h2>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Rank
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    User
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Predictions
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Points
-                  </th>
+                  <th className="px-4 py-3">POS</th>
+                  <th className="px-4 py-3">PARTICIPANTE</th>
+                  <th className="px-4 py-3 text-center">GRUPOS</th>
+                  <th className="px-4 py-3 text-center">D16</th>
+                  <th className="px-4 py-3 text-center">OCT</th>
+                  <th className="px-4 py-3 text-center">CUA</th>
+                  <th className="px-4 py-3 text-center">SEMI</th>
+                  <th className="px-4 py-3 text-center">FINAL</th>
+                  <th className="px-4 py-3 text-center">TOTAL</th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="divide-y divide-slate-100">
                 {leaderboard && leaderboard.length > 0 ? (
                   leaderboard.map((entry: any, index: number) => (
-                    <tr
-                      key={entry.user_id}
-                      className={entry.user_id === user.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''}
-                    >
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          {index < 3 ? (
-                            <span className="text-2xl">
-                              {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
-                            </span>
-                          ) : (
-                            <span className="text-sm font-medium text-gray-900 dark:text-white">
-                              {index + 1}
-                            </span>
-                          )}
+                    <tr key={entry.user_id} className={entry.user_id === user.id ? 'bg-sky-50' : ''}>
+                      <td className="px-4 py-4 font-semibold text-slate-700">
+                        <div className="flex items-center gap-2">
+                          {index === 0 ? '🏆' : index === 1 ? '🥈' : index === 2 ? '🥉' : null}
+                          <span>{index + 1}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
-                          {entry.username || entry.email}
+                      <td className="px-4 py-4">
+                        <div className="flex items-center gap-3">
+                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-500">
+                            {(entry.username || entry.email)?.charAt(0)?.toUpperCase()}
+                          </span>
+                          <div>
+                            <p className="text-sm font-semibold text-slate-900">
+                              {entry.username || entry.email}
+                              {entry.user_id === user.id ? ' (Tu)' : ''}
+                            </p>
+                          </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500 dark:text-gray-300">
-                          {entry.total_predictions}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-semibold text-green-600 dark:text-green-400">
-                          {entry.total_points}
-                        </div>
+                      <td className="px-4 py-4 text-center">0</td>
+                      <td className="px-4 py-4 text-center">0</td>
+                      <td className="px-4 py-4 text-center">0</td>
+                      <td className="px-4 py-4 text-center">0</td>
+                      <td className="px-4 py-4 text-center">0</td>
+                      <td className="px-4 py-4 text-center">0</td>
+                      <td className="px-4 py-4 text-center font-semibold text-slate-900">
+                        {entry.total_points}
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
-                      No rankings available yet. Start making predictions!
+                    <td colSpan={9} className="px-6 py-8 text-center text-slate-500">
+                      No hay rankings disponibles aún. ¡Comienza a hacer predicciones!
                     </td>
                   </tr>
                 )}
