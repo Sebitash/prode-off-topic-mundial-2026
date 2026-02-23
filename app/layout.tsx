@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Mundial 2026 Prode - OffTopic",
-  description: "Predict World Cup 2026 matches and compete with friends",
+  title: "⚽ Mundial 2026 Prode",
+  description: "Predice los partidos del Mundial 2026 y compite con amigos",
 };
 
 export default function RootLayout({
