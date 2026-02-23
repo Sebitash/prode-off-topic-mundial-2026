@@ -1,27 +1,37 @@
-import { FootballService } from '../lib/services/football';
 import * as dotenv from 'dotenv';
 import path from 'path';
+import { FootballService } from '../lib/services/football';
 
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
-async function testApi() {
-    console.log('--- Testing API-Football Connection ---');
-    console.log('Using URL:', process.env.FOOTBALL_API_URL);
+async function verifyConnection() {
+    console.log('\n==========================================');
+    console.log('      FOOTBALL API - TEST RUN      ');
+    console.log('==========================================\n');
+
+    const apiKey = process.env.FOOTBALL_API_KEY;
+    console.log('Checking Environment:');
+    console.log('   - Base URL:', process.env.FOOTBALL_API_URL || 'https://v3.football.api-sports.io');
+    console.log('\nStarting API Call...');
 
     try {
-        console.log('Fetching status...');
-        const data = await FootballService.getLeagues();
+        const data = await FootballService.getLeagues() as any;
 
-        if (data.results > 0) {
-            console.log('✅ Success! Found', data.results, 'leagues.');
-            console.log('Sample league:', data.response[0].league.name);
+        if (data && data.results > 0) {
+            console.log('\nCONNECTION SUCCESSFUL!');
+            console.log(`Found ${data.results} leagues available.`);
+            console.log(`Example League: ${data.response[0].league.name}`);
+            console.log('Country:', data.response[0].country.name);
         } else {
-            console.log('⚠️ API returned 0 results. Check your subscription or parameters.');
-            console.log('Full response:', JSON.stringify(data, null, 2));
+            console.log('\nAPI RESPONSE EMPTY OR UNKNOWN');
+            console.log('Response Body:', JSON.stringify(data, null, 2));
         }
-    } catch (error) {
-        console.error('❌ API Test Failed:', error);
+    } catch (error: any) {
+        console.log('\nERROR DETECTED:');
+        console.error('   Message:', error.message);
     }
+
+    console.log('TEST COMPLETED SUCCESSFULLY');
 }
 
-testApi();
+verifyConnection();
