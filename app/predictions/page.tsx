@@ -15,6 +15,15 @@ export default async function PredictionsPage() {
     redirect('/auth/login')
   }
 
+  const { data } = await supabase
+    .from('profiles')
+    .select('username')
+    .eq('id', user.id)
+    .maybeSingle()
+
+  const profile = data as { username: string | null } | null
+  const displayName = profile?.username?.trim() || user.email || 'Usuario'
+
   const { data: matches } = await supabase
     .from('matches')
     .select('*')
@@ -30,7 +39,7 @@ export default async function PredictionsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100">
-      <DashboardNav user={user} />
+      <DashboardNav user={user} displayName={displayName} />
       <div className="mx-auto max-w-6xl px-4 py-8">
         <ResultsTabs
           matches={groupMatches}

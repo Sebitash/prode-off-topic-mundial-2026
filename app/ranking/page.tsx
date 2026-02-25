@@ -14,6 +14,15 @@ export default async function RankingPage() {
     redirect('/auth/login')
   }
 
+  const { data } = await supabase
+    .from('profiles')
+    .select('username')
+    .eq('id', user.id)
+    .maybeSingle()
+
+  const profile = data as { username: string | null } | null
+  const displayName = profile?.username?.trim() || user.email || 'Usuario'
+
   // Get leaderboard data
   const { data: leaderboard } = await supabase
     .from('leaderboard')
@@ -23,7 +32,7 @@ export default async function RankingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100">
-      <DashboardNav user={user} />
+      <DashboardNav user={user} displayName={displayName} />
       <div className="mx-auto max-w-6xl px-4 py-8">
         <div>
           <h1 className="text-3xl font-semibold text-slate-900">Ranking</h1>

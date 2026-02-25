@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 
-export default function DashboardNav({ user }: { user: User }) {
+export default function DashboardNav({ user, displayName }: { user: User; displayName: string }) {
   const router = useRouter()
   const pathname = usePathname()
   const supabase = createClient()
@@ -51,7 +51,7 @@ export default function DashboardNav({ user }: { user: User }) {
         </div>
         <div className="flex items-center gap-3">
           <span className="hidden text-xs text-slate-500 md:inline">
-            {user.email}
+            {displayName}
           </span>
           <button
             onClick={handleLogout}
