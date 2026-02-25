@@ -2,31 +2,8 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { Database } from '@/types/database.types'
 
-function getUserDisplayName(user: { email?: string | null; user_metadata?: Record<string, unknown> }) {
-  const usernameFromMetadata =
-    typeof user.user_metadata?.username === 'string' ? user.user_metadata.username.trim() : ''
-  const fullNameFromMetadata =
-    typeof user.user_metadata?.full_name === 'string' ? user.user_metadata.full_name.trim() : ''
-  const nameFromMetadata =
-    typeof user.user_metadata?.name === 'string' ? user.user_metadata.name.trim() : ''
-
-  if (usernameFromMetadata) {
-    return usernameFromMetadata
-  }
-
-  if (fullNameFromMetadata) {
-    return fullNameFromMetadata
-  }
-
-  if (nameFromMetadata) {
-    return nameFromMetadata
-  }
-
-  if (user.email) {
-    return user.email.split('@')[0]
-  }
-
-  return null
+declare const process: {
+  env: Record<string, string | undefined>
 }
 
 export async function updateSession(request: NextRequest) {
@@ -100,7 +77,6 @@ export async function updateSession(request: NextRequest) {
     const profilePayload: Database['public']['Tables']['profiles']['Insert'] = {
       id: user.id,
       email: user.email,
-      username: getUserDisplayName(user),
     }
 
     await (supabase as any).from('profiles').upsert(profilePayload, { onConflict: 'id' })
@@ -117,14 +93,14 @@ export async function updateSession(request: NextRequest) {
   if (!user && isProtectedRoute) {
     const redirectUrl = new URL('/auth/login', request.url)
     const redirectResponse = NextResponse.redirect(redirectUrl)
-    response.cookies.getAll().forEach((cookie) => redirectResponse.cookies.set(cookie))
+    response.cookies.getAll().forEach((cookie: { name: string; value: string }) => redirectResponse.cookies.set(cookie.name, cookie.value))
     return redirectResponse
   }
 
   if (user && isAuthRoute && !isAuthCallbackRoute) {
     const redirectUrl = new URL('/dashboard/rules', request.url)
     const redirectResponse = NextResponse.redirect(redirectUrl)
-    response.cookies.getAll().forEach((cookie) => redirectResponse.cookies.set(cookie))
+    response.cookies.getAll().forEach((cookie: { name: string; value: string }) => redirectResponse.cookies.set(cookie.name, cookie.value))
     return redirectResponse
   }
 
