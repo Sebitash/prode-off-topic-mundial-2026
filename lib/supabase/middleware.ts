@@ -2,7 +2,44 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { Database } from '@/types/database.types'
 
+function getUserDisplayName(user: { email?: string | null; user_metadata?: Record<string, unknown> }) {
+  const usernameFromMetadata =
+    typeof user.user_metadata?.username === 'string' ? user.user_metadata.username.trim() : ''
+  const fullNameFromMetadata =
+    typeof user.user_metadata?.full_name === 'string' ? user.user_metadata.full_name.trim() : ''
+  const nameFromMetadata =
+    typeof user.user_metadata?.name === 'string' ? user.user_metadata.name.trim() : ''
+
+  if (usernameFromMetadata) {
+    return usernameFromMetadata
+  }
+
+  if (fullNameFromMetadata) {
+    return fullNameFromMetadata
+  }
+
+  if (nameFromMetadata) {
+    return nameFromMetadata
+  }
+
+  if (user.email) {
+    return user.email.split('@')[0]
+  }
+
+  return null
+}
+
 export async function updateSession(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
+
+  if (pathname.startsWith('/auth/callback')) {
+    return NextResponse.next({
+      request: {
+        headers: request.headers,
+      },
+    })
+  }
+
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -59,8 +96,18 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const pathname = request.nextUrl.pathname
+  if (user?.email) {
+    const profilePayload: Database['public']['Tables']['profiles']['Insert'] = {
+      id: user.id,
+      email: user.email,
+      username: getUserDisplayName(user),
+    }
+
+    await (supabase as any).from('profiles').upsert(profilePayload, { onConflict: 'id' })
+  }
+
   const isAuthRoute = pathname.startsWith('/auth')
+  const isAuthCallbackRoute = pathname.startsWith('/auth/callback')
   const isProtectedRoute =
     pathname.startsWith('/dashboard') ||
     pathname.startsWith('/matches') ||
@@ -74,7 +121,7 @@ export async function updateSession(request: NextRequest) {
     return redirectResponse
   }
 
-  if (user && isAuthRoute) {
+  if (user && isAuthRoute && !isAuthCallbackRoute) {
     const redirectUrl = new URL('/dashboard/rules', request.url)
     const redirectResponse = NextResponse.redirect(redirectUrl)
     response.cookies.getAll().forEach((cookie) => redirectResponse.cookies.set(cookie))
