@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 interface Match {
@@ -21,80 +21,36 @@ const PRIMARY_TAB_LABELS = {
 
 const SECONDARY_TABS = ['Resultados', 'Tablas de Posiciones', 'Mejores Terceros']
 
-const mockGroups = [
-  {
-    group: 'Grupo A',
-    teams: [
-      { name: 'Jamaica', code: 'JAM' },
-      { name: 'Marruecos', code: 'MAR' },
-      { name: 'Mexico', code: 'MEX' },
-      { name: 'Uruguay', code: 'URU' },
-    ],
-  },
-  {
-    group: 'Grupo B',
-    teams: [
-      { name: 'Canada', code: 'CAN' },
-      { name: 'Colombia', code: 'COL' },
-      { name: 'Senegal', code: 'SEN' },
-      { name: 'Tunez', code: 'TUN' },
-    ],
-  },
-  {
-    group: 'Grupo C',
-    teams: [
-      { name: 'Costa Rica', code: 'CRC' },
-      { name: 'Croacia', code: 'CRO' },
-      { name: 'Egipto', code: 'EGY' },
-      { name: 'Espana', code: 'ESP' },
-    ],
-  },
-  {
-    group: 'Grupo D',
-    teams: [
-      { name: 'Alemania', code: 'GER' },
-      { name: 'Australia', code: 'AUS' },
-      { name: 'Estados Unidos', code: 'USA' },
-      { name: 'Japon', code: 'JPN' },
-    ],
-  },
-  {
-    group: 'Grupo E',
-    teams: [
-      { name: 'Belgica', code: 'BEL' },
-      { name: 'Brasil', code: 'BRA' },
-      { name: 'Camerun', code: 'CMR' },
-      { name: 'Suiza', code: 'SUI' },
-    ],
-  },
-  {
-    group: 'Grupo F',
-    teams: [
-      { name: 'Argentina', code: 'ARG' },
-      { name: 'Dinamarca', code: 'DEN' },
-      { name: 'Francia', code: 'FRA' },
-      { name: 'Nigeria', code: 'NGA' },
-    ],
-  },
-  {
-    group: 'Grupo G',
-    teams: [
-      { name: 'Corea del Sur', code: 'KOR' },
-      { name: 'Ecuador', code: 'ECU' },
-      { name: 'Inglaterra', code: 'ENG' },
-      { name: 'Paises Bajos', code: 'NED' },
-    ],
-  },
-  {
-    group: 'Grupo H',
-    teams: [
-      { name: 'Ghana', code: 'GHA' },
-      { name: 'Italia', code: 'ITA' },
-      { name: 'Polonia', code: 'POL' },
-      { name: 'Portugal', code: 'POR' },
-    ],
-  },
-]
+interface GroupRow {
+  id: string
+  code: string
+  name: string
+}
+
+interface TeamRow {
+  id: string
+  name: string
+  short_name: string | null
+  fifa_code: string | null
+  group_id: string | null
+}
+
+interface GroupStanding {
+  group: string
+  code: string
+  teams: Array<{
+    id: string
+    name: string
+    code: string
+    played: number
+    won: number
+    draw: number
+    lost: number
+    gf: number
+    ga: number
+    points: number
+  }>
+}
 
 const mockThirds = [
   { name: 'Camerun', code: 'CMR', group: 'E', status: 'Clasificado' },
@@ -200,7 +156,24 @@ function ThirdsTable() {
   )
 }
 
-function GroupTable({ group, teams }: { group: string; teams: { name: string; code: string }[] }) {
+function GroupTable({
+  group,
+  teams,
+}: {
+  group: string
+  teams: Array<{
+    id: string
+    name: string
+    code: string
+    played: number
+    won: number
+    draw: number
+    lost: number
+    gf: number
+    ga: number
+    points: number
+  }>
+}) {
   return (
     <div className="rounded-xl border border-sky-200 bg-white p-4 shadow-sm">
       <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
@@ -222,7 +195,7 @@ function GroupTable({ group, teams }: { group: string; teams: { name: string; co
         </div>
         {teams.map((team, index) => (
           <div
-            key={team.code}
+            key={team.id}
             className={`grid grid-cols-[2fr_repeat(7,1fr)] gap-2 px-3 py-2 text-xs text-slate-700 ${
               index === 0
                 ? 'bg-emerald-50'
@@ -236,13 +209,13 @@ function GroupTable({ group, teams }: { group: string; teams: { name: string; co
             <span className="font-semibold text-slate-800">
               {team.name} <span className="ml-1 text-[10px] text-slate-400">{team.code}</span>
             </span>
-            <span className="text-center">0</span>
-            <span className="text-center">0</span>
-            <span className="text-center">0</span>
-            <span className="text-center">0</span>
-            <span className="text-center">0</span>
-            <span className="text-center">0</span>
-            <span className="text-center font-semibold text-slate-900">0</span>
+            <span className="text-center">{team.played}</span>
+            <span className="text-center">{team.won}</span>
+            <span className="text-center">{team.draw}</span>
+            <span className="text-center">{team.lost}</span>
+            <span className="text-center">{team.gf}</span>
+            <span className="text-center">{team.ga}</span>
+            <span className="text-center font-semibold text-slate-900">{team.points}</span>
           </div>
         ))}
       </div>
@@ -435,6 +408,8 @@ export default function ResultsTabs({
 }) {
   const [activePrimary, setActivePrimary] = useState<'group' | 'knockout'>('group')
   const [activeSecondary, setActiveSecondary] = useState('Resultados')
+  const [groups, setGroups] = useState<GroupRow[]>([])
+  const [teams, setTeams] = useState<TeamRow[]>([])
 
   const { groupStages, knockoutStages } = useMemo(() => {
     const group: Record<string, Match[]> = {}
@@ -459,6 +434,113 @@ export default function ResultsTabs({
 
   const stages = activePrimary === 'group' ? groupStages : knockoutStages
   const stageEntries = Object.entries(stages)
+
+  useEffect(() => {
+    const supabase = createClient()
+
+    const loadGroupsAndTeams = async () => {
+      const [{ data: groupsData }, { data: teamsData }] = await Promise.all([
+        supabase.from('groups').select('id, code, name').order('code', { ascending: true }),
+        supabase.from('teams').select('id, name, short_name, fifa_code, group_id').order('name', { ascending: true }),
+      ])
+
+      setGroups((groupsData as GroupRow[]) || [])
+      setTeams((teamsData as TeamRow[]) || [])
+    }
+
+    loadGroupsAndTeams()
+  }, [])
+
+  const groupTables = useMemo<GroupStanding[]>(() => {
+    if (!groups.length || !teams.length) return []
+
+    const teamsByName = new Map<string, TeamRow>()
+    teams.forEach((team) => {
+      teamsByName.set(team.name.trim().toLowerCase(), team)
+    })
+
+    const standingsByGroup = new Map<string, GroupStanding>()
+
+    groups
+      .filter((group) => group.code !== 'TBD')
+      .forEach((group) => {
+        const groupTeams = teams
+          .filter((team) => team.group_id === group.id)
+          .map((team) => ({
+            id: team.id,
+            name: team.name,
+            code: (team.fifa_code || team.short_name || team.name.slice(0, 3)).toUpperCase(),
+            played: 0,
+            won: 0,
+            draw: 0,
+            lost: 0,
+            gf: 0,
+            ga: 0,
+            points: 0,
+          }))
+
+        standingsByGroup.set(group.id, {
+          group: `Grupo ${group.code}`,
+          code: group.code,
+          teams: groupTeams,
+        })
+      })
+
+    matches
+      .filter((match) => isGroupStage(match.stage) && match.status === 'finished')
+      .forEach((match) => {
+        if (match.home_score === null || match.away_score === null) return
+
+        const homeTeam = teamsByName.get(match.home_team.trim().toLowerCase())
+        const awayTeam = teamsByName.get(match.away_team.trim().toLowerCase())
+
+        if (!homeTeam || !awayTeam || !homeTeam.group_id || homeTeam.group_id !== awayTeam.group_id) return
+
+        const groupStanding = standingsByGroup.get(homeTeam.group_id)
+        if (!groupStanding) return
+
+        const home = groupStanding.teams.find((team) => team.id === homeTeam.id)
+        const away = groupStanding.teams.find((team) => team.id === awayTeam.id)
+
+        if (!home || !away) return
+
+        home.played += 1
+        away.played += 1
+        home.gf += match.home_score
+        home.ga += match.away_score
+        away.gf += match.away_score
+        away.ga += match.home_score
+
+        if (match.home_score > match.away_score) {
+          home.won += 1
+          home.points += 3
+          away.lost += 1
+        } else if (match.home_score < match.away_score) {
+          away.won += 1
+          away.points += 3
+          home.lost += 1
+        } else {
+          home.draw += 1
+          away.draw += 1
+          home.points += 1
+          away.points += 1
+        }
+      })
+
+    return Array.from(standingsByGroup.values())
+      .map((group) => ({
+        ...group,
+        teams: [...group.teams].sort((a, b) => {
+          if (b.points !== a.points) return b.points - a.points
+          const goalDiffA = a.gf - a.ga
+          const goalDiffB = b.gf - b.ga
+          if (goalDiffB !== goalDiffA) return goalDiffB - goalDiffA
+          if (b.gf !== a.gf) return b.gf - a.gf
+          return a.name.localeCompare(b.name)
+        }),
+      }))
+      .sort((a, b) => a.code.localeCompare(b.code))
+  }, [groups, teams, matches])
 
   return (
     <div className="grid gap-6">
@@ -508,11 +590,17 @@ export default function ResultsTabs({
             Tablas oficiales segun los resultados reales del mundial. Los primeros 2 de cada grupo clasifican
             directamente, y los mejores 8 terceros tambien avanzan.
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            {mockGroups.map((group) => (
-              <GroupTable key={group.group} group={group.group} teams={group.teams} />
-            ))}
-          </div>
+          {groupTables.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              {groupTables.map((group) => (
+                <GroupTable key={group.code} group={group.group} teams={group.teams} />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-sky-200 bg-white p-8 text-center shadow-sm">
+              <p className="text-slate-600">No hay grupos cargados todavía.</p>
+            </div>
+          )}
         </div>
       )}
 
