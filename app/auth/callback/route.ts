@@ -3,6 +3,23 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Database } from '@/types/database.types'
 
 export async function GET(request: NextRequest) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  const invalidUrl =
+    !supabaseUrl ||
+    supabaseUrl.includes('TU-PROYECTO') ||
+    supabaseUrl.includes('your-project-url')
+
+  const invalidKey =
+    !supabaseAnonKey ||
+    supabaseAnonKey.includes('PEGA_AQUI') ||
+    supabaseAnonKey.includes('your-anon-key')
+
+  if (invalidUrl || invalidKey) {
+    return NextResponse.redirect(new URL('/auth/login', request.url))
+  }
+
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
   const error_description = requestUrl.searchParams.get('error_description')
@@ -19,8 +36,8 @@ export async function GET(request: NextRequest) {
   const response = NextResponse.redirect(redirectUrl)
 
   const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         get(name: string) {
