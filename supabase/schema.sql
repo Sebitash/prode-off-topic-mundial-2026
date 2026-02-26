@@ -103,17 +103,26 @@ CREATE POLICY "Users can update own predictions before match starts"
 
 -- Function to automatically create profile on signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
   INSERT INTO public.profiles (id, email, username)
   VALUES (
     new.id,
     new.email,
-    COALESCE(new.raw_user_meta_data->>'username', split_part(new.email, '@', 1))
-  );
+    COALESCE(NULLIF(TRIM(new.raw_user_meta_data->>'username'), ''), split_part(new.email, '@', 1))
+  )
+  ON CONFLICT (id) DO UPDATE
+  SET
+    email = EXCLUDED.email,
+    username = COALESCE(EXCLUDED.username, public.profiles.username);
+
   RETURN new;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 -- Trigger to create profile on user signup
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
