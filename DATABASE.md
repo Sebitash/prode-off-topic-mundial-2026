@@ -225,6 +225,18 @@ WHERE schemaname = 'public';
 SELECT * FROM matches;
 ```
 
+### New migration: groups + teams normalization
+
+If you want each team to have its own ID and connect matches by foreign keys, run:
+
+- `supabase/migrations/20260225_groups_teams_matches.sql`
+
+This migration:
+- Creates `groups` and `teams`
+- Adds `home_team_id` and `away_team_id` to `matches`
+- Backfills team records from existing text columns (`home_team`, `away_team`)
+- Keeps old text columns for compatibility while you update the app
+
 ---
 
 ## Future Enhancements

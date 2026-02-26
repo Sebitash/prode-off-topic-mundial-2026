@@ -2,7 +2,40 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { Database } from '@/types/database.types'
 
+declare const process: {
+  env: Record<string, string | undefined>
+}
+
 export async function updateSession(request: NextRequest) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  const invalidUrl =
+    !supabaseUrl ||
+    supabaseUrl.includes('TU-PROYECTO') ||
+    supabaseUrl.includes('your-project-url')
+
+  const invalidKey =
+    !supabaseAnonKey ||
+    supabaseAnonKey.includes('PEGA_AQUI') ||
+    supabaseAnonKey.includes('your-anon-key')
+
+  if (invalidUrl || invalidKey) {
+    throw new Error(
+      'Supabase no configurado. Completa NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY en .env.local con valores reales de tu proyecto.'
+    )
+  }
+
+  const pathname = request.nextUrl.pathname
+
+  if (pathname.startsWith('/auth/callback')) {
+    return NextResponse.next({
+      request: {
+        headers: request.headers,
+      },
+    })
+  }
+
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -10,8 +43,8 @@ export async function updateSession(request: NextRequest) {
   })
 
   const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         get(name: string) {
@@ -55,7 +88,40 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (user?.email) {
+    const profilePayload: Database['public']['Tables']['profiles']['Insert'] = {
+      id: user.id,
+      email: user.email,
+    }
+
+    await (supabase as any).from('profiles').upsert(profilePayload, { onConflict: 'id' })
+  }
+
+  const isAuthRoute = pathname.startsWith('/auth')
+  const isAuthCallbackRoute = pathname.startsWith('/auth/callback')
+  const isProtectedRoute =
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/matches') ||
+    pathname.startsWith('/predictions') ||
+    pathname.startsWith('/ranking')
+
+  if (!user && isProtectedRoute) {
+    const redirectUrl = new URL('/auth/login', request.url)
+    const redirectResponse = NextResponse.redirect(redirectUrl)
+    response.cookies.getAll().forEach((cookie: { name: string; value: string }) => redirectResponse.cookies.set(cookie.name, cookie.value))
+    return redirectResponse
+  }
+
+  if (user && isAuthRoute && !isAuthCallbackRoute) {
+    const redirectUrl = new URL('/dashboard/rules', request.url)
+    const redirectResponse = NextResponse.redirect(redirectUrl)
+    response.cookies.getAll().forEach((cookie: { name: string; value: string }) => redirectResponse.cookies.set(cookie.name, cookie.value))
+    return redirectResponse
+  }
 
   return response
 }

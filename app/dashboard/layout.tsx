@@ -18,10 +18,19 @@ export default async function DashboardLayout({
     redirect('/auth/login')
   }
 
+  const { data } = await supabase
+    .from('profiles')
+    .select('username')
+    .eq('id', user.id)
+    .maybeSingle()
+
+  const profile = data as { username: string | null } | null
+  const displayName = profile?.username?.trim() || user.email || 'Usuario'
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <DashboardNav user={user} />
-      <main className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100">
+      <DashboardNav user={user} displayName={displayName} />
+      <main className="w-full">
         {children}
       </main>
     </div>
