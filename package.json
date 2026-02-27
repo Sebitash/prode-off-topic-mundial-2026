@@ -1,48 +1,21 @@
 {
-  "name": "prode-mundial-2026",
+  "name": "prode-mundial-2026-root",
   "version": "1.0.0",
   "description": "Prode Mundial 2026",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "test-api": "ts-node --transpile-only -O '{\"module\": \"commonjs\", \"moduleResolution\": \"node\"}' tests/api-test.ts",
-    "test-api-skip": "ts-node --skip-project tests/api-test.ts",
-    "debug-js": "node tests/debug.js",
-    "test-final": "node tests/test-final.js"
+    "frontend:dev": "npm --prefix frontend run dev",
+    "backend:test": "npm --prefix backend run test-api",
+    "docker:up": "docker-compose up -d",
+    "docker:build": "docker-compose build",
+    "docker:down": "docker-compose down"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Sebitash/Prode-OffTopic-Mundial2026.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
   "bugs": {
     "url": "https://github.com/Sebitash/Prode-OffTopic-Mundial2026/issues"
   },
-  "homepage": "https://github.com/Sebitash/Prode-OffTopic-Mundial2026#readme",
-  "dependencies": {
-    "@supabase/ssr": "^0.8.0",
-    "@supabase/supabase-js": "^2.95.3",
-    "@types/node": "^25.2.3",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "dotenv": "^16.4.5",
-    "next": "^16.1.6",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "typescript": "^5.9.3"
-  },
-  "devDependencies": {
-    "autoprefixer": "^10.4.24",
-    "eslint": "^9.39.2",
-    "eslint-config-next": "^16.1.6",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.19",
-    "ts-node": "^10.9.2"
-  }
+  "homepage": "https://github.com/Sebitash/Prode-OffTopic-Mundial2026#readme"
 }
