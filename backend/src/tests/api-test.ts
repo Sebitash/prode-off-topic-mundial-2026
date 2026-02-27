@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 import path from 'path';
-import { FootballService } from '../lib/services/football';
+import { FootballService } from '../lib/services/football.js';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
