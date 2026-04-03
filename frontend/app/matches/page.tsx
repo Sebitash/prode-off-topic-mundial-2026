@@ -1,41 +1,76 @@
-export const dynamic = "force-dynamic";
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import DashboardNav from '@/components/ui/DashboardNav'
 import ResultsTabs from '@/components/matches/ResultsTabs'
 
-export default async function MatchesPage() {
-  const supabase = await createClient()
+const API_URL = 'http://localhost:3001'
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+interface Match {
+  id: string
+  home_team: string
+  away_team: string
+  home_score: number | null
+  away_score: number | null
+  match_date: string
+  stage: string
+  status: 'scheduled' | 'live' | 'finished'
+}
 
-  if (!user) {
-    redirect('/auth/login')
+export default function MatchesPage() {
+  const router = useRouter()
+  const [matches, setMatches] = useState<Match[]>([])
+  const [displayName, setDisplayName] = useState('')
+  const [userId, setUserId] = useState('')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    const storedUser = localStorage.getItem('user')
+
+    if (!token) {
+      router.replace('/auth/login')
+      return
+    }
+
+    if (storedUser) {
+      const u = JSON.parse(storedUser)
+      setDisplayName(`${u.nombre} ${u.apellido}`)
+      setUserId(u.id)
+    }
+
+    fetch(`${API_URL}/api/matches`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(async (res) => {
+        if (res.status === 401) {
+          localStorage.removeItem('token')
+          router.replace('/auth/login')
+          return
+        }
+        const data = await res.json()
+        setMatches(data.matches || [])
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [router])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 flex items-center justify-center">
+        <p className="text-slate-500">Cargando partidos...</p>
+      </div>
+    )
   }
-
-  const { data } = await supabase
-    .from('profiles')
-    .select('username')
-    .eq('id', user.id)
-    .maybeSingle()
-
-  const profile = data as { username: string | null } | null
-  const displayName = profile?.username?.trim() || user.email || 'Usuario'
-
-  const { data: matches } = await supabase
-    .from('matches')
-    .select('*')
-    .order('match_date', { ascending: true })
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100">
-      <DashboardNav user={user} displayName={displayName} />
+      <DashboardNav displayName={displayName} />
       <div className="mx-auto max-w-6xl px-4 py-8">
         <ResultsTabs
-          matches={(matches as any[]) || []}
-          userId={user.id}
+          matches={matches}
+          userId={userId}
           allowPredict={false}
         />
       </div>

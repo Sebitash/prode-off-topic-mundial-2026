@@ -2,23 +2,21 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
 
-export default function DashboardNav({ user, displayName }: { user: User; displayName: string }) {
+export default function DashboardNav({ displayName }: { displayName: string }) {
   const router = useRouter()
   const pathname = usePathname()
-  const supabase = createClient()
 
   const linkClassName = (href: string) =>
     pathname === href
       ? 'text-sky-800'
       : 'text-slate-700 hover:text-sky-700'
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    document.cookie = 'token=; path=/; max-age=0'
     router.replace('/auth/login')
-    router.refresh()
   }
 
   return (
