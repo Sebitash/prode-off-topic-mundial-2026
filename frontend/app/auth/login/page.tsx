@@ -23,39 +23,40 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+      const response = await fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-      if (error) throw error
+      const data = await response.json();
 
-      router.replace('/dashboard/rules')
+      if (!response.ok) {
+        throw new Error(data.error || 'Credenciales inválidas');
+      }
+
+      // Guardar token en localStorage o cookies
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      alert('¡Bienvenido! Has iniciado sesión correctamente.');
+      router.push("/dashboard")
       router.refresh()
     } catch (error: any) {
-      setError(error.message)
+      setError(error.message || "Error de autenticación")
     } finally {
       setLoading(false)
     }
   }
 
   const handleGoogleLogin = async () => {
-    setError(null)
-    setLoadingGoogle(true)
-
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/dashboard/rules`,
-        },
-      })
-
-      if (error) throw error
-    } catch (error: any) {
-      setError(error.message)
-      setLoadingGoogle(false)
-    }
+    setError('El login con Google requiere configuración adicional en el nuevo backend.')
+    setLoadingGoogle(false)
+    /* 
+    TODO: Implementar intercambio de token de Google en el backend
+    */
   }
 
   return (
