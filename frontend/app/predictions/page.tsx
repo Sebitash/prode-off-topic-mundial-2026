@@ -1,52 +1,87 @@
-export const dynamic = "force-dynamic";
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import DashboardNav from '@/components/ui/DashboardNav'
 import ResultsTabs from '@/components/matches/ResultsTabs'
 
-export default async function PredictionsPage() {
-  const supabase = await createClient()
+const API_URL = 'http://localhost:3001'
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+interface Match {
+  id: string
+  home_team: string
+  away_team: string
+  home_score: number | null
+  away_score: number | null
+  match_date: string
+  stage: string
+  status: 'scheduled' | 'live' | 'finished'
+}
 
-  if (!user) {
-    redirect('/auth/login')
+export default function PredictionsPage() {
+  const router = useRouter()
+  const [matches, setMatches] = useState<Match[]>([])
+  const [displayName, setDisplayName] = useState('')
+  const [userId, setUserId] = useState('')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    const storedUser = localStorage.getItem('user')
+
+    if (!token) {
+      router.replace('/auth/login')
+      return
+    }
+
+    if (storedUser) {
+      const u = JSON.parse(storedUser)
+      setDisplayName(`${u.nombre} ${u.apellido}`)
+      setUserId(u.id)
+    }
+
+    // Solo partidos de fase de grupos que aún no terminaron
+    fetch(`${API_URL}/api/matches`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(async (res) => {
+        if (res.status === 401) {
+          localStorage.removeItem('token')
+          router.replace('/auth/login')
+          return
+        }
+        const data = await res.json()
+        const now = new Date()
+        const groupMatches = (data.matches || []).filter((match: Match) => {
+          const stage = `${match.stage || ''}`.toLowerCase()
+          const isGroup = stage.includes('group') || stage.includes('grupo')
+          const isNotFinished = match.status !== 'finished' && new Date(match.match_date) >= now
+          return isGroup && isNotFinished
+        })
+        setMatches(groupMatches)
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [router])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 flex items-center justify-center">
+        <p className="text-slate-500">Cargando predicciones...</p>
+      </div>
+    )
   }
-
-  const { data } = await supabase
-    .from('profiles')
-    .select('username')
-    .eq('id', user.id)
-    .maybeSingle()
-
-  const profile = data as { username: string | null } | null
-  const displayName = profile?.username?.trim() || user.email || 'Usuario'
-
-  const { data: matches } = await supabase
-    .from('matches')
-    .select('*')
-    .order('match_date', { ascending: true })
-
-  const now = new Date()
-  const groupMatches = (matches as any[] || []).filter((match: any) => {
-    const stage = `${match.stage || ''}`.toLowerCase()
-    const isGroup = stage.includes('group') || stage.includes('grupo')
-    const isCurrent = match.status !== 'finished' && new Date(match.match_date) >= now
-    return isGroup && isCurrent
-  })
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100">
-      <DashboardNav user={user} displayName={displayName} />
+      <DashboardNav displayName={displayName} />
       <div className="mx-auto max-w-6xl px-4 py-8">
         <ResultsTabs
-          matches={groupMatches}
-          userId={user.id}
+          matches={matches}
+          userId={userId}
           showSecondaryTabs={false}
           title="Tus Predicciones"
-          description="Completa los partidos de la fase de grupos y guarda tus pronosticos"
+          description="Completá los partidos de la fase de grupos y guardá tus pronósticos"
         />
       </div>
     </div>

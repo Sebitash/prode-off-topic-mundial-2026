@@ -1,7 +1,13 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+
+const API_URL = 'http://localhost:3001'
+
+function getToken(): string | null {
+  if (typeof window === 'undefined') return null
+  return localStorage.getItem('token')
+}
 
 interface Match {
   id: string
@@ -292,7 +298,6 @@ function ResultRow({
   const [awayScore, setAwayScore] = useState<number>(0)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
-  const supabase = createClient()
 
   const isFinished = match.status === 'finished'
   const isPast = new Date(match.match_date) < new Date()
@@ -306,24 +311,30 @@ function ResultRow({
     setSuccess(false)
 
     try {
-      const { error } = await supabase
-        .from('predictions')
-        .upsert({
-          user_id: userId,
+      const token = getToken()
+      const response = await fetch(`${API_URL}/api/predictions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
           match_id: match.id,
           predicted_home_score: homeScore,
           predicted_away_score: awayScore,
-        } as any, {
-          onConflict: 'user_id,match_id',
-        })
+        }),
+      })
 
-      if (error) throw error
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Error al guardar')
+      }
 
       setSuccess(true)
       setTimeout(() => setSuccess(false), 2500)
     } catch (error) {
       console.error('Error saving prediction:', error)
-      alert('Failed to save prediction')
+      alert('No se pudo guardar el pronóstico')
     } finally {
       setLoading(false)
     }
@@ -455,16 +466,28 @@ export default function ResultsTabs({
   const stageEntries = Object.entries(stages)
 
   useEffect(() => {
-    const supabase = createClient()
-
     const loadGroupsAndTeams = async () => {
-      const [{ data: groupsData }, { data: teamsData }] = await Promise.all([
-        supabase.from('groups').select('id, code, name').order('code', { ascending: true }),
-        supabase.from('teams').select('id, name, short_name, fifa_code, group_id').order('name', { ascending: true }),
-      ])
+      const token = getToken()
+      const headers = { Authorization: `Bearer ${token}` }
 
-      setGroups((groupsData as GroupRow[]) || [])
-      setTeams((teamsData as TeamRow[]) || [])
+      try {
+        const [groupsRes, teamsRes] = await Promise.all([
+          fetch(`${API_URL}/api/matches/groups`, { headers }),
+          fetch(`${API_URL}/api/matches/teams`, { headers }),
+        ])
+
+        if (groupsRes.ok) {
+          const data = await groupsRes.json()
+          setGroups(data.groups || [])
+        }
+        if (teamsRes.ok) {
+          const data = await teamsRes.json()
+          setTeams(data.teams || [])
+        }
+      } catch (err) {
+        // grupos/equipos opcionales, no bloquear si fallan
+        console.warn('No se pudieron cargar grupos/equipos:', err)
+      }
     }
 
     loadGroupsAndTeams()

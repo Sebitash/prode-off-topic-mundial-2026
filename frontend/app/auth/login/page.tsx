@@ -37,13 +37,12 @@ export default function LoginPage() {
         throw new Error(data.error || 'Credenciales inválidas');
       }
 
-      // Guardar token en localStorage o cookies
+      // Guardar token en localStorage y cookie (para middleware)
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
+      document.cookie = `token=${data.token}; path=/; max-age=${60 * 60 * 24}`; // 24 horas
 
-      alert('¡Bienvenido! Has iniciado sesión correctamente.');
       router.push("/dashboard")
-      router.refresh()
     } catch (error: any) {
       setError(error.message || "Error de autenticación")
     } finally {
