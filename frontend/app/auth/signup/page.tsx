@@ -32,23 +32,29 @@ export default function SignUpPage() {
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            username: `${firstName} ${lastName}`.trim(),
-          },
+      const response = await fetch('http://localhost:3001/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      })
+        body: JSON.stringify({
+          nombre: firstName,
+          apellido: lastName,
+          email,
+          password,
+        }),
+      });
 
-      if (error) throw error
+      const data = await response.json();
 
-      // Show success message
-      alert('Account created! Please check your email to verify your account.')
-      router.push('/auth/login')
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al registrar usuario');
+      }
+
+      alert('¡Cuenta creada con éxito! Ahora puedes iniciar sesión.');
+      router.push("/auth/login")
     } catch (error: any) {
-      setError(error.message)
+      setError(error.message || "No se pudo crear la cuenta")
     } finally {
       setLoading(false)
     }
