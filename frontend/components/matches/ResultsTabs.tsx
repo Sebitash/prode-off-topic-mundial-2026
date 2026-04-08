@@ -194,6 +194,25 @@ interface Team {
   flag_emoji?: string
 }
 
+interface TeamRow {
+  id: string
+  name: string
+  code?: string
+  played?: number
+  won?: number
+  drawn?: number
+  lost?: number
+  goals_for?: number
+  goals_against?: number
+  points?: number
+  flag_emoji?: string
+}
+
+interface GroupRow {
+  group_letter: string
+  teams: TeamRow[]
+}
+
 interface GroupStanding {
   group: string
   code: string
