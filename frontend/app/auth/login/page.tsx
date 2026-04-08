@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { API_URL } from '@/lib/config'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'

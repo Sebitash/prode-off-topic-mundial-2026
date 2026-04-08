@@ -1,8 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-
-const API_URL = 'http://localhost:3001'
+import { API_URL } from '@/lib/config'
 
 function getToken(): string | null {
   if (typeof window === 'undefined') return null

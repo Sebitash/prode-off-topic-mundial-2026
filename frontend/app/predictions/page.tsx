@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import DashboardNav from '@/components/ui/DashboardNav'
 import ResultsTabs from '@/components/matches/ResultsTabs'
-
-const API_URL = 'http://localhost:3001'
+import { API_URL } from '@/lib/config'
 
 interface Match {
   id: string

@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import DashboardNav from '@/components/ui/DashboardNav'
-
-const API_URL = 'http://localhost:3001'
+import { API_URL } from '@/lib/config'
 
 interface UserData {
   id: string
