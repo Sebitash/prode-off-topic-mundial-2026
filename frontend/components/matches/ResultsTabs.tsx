@@ -712,7 +712,7 @@ export default function ResultsTabs({
             points: team.points || 0,
             flag_emoji: team.flag_emoji || '',
           }))
-          .sort((a, b) => {
+          .sort((a: any, b: any) => {
             // Ordenar por puntos, diferencia de goles, etc
             if (b.points !== a.points) return b.points - a.points
             const goalDiffA = a.gf - a.ga
@@ -728,7 +728,7 @@ export default function ResultsTabs({
           teams: groupTeams,
         }
       })
-      .sort((a, b) => a.code.localeCompare(b.code))
+      .sort((a: any, b: any) => a.code.localeCompare(b.code))
   }, [groups])
 
   const thirdTeams = useMemo<ThirdTeamRow[]>(() => {
@@ -752,7 +752,7 @@ export default function ResultsTabs({
           status: 'Eliminado' as const,
         }
       })
-      .sort((a, b) => {
+      .sort((a: any, b: any) => {
         if (b.points !== a.points) return b.points - a.points
         if (b.goalDiff !== a.goalDiff) return b.goalDiff - a.goalDiff
         if (b.gf !== a.gf) return b.gf - a.gf
