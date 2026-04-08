@@ -40,7 +40,7 @@ export default function PredictionsPage() {
       setUserId(u.id)
     }
 
-    // Solo partidos de fase de grupos que aún no terminaron
+    // Todos los partidos de fase de grupos
     fetch(`${API_URL}/api/matches`, {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -51,12 +51,10 @@ export default function PredictionsPage() {
           return
         }
         const data = await res.json()
-        const now = new Date()
         const groupMatches = (data.matches || []).filter((match: Match) => {
           const stage = `${match.stage || ''}`.toLowerCase()
           const isGroup = stage.includes('group') || stage.includes('grupo')
-          const isNotFinished = match.status !== 'finished' && new Date(match.match_date) >= now
-          return isGroup && isNotFinished
+          return isGroup
         })
         setMatches(groupMatches)
       })

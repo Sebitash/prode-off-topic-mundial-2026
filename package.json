@@ -10,5 +10,8 @@
     "docker:up": "docker-compose up -d",
     "docker:build": "docker-compose build",
     "docker:down": "docker-compose down"
+  },
+  "dependencies": {
+    "flag-icons": "^7.5.0"
   }
 }

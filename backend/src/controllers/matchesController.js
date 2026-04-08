@@ -40,10 +40,72 @@ export const getMatchById = async (req, res) => {
 // GET /api/matches/groups
 export const getGroups = async (req, res) => {
   try {
-    const result = await query('SELECT * FROM groups ORDER BY code ASC');
-    res.json({ groups: result.rows });
+    const result = await query(`
+      SELECT 
+        group_letter,
+        json_agg(
+          json_build_object(
+            'id', id,
+            'name', name,
+            'code', code,
+            'flag_emoji', flag_emoji,
+            'played', played,
+            'won', won,
+            'drawn', drawn,
+            'lost', lost,
+            'goals_for', goals_for,
+            'goals_against', goals_against,
+            'points', points
+          ) ORDER BY points DESC, (goals_for - goals_against) DESC
+        ) as teams
+      FROM teams_simple
+      GROUP BY group_letter
+      ORDER BY group_letter ASC
+    `);
+    
+    // Transformar la respuesta para que sea compatible con el frontend
+    const groups = result.rows.map(row => ({
+      id: `group-${row.group_letter}`,
+      group_letter: row.group_letter,
+      name: `Grupo ${row.group_letter}`,
+      teams: row.teams || []
+    }));
+    
+    res.json({ groups });
   } catch (error) {
     console.error('getGroups Error:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+// GET /api/groups/teams (alternativa usando teams_simple)
+export const getGroupsSimple = async (req, res) => {
+  try {
+    const result = await query(`
+      SELECT 
+        group_letter,
+        json_agg(
+          json_build_object(
+            'id', id,
+            'name', name,
+            'code', code,
+            'flag_emoji', flag_emoji,
+            'played', played,
+            'won', won,
+            'drawn', drawn,
+            'lost', lost,
+            'goals_for', goals_for,
+            'goals_against', goals_against,
+            'points', points
+          ) ORDER BY points DESC, (goals_for - goals_against) DESC
+        ) as teams
+      FROM teams_simple
+      GROUP BY group_letter
+      ORDER BY group_letter ASC
+    `);
+    res.json({ groups: result.rows });
+  } catch (error) {
+    console.error('getGroupsSimple Error:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };

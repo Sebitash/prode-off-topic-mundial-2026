@@ -23,7 +23,7 @@ export default function DashboardNav({ displayName }: { displayName: string }) {
     <nav className="border-b border-sky-200/60 bg-white/80 shadow-sm backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <div className="flex items-center space-x-8">
-          <button type="button" className="flex items-center gap-2 text-sky-700">
+          <Link href="/dashboard" className="flex items-center gap-2 text-sky-700 hover:text-sky-800 transition">
             <span className="text-xl">⚽</span>
             <span className="flex flex-col leading-tight">
               <span className="text-base font-semibold">Prode 2026</span>
@@ -31,9 +31,12 @@ export default function DashboardNav({ displayName }: { displayName: string }) {
                 FIFA World Cup
               </span>
             </span>
-          </button>
+          </Link>
           <div className="hidden md:flex space-x-4 text-sm font-semibold">
-            <Link href="/dashboard/rules" className={linkClassName('/dashboard/rules')}>
+            <Link href="/dashboard" className={linkClassName('/dashboard')}>
+              Inicio
+            </Link>
+            <Link href="/rules" className={linkClassName('/rules')}>
               Reglas del Juego
             </Link>
             <Link href="/matches" className={linkClassName('/matches')}>

@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import "./globals.css";
+import "flag-icons/css/flag-icons.min.css";
 
 export const metadata: Metadata = {
   title: "Mundial 2026 Prode",

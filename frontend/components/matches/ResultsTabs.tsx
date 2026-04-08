@@ -20,6 +20,159 @@ interface Match {
   status: 'scheduled' | 'live' | 'finished'
 }
 
+const FLAG_CODES: Record<string, string> = {
+  'MEX': 'mx',
+  'RSA': 'za',
+  'KOR': 'kr',
+  'CZE': 'cz',
+  'CAN': 'ca',
+  'BIH': 'ba',
+  'QAT': 'qa',
+  'SUI': 'ch',
+  'BRA': 'br',
+  'MAR': 'ma',
+  'HAI': 'ht',
+  'SCO': 'gb-sct',
+  'USA': 'us',
+  'PAR': 'py',
+  'AUS': 'au',
+  'TUR': 'tr',
+  'GER': 'de',
+  'CUW': 'cw',
+  'CIV': 'ci',
+  'ECU': 'ec',
+  'NED': 'nl',
+  'JPN': 'jp',
+  'SWE': 'se',
+  'TUN': 'tn',
+  'BEL': 'be',
+  'EGY': 'eg',
+  'IRN': 'ir',
+  'NZL': 'nz',
+  'ESP': 'es',
+  'CPV': 'cv',
+  'KSA': 'sa',
+  'URY': 'uy',
+  'FRA': 'fr',
+  'SEN': 'sn',
+  'IRQ': 'iq',
+  'NOR': 'no',
+  'ARG': 'ar',
+  'ALG': 'dz',
+  'AUT': 'at',
+  'JOR': 'jo',
+  'POR': 'pt',
+  'COD': 'cd',
+  'UZB': 'uz',
+  'COL': 'co',
+  'ENG': 'gb-eng',
+  'CRO': 'hr',
+  'GHA': 'gh',
+  'PAN': 'pa',
+}
+
+const TEAM_TO_GROUP: Record<string, string> = {
+  'México': 'A',
+  'Sudáfrica': 'A',
+  'República de Corea': 'A',
+  'República Checa': 'A',
+  'Canadá': 'B',
+  'Bosnia y Herzegovina': 'B',
+  'Catar': 'B',
+  'Suiza': 'B',
+  'Brasil': 'C',
+  'Marruecos': 'C',
+  'Haití': 'C',
+  'Escocia': 'C',
+  'Estados Unidos': 'D',
+  'Paraguay': 'D',
+  'Australia': 'D',
+  'Turquía': 'D',
+  'Alemania': 'E',
+  'Curazao': 'E',
+  'Costa de Marfil': 'E',
+  'Ecuador': 'E',
+  'Países Bajos': 'F',
+  'Japón': 'F',
+  'Suecia': 'F',
+  'Túnez': 'F',
+  'Bélgica': 'G',
+  'Egipto': 'G',
+  'Irán': 'G',
+  'Nueva Zelanda': 'G',
+  'España': 'H',
+  'Cabo Verde': 'H',
+  'Arabia Saudí': 'H',
+  'Uruguay': 'H',
+  'Francia': 'I',
+  'Senegal': 'I',
+  'Irak': 'I',
+  'Noruega': 'I',
+  'Argentina': 'J',
+  'Argelia': 'J',
+  'Austria': 'J',
+  'Jordania': 'J',
+  'Portugal': 'K',
+  'RD del Congo': 'K',
+  'Uzbekistán': 'K',
+  'Colombia': 'K',
+  'Inglaterra': 'L',
+  'Croacia': 'L',
+  'Ghana': 'L',
+  'Panamá': 'L',
+}
+
+const TEAM_TO_CODE: Record<string, string> = {
+  'México': 'MEX',
+  'Sudáfrica': 'RSA',
+  'República de Corea': 'KOR',
+  'República Checa': 'CZE',
+  'Canadá': 'CAN',
+  'Bosnia y Herzegovina': 'BIH',
+  'Catar': 'QAT',
+  'Suiza': 'SUI',
+  'Brasil': 'BRA',
+  'Marruecos': 'MAR',
+  'Haití': 'HAI',
+  'Escocia': 'SCO',
+  'Estados Unidos': 'USA',
+  'Paraguay': 'PAR',
+  'Australia': 'AUS',
+  'Turquía': 'TUR',
+  'Alemania': 'GER',
+  'Curazao': 'CUW',
+  'Costa de Marfil': 'CIV',
+  'Ecuador': 'ECU',
+  'Países Bajos': 'NED',
+  'Japón': 'JPN',
+  'Suecia': 'SWE',
+  'Túnez': 'TUN',
+  'Bélgica': 'BEL',
+  'Egipto': 'EGY',
+  'Irán': 'IRN',
+  'Nueva Zelanda': 'NZL',
+  'España': 'ESP',
+  'Cabo Verde': 'CPV',
+  'Arabia Saudí': 'KSA',
+  'Uruguay': 'URY',
+  'Francia': 'FRA',
+  'Senegal': 'SEN',
+  'Irak': 'IRQ',
+  'Noruega': 'NOR',
+  'Argentina': 'ARG',
+  'Argelia': 'ALG',
+  'Austria': 'AUT',
+  'Jordania': 'JOR',
+  'Portugal': 'POR',
+  'RD del Congo': 'COD',
+  'Uzbekistán': 'UZB',
+  'Colombia': 'COL',
+  'Inglaterra': 'ENG',
+  'Croacia': 'CRO',
+  'Ghana': 'GHA',
+  'Panamá': 'PAN',
+}
+
 const PRIMARY_TAB_LABELS = {
   group: 'Fase de Grupos',
   knockout: 'Fase Eliminatoria',
@@ -27,18 +180,18 @@ const PRIMARY_TAB_LABELS = {
 
 const SECONDARY_TABS = ['Resultados', 'Tablas de Posiciones', 'Mejores Terceros']
 
-interface GroupRow {
+interface Team {
   id: string
+  name: string
   code: string
-  name: string
-}
-
-interface TeamRow {
-  id: string
-  name: string
-  short_name: string | null
-  fifa_code: string | null
-  group_id: string | null
+  played: number
+  won: number
+  draw: number
+  lost: number
+  gf: number
+  ga: number
+  points: number
+  flag_emoji?: string
 }
 
 interface GroupStanding {
@@ -55,6 +208,7 @@ interface GroupStanding {
     gf: number
     ga: number
     points: number
+    flag_emoji?: string
   }>
 }
 
@@ -115,9 +269,12 @@ function ThirdsTable({ thirdTeams }: { thirdTeams: ThirdTeamRow[] }) {
                 >
                   <td className="px-3 py-2 font-semibold text-slate-700">{index + 1}</td>
                   <td className="px-3 py-2">
-                    <div className="font-semibold text-slate-800">
-                      {team.name}
-                      <span className="ml-1 text-[10px] text-slate-400">{team.code}</span>
+                    <div className="font-semibold text-slate-800 flex items-center gap-2">
+                      <span className={`fi fi-${FLAG_CODES[team.code] || 'xx'} w-10 h-10`}></span>
+                      <div>
+                        <div>{team.name}</div>
+                        <div className="text-[10px] text-slate-400">{team.code}</div>
+                      </div>
                     </div>
                   </td>
                   <td className="px-3 py-2 text-center">
@@ -216,8 +373,12 @@ function GroupTable({
                 : 'bg-white'
             }`}
           >
-            <span className="font-semibold text-slate-800">
-              {team.name} <span className="ml-1 text-[10px] text-slate-400">{team.code}</span>
+            <span className="font-semibold text-slate-800 flex items-center gap-2">
+              <span className={`fi fi-${FLAG_CODES[team.code] || 'xx'} w-10 h-10`}></span>
+              <div>
+                <div>{team.name}</div>
+                <div className="text-[10px] text-slate-400">{team.code}</div>
+              </div>
             </span>
             <span className="text-center">{team.played}</span>
             <span className="text-center">{team.won}</span>
@@ -347,7 +508,7 @@ function ResultRow({
     >
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-1 items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-sky-100" />
+          <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[match.home_team] || 'xx'] || 'xx'} w-10 h-10 rounded`}></span>
           <div>
             <p className="text-sm font-semibold text-slate-900">{match.home_team}</p>
             {isFinished && match.home_score !== null && (
@@ -395,7 +556,7 @@ function ResultRow({
               <p className="text-lg font-semibold text-sky-700">{match.away_score}</p>
             )}
           </div>
-          <div className="h-10 w-10 rounded-full bg-sky-100" />
+          <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[match.away_team] || 'xx'] || 'xx'} w-10 h-10 rounded`}></span>
         </div>
       </div>
 
@@ -462,6 +623,27 @@ export default function ResultsTabs({
     return { groupStages: group, knockoutStages: knockout }
   }, [matches])
 
+  // Agrupar por grupos (A, B, C, etc.)
+  const matchesByGroup = useMemo(() => {
+    const groups: Record<string, Match[]> = {}
+    
+    matches.forEach((match) => {
+      const groupLetter = TEAM_TO_GROUP[match.home_team] || 'Unknown'
+      if (!groups[groupLetter]) {
+        groups[groupLetter] = []
+      }
+      groups[groupLetter].push(match)
+    })
+    
+    // Ordenar por grupo (A, B, C, ...)
+    return Object.entries(groups)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .reduce((acc, [key, value]) => {
+        acc[key] = value.sort((a, b) => new Date(a.match_date).getTime() - new Date(b.match_date).getTime())
+        return acc
+      }, {} as Record<string, Match[]>)
+  }, [matches])
+
   const stages = activePrimary === 'group' ? groupStages : knockoutStages
   const stageEntries = Object.entries(stages)
 
@@ -471,22 +653,14 @@ export default function ResultsTabs({
       const headers = { Authorization: `Bearer ${token}` }
 
       try {
-        const [groupsRes, teamsRes] = await Promise.all([
-          fetch(`${API_URL}/api/matches/groups`, { headers }),
-          fetch(`${API_URL}/api/matches/teams`, { headers }),
-        ])
+        const groupsRes = await fetch(`${API_URL}/api/matches/groups`, { headers })
 
         if (groupsRes.ok) {
           const data = await groupsRes.json()
           setGroups(data.groups || [])
         }
-        if (teamsRes.ok) {
-          const data = await teamsRes.json()
-          setTeams(data.teams || [])
-        }
       } catch (err) {
-        // grupos/equipos opcionales, no bloquear si fallan
-        console.warn('No se pudieron cargar grupos/equipos:', err)
+        console.warn('No se pudieron cargar grupos:', err)
       }
     }
 
@@ -494,95 +668,49 @@ export default function ResultsTabs({
   }, [])
 
   const groupTables = useMemo<GroupStanding[]>(() => {
-    if (!groups.length || !teams.length) return []
+    // Los grupos ya vienen con sus equipos y posiciones del API
+    if (!groups.length) return []
 
-    const teamsByName = new Map<string, TeamRow>()
-    teams.forEach((team) => {
-      teamsByName.set(team.name.trim().toLowerCase(), team)
-    })
-
-    const standingsByGroup = new Map<string, GroupStanding>()
-
-    groups
-      .filter((group) => group.code !== 'TBD')
-      .forEach((group) => {
-        const groupTeams = teams
-          .filter((team) => team.group_id === group.id)
-          .map((team) => ({
+    return groups
+      .filter((group: any) => {
+        // Filtrar grupos válidos
+        return group.group_letter && group.teams && group.teams.length > 0
+      })
+      .map((group: any) => {
+        // Filtrar equipos válidos y mapear a la estructura esperada
+        const groupTeams = (group.teams || [])
+          .filter((team: any) => team && team.id && team.name)
+          .map((team: any) => ({
             id: team.id,
             name: team.name,
-            code: (team.fifa_code || team.short_name || team.name.slice(0, 3)).toUpperCase(),
-            played: 0,
-            won: 0,
-            draw: 0,
-            lost: 0,
-            gf: 0,
-            ga: 0,
-            points: 0,
+            code: (team.code || team.name.slice(0, 3)).toUpperCase(),
+            played: team.played || 0,
+            won: team.won || 0,
+            draw: team.drawn || 0,
+            lost: team.lost || 0,
+            gf: team.goals_for || 0,
+            ga: team.goals_against || 0,
+            points: team.points || 0,
+            flag_emoji: team.flag_emoji || '',
           }))
+          .sort((a, b) => {
+            // Ordenar por puntos, diferencia de goles, etc
+            if (b.points !== a.points) return b.points - a.points
+            const goalDiffA = a.gf - a.ga
+            const goalDiffB = b.gf - b.ga
+            if (goalDiffB !== goalDiffA) return goalDiffB - goalDiffA
+            if (b.gf !== a.gf) return b.gf - a.gf
+            return a.name.localeCompare(b.name)
+          })
 
-        standingsByGroup.set(group.id, {
-          group: `Grupo ${group.code}`,
-          code: group.code,
+        return {
+          group: `Grupo ${group.group_letter}`,
+          code: group.group_letter,
           teams: groupTeams,
-        })
-      })
-
-    matches
-      .filter((match) => isGroupStage(match.stage) && match.status === 'finished')
-      .forEach((match) => {
-        if (match.home_score === null || match.away_score === null) return
-
-        const homeTeam = teamsByName.get(match.home_team.trim().toLowerCase())
-        const awayTeam = teamsByName.get(match.away_team.trim().toLowerCase())
-
-        if (!homeTeam || !awayTeam || !homeTeam.group_id || homeTeam.group_id !== awayTeam.group_id) return
-
-        const groupStanding = standingsByGroup.get(homeTeam.group_id)
-        if (!groupStanding) return
-
-        const home = groupStanding.teams.find((team) => team.id === homeTeam.id)
-        const away = groupStanding.teams.find((team) => team.id === awayTeam.id)
-
-        if (!home || !away) return
-
-        home.played += 1
-        away.played += 1
-        home.gf += match.home_score
-        home.ga += match.away_score
-        away.gf += match.away_score
-        away.ga += match.home_score
-
-        if (match.home_score > match.away_score) {
-          home.won += 1
-          home.points += 3
-          away.lost += 1
-        } else if (match.home_score < match.away_score) {
-          away.won += 1
-          away.points += 3
-          home.lost += 1
-        } else {
-          home.draw += 1
-          away.draw += 1
-          home.points += 1
-          away.points += 1
         }
       })
-
-    return Array.from(standingsByGroup.values())
-      .map((group) => ({
-        ...group,
-        teams: [...group.teams].sort((a, b) => {
-          if (b.points !== a.points) return b.points - a.points
-          const goalDiffA = a.gf - a.ga
-          const goalDiffB = b.gf - b.ga
-          if (goalDiffB !== goalDiffA) return goalDiffB - goalDiffA
-          if (b.gf !== a.gf) return b.gf - a.gf
-          return a.name.localeCompare(b.name)
-        }),
-      }))
       .sort((a, b) => a.code.localeCompare(b.code))
-  }, [groups, teams, matches])
+  }, [groups])
 
   const thirdTeams = useMemo<ThirdTeamRow[]>(() => {
     const ranked = groupTables
@@ -703,7 +831,28 @@ export default function ResultsTabs({
         </div>
       )}
 
-      {(!showSecondaryTabs || activeSecondary === 'Resultados') && (
+      {(!showSecondaryTabs || activeSecondary === 'Resultados') && activePrimary === 'group' && (
+        <div className="grid gap-6">
+        {Object.keys(matchesByGroup).length === 0 && (
+          <div className="rounded-2xl border border-sky-200 bg-white p-8 text-center shadow-sm">
+            <p className="text-slate-600">No hay partidos disponibles.</p>
+          </div>
+        )}
+
+        {Object.entries(matchesByGroup).map(([groupLetter, matchList]) => (
+          <div key={groupLetter} className="rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-slate-900">Grupo {groupLetter}</h2>
+            <div className="mt-4 grid gap-4">
+              {matchList.map((match) => (
+                <ResultRow key={match.id} match={match} userId={userId} allowPredict={allowPredict} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      )}
+
+      {(!showSecondaryTabs || activeSecondary === 'Resultados') && activePrimary === 'knockout' && (
         <div className="grid gap-6">
         {stageEntries.length === 0 && (
           <div className="rounded-2xl border border-sky-200 bg-white p-8 text-center shadow-sm">

@@ -1,4 +1,8 @@
+'use client'
+
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import DashboardNav from '@/components/ui/DashboardNav'
 
 const groupScoring = [
   {
@@ -62,12 +66,36 @@ const tips = [
 ]
 
 export default function RulesPage() {
-  return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-sky-50 via-white to-sky-100">
-      <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
-      <div className="absolute -bottom-32 left-0 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />
+  const [displayName, setDisplayName] = useState('')
 
-      <section className="relative z-10 mx-auto grid max-w-6xl gap-6 px-4 py-8">
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      const userData = localStorage.getItem('user')
+      if (userData) {
+        try {
+          const user = JSON.parse(userData)
+          setDisplayName(`${user.nombre} ${user.apellido}`)
+        } catch (e) {
+          console.error('Error parsing user data')
+        }
+      }
+    }
+  }, [])
+
+  return (
+    <div className="relative min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100">
+      <DashboardNav displayName={displayName} />
+      <div className="relative overflow-hidden">
+        <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
+        <div className="absolute -bottom-32 left-0 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />
+
+        <section className="relative z-10 mx-auto grid max-w-6xl gap-6 px-4 py-8">
+        <div className="flex items-center gap-2 mb-4">
+          <Link href="/dashboard" className="text-sky-600 hover:text-sky-700 font-semibold text-sm flex items-center gap-1">
+            ← Volver al Dashboard
+          </Link>
+        </div>
         <div className="rounded-2xl border border-sky-200/60 bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-6 shadow-sm">
           <p className="text-sm uppercase tracking-[0.3em] text-sky-700">
             Reglas del Juego
@@ -254,7 +282,7 @@ export default function RulesPage() {
           </div>
         </div>
       </section>
-
+      </div>
     </div>
   )
 }
