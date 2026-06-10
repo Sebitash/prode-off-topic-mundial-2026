@@ -155,4 +155,4 @@ Las llaves de octavos/cuartos/semis/final dependen de las posiciones finales de 
 - [ ] Servicio backend en Railway: deploy OK, `/health` responde, variables configuradas
 - [ ] Servicio frontend en Railway: deploy OK, `NEXT_PUBLIC_API_URL` apunta al backend, login funciona
 - [ ] `/matches`, `/predictions`, "Tablas de Posiciones" cargan sin error 500
-- [ ] Probar que una predicción se puede guardar (>2hs antes del partido) y que se bloquea (<2hs antes), con el mensaje "Cerrado" en la UI
+- [ ] Probar que una predicción se puede guardar (>1h antes del partido) y que se bloquea (<1h antes), con el mensaje "Cerrado" en la UI

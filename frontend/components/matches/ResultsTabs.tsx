@@ -289,7 +289,7 @@ function ThirdsTable({ thirdTeams }: { thirdTeams: ThirdTeamRow[] }) {
                   key={`${team.code}-${team.group}`}
                   className={isPending ? 'bg-white' : isQualified ? 'bg-emerald-50' : 'bg-rose-50'}
                 >
-                  <td className="px-3 py-2 font-semibold text-slate-700">{index + 1}</td>
+                  <td className="px-3 py-2 font-semibold text-slate-900">{index + 1}</td>
                   <td className="px-3 py-2">
                     <div className="font-semibold text-slate-800 flex items-center gap-2">
                       <span className={`fi fi-${FLAG_CODES[team.code] || 'xx'} w-10 h-10`}></span>
@@ -391,7 +391,7 @@ function GroupTable({
         {teams.map((team, index) => (
           <div
             key={team.id}
-            className={`grid grid-cols-[2fr_repeat(7,1fr)_1.3fr] gap-2 px-3 py-2 text-xs text-slate-700 ${
+            className={`grid grid-cols-[2fr_repeat(7,1fr)_1.3fr] gap-2 px-3 py-2 text-xs text-slate-900 ${
               !started
                 ? 'bg-white'
                 : index === 0
@@ -524,7 +524,7 @@ function ResultRow({
 
   const isFinished = match.status === 'finished'
   const tbd = isTBD(match)
-  const locked = Date.now() >= new Date(match.match_date).getTime() - 2 * 60 * 60 * 1000
+  const locked = Date.now() >= new Date(match.match_date).getTime() - 60 * 60 * 1000
   const canPredict = allowPredict && !isFinished && !locked && !tbd
   const isSaved = !!prediction
 
@@ -647,7 +647,7 @@ function ResultRow({
             )
           ) : (
             <div className="flex flex-col items-center gap-1">
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+              <div className="flex items-center gap-2 text-xs font-semibold text-slate-900">
                 <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
                   {prediction ? prediction.predicted_home_score : match.home_score ?? '-'}
                 </span>
@@ -657,7 +657,7 @@ function ResultRow({
                 </span>
               </div>
               {prediction && (
-                <span className="text-[10px] text-slate-400">
+                <span className="text-[10px] text-slate-700">
                   Tu pronóstico{isFinished && prediction.points !== undefined ? ` · ${prediction.points} pts` : ''}
                 </span>
               )}
@@ -690,7 +690,7 @@ function ResultRow({
             {statusLabel(match.status, locked, allowPredict, tbd)}
           </span>
           {allowPredict && locked && !isFinished && !tbd && (
-            <span className="text-slate-400">Las predicciones cierran 2hs antes del partido</span>
+            <span className="text-slate-400">Las predicciones cierran 1h antes del partido</span>
           )}
           {canPredict && (
             isSaved ? (
