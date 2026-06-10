@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS predictions (
   match_id UUID REFERENCES matches(id) ON DELETE CASCADE NOT NULL,
   predicted_home_score INTEGER NOT NULL,
   predicted_away_score INTEGER NOT NULL,
+  predicted_penalty_winner TEXT CHECK (predicted_penalty_winner IS NULL OR predicted_penalty_winner IN ('home', 'away')),
   points INTEGER,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL,
@@ -155,6 +156,9 @@ CREATE TRIGGER on_auth_user_created
 -- Reglas: 2 puntos por acertar el ganador (si el partido termina empatado y se
 -- define por penales, el ganador de la definición por penales es el ganador
 -- a estos efectos) + 1 punto extra si además se acierta el resultado exacto.
+-- Si el pronóstico fue empate y el partido real también termina empatado en
+-- los 90' y se define por penales, se usa predicted_penalty_winner como
+-- "ganador" pronosticado.
 CREATE OR REPLACE FUNCTION calculate_prediction_points()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -182,6 +186,7 @@ BEGIN
       predicted_winner := CASE
         WHEN pred.predicted_home_score > pred.predicted_away_score THEN 'home'
         WHEN pred.predicted_home_score < pred.predicted_away_score THEN 'away'
+        WHEN NEW.home_score = NEW.away_score AND pred.predicted_penalty_winner IS NOT NULL THEN pred.predicted_penalty_winner
         ELSE 'draw'
       END;
 
