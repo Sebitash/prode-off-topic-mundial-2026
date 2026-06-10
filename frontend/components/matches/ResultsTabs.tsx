@@ -479,23 +479,35 @@ function ResultRow({
   match,
   userId,
   allowPredict,
+  prediction,
+  onPredictionSaved,
+  onPredictionDeleted,
 }: {
   match: Match
   userId: string
   allowPredict: boolean
+  prediction?: { predicted_home_score: number; predicted_away_score: number } | null
+  onPredictionSaved?: (matchId: string, prediction: { predicted_home_score: number; predicted_away_score: number }) => void
+  onPredictionDeleted?: (matchId: string) => void
 }) {
-  const [homeScore, setHomeScore] = useState<number>(0)
-  const [awayScore, setAwayScore] = useState<number>(0)
+  const [homeScore, setHomeScore] = useState<number>(prediction?.predicted_home_score ?? 0)
+  const [awayScore, setAwayScore] = useState<number>(prediction?.predicted_away_score ?? 0)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+
+  useEffect(() => {
+    setHomeScore(prediction?.predicted_home_score ?? 0)
+    setAwayScore(prediction?.predicted_away_score ?? 0)
+  }, [prediction])
 
   const isFinished = match.status === 'finished'
   const locked = Date.now() >= new Date(match.match_date).getTime() - 2 * 60 * 60 * 1000
   const canPredict = allowPredict && !isFinished && !locked
+  const isSaved = !!prediction
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!canPredict) return
+    if (!canPredict || isSaved) return
 
     setLoading(true)
     setSuccess(false)
@@ -521,10 +533,39 @@ function ResultRow({
       }
 
       setSuccess(true)
+      onPredictionSaved?.(match.id, { predicted_home_score: homeScore, predicted_away_score: awayScore })
       setTimeout(() => setSuccess(false), 2500)
     } catch (error) {
       console.error('Error saving prediction:', error)
       alert('No se pudo guardar el pronóstico')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCancel = async () => {
+    if (!canPredict || loading) return
+
+    setLoading(true)
+
+    try {
+      const token = getToken()
+      const response = await fetch(`${API_URL}/api/predictions/${match.id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Error al cancelar')
+      }
+
+      onPredictionDeleted?.(match.id)
+    } catch (error) {
+      console.error('Error deleting prediction:', error)
+      alert('No se pudo cancelar el pronóstico')
     } finally {
       setLoading(false)
     }
@@ -548,23 +589,35 @@ function ResultRow({
 
         <div className="flex items-center justify-center gap-3">
           {canPredict ? (
-            <>
-              <input
-                type="number"
-                min="0"
-                value={homeScore}
-                onChange={(e) => setHomeScore(parseInt(e.target.value) || 0)}
-                className="h-10 w-12 rounded-lg border border-slate-200 text-center text-sm"
-              />
-              <span className="text-xs font-semibold text-slate-400">vs</span>
-              <input
-                type="number"
-                min="0"
-                value={awayScore}
-                onChange={(e) => setAwayScore(parseInt(e.target.value) || 0)}
-                className="h-10 w-12 rounded-lg border border-slate-200 text-center text-sm"
-              />
-            </>
+            isSaved ? (
+              <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
+                  {homeScore}
+                </span>
+                <span className="text-xs font-semibold text-slate-400">vs</span>
+                <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
+                  {awayScore}
+                </span>
+              </div>
+            ) : (
+              <>
+                <input
+                  type="number"
+                  min="0"
+                  value={homeScore}
+                  onChange={(e) => setHomeScore(parseInt(e.target.value) || 0)}
+                  className="h-10 w-12 rounded-lg border border-slate-200 text-center text-sm"
+                />
+                <span className="text-xs font-semibold text-slate-400">vs</span>
+                <input
+                  type="number"
+                  min="0"
+                  value={awayScore}
+                  onChange={(e) => setAwayScore(parseInt(e.target.value) || 0)}
+                  className="h-10 w-12 rounded-lg border border-slate-200 text-center text-sm"
+                />
+              </>
+            )
           ) : (
             <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
               <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
@@ -599,13 +652,29 @@ function ResultRow({
             <span className="text-slate-400">Las predicciones cierran 2hs antes del partido</span>
           )}
           {canPredict && (
-            <button
-              type="submit"
-              disabled={loading}
-              className="rounded-full bg-sky-600 px-4 py-1 text-xs font-semibold text-white transition hover:bg-sky-700 disabled:opacity-50"
-            >
-              {loading ? 'Guardando...' : 'Guardar'}
-            </button>
+            isSaved ? (
+              <>
+                <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                  Guardado
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  disabled={loading}
+                  className="rounded-full border border-slate-300 px-4 py-1 text-xs font-semibold text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"
+                >
+                  {loading ? 'Cancelando...' : 'Cancelar'}
+                </button>
+              </>
+            ) : (
+              <button
+                type="submit"
+                disabled={loading}
+                className="rounded-full bg-sky-600 px-4 py-1 text-xs font-semibold text-white transition hover:bg-sky-700 disabled:opacity-50"
+              >
+                {loading ? 'Guardando...' : 'Guardar'}
+              </button>
+            )
           )}
           {success && <span className="text-sky-700">Pronostico guardado</span>}
         </div>
@@ -633,6 +702,7 @@ export default function ResultsTabs({
   const [activeSecondary, setActiveSecondary] = useState('Resultados')
   const [groups, setGroups] = useState<GroupRow[]>([])
   const [teams, setTeams] = useState<TeamRow[]>([])
+  const [predictions, setPredictions] = useState<Record<string, { predicted_home_score: number; predicted_away_score: number }>>({})
 
   const { groupStages, knockoutStages } = useMemo(() => {
     const group: Record<string, Match[]> = {}
@@ -678,6 +748,48 @@ export default function ResultsTabs({
 
   const stages = activePrimary === 'group' ? groupStages : knockoutStages
   const stageEntries = Object.entries(stages)
+
+  useEffect(() => {
+    if (!allowPredict) return
+
+    const loadPredictions = async () => {
+      const token = getToken()
+
+      try {
+        const res = await fetch(`${API_URL}/api/predictions`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+
+        if (res.ok) {
+          const data = await res.json()
+          const map: Record<string, { predicted_home_score: number; predicted_away_score: number }> = {}
+          for (const p of data.predictions || []) {
+            map[p.match_id] = {
+              predicted_home_score: p.predicted_home_score,
+              predicted_away_score: p.predicted_away_score,
+            }
+          }
+          setPredictions(map)
+        }
+      } catch (err) {
+        console.warn('No se pudieron cargar las predicciones:', err)
+      }
+    }
+
+    loadPredictions()
+  }, [allowPredict])
+
+  const handlePredictionSaved = (matchId: string, prediction: { predicted_home_score: number; predicted_away_score: number }) => {
+    setPredictions((prev) => ({ ...prev, [matchId]: prediction }))
+  }
+
+  const handlePredictionDeleted = (matchId: string) => {
+    setPredictions((prev) => {
+      const next = { ...prev }
+      delete next[matchId]
+      return next
+    })
+  }
 
   useEffect(() => {
     if (!showSecondaryTabs) return
@@ -881,7 +993,15 @@ export default function ResultsTabs({
             <h2 className="text-lg font-semibold text-slate-900">Grupo {groupLetter}</h2>
             <div className="mt-4 grid gap-4">
               {matchList.map((match) => (
-                <ResultRow key={match.id} match={match} userId={userId} allowPredict={allowPredict} />
+                <ResultRow
+                  key={match.id}
+                  match={match}
+                  userId={userId}
+                  allowPredict={allowPredict}
+                  prediction={predictions[match.id]}
+                  onPredictionSaved={handlePredictionSaved}
+                  onPredictionDeleted={handlePredictionDeleted}
+                />
               ))}
             </div>
           </div>
@@ -902,7 +1022,15 @@ export default function ResultsTabs({
             <h2 className="text-lg font-semibold text-slate-900">{stage}</h2>
             <div className="mt-4 grid gap-4">
               {list.map((match) => (
-                <ResultRow key={match.id} match={match} userId={userId} allowPredict={allowPredict} />
+                <ResultRow
+                  key={match.id}
+                  match={match}
+                  userId={userId}
+                  allowPredict={allowPredict}
+                  prediction={predictions[match.id]}
+                  onPredictionSaved={handlePredictionSaved}
+                  onPredictionDeleted={handlePredictionDeleted}
+                />
               ))}
             </div>
           </div>

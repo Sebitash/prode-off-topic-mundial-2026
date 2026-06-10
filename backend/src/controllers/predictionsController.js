@@ -67,3 +67,31 @@ export const upsertPrediction = async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
+
+// DELETE /api/predictions/:matchId — borrar la predicción del usuario para un partido
+export const deletePrediction = async (req, res) => {
+  const userId = req.user.id;
+  const { matchId } = req.params;
+
+  try {
+    const matchResult = await query('SELECT * FROM matches WHERE id = $1', [matchId]);
+
+    if (matchResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Partido no encontrado' });
+    }
+
+    const match = matchResult.rows[0];
+    const kickoff = new Date(match.match_date).getTime();
+    const twoHoursBeforeMs = kickoff - 2 * 60 * 60 * 1000;
+    if (match.status !== 'scheduled' || Date.now() >= twoHoursBeforeMs) {
+      return res.status(400).json({ error: 'Las predicciones para este partido están cerradas (cierran 2 horas antes del inicio)' });
+    }
+
+    await query('DELETE FROM predictions WHERE user_id = $1 AND match_id = $2', [userId, matchId]);
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('deletePrediction Error:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
