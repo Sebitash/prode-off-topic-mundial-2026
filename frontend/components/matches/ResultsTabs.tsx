@@ -215,6 +215,7 @@ interface GroupRow {
 interface GroupStanding {
   group: string
   code: string
+  started: boolean
   teams: Array<{
     id: string
     name: string
@@ -243,7 +244,7 @@ interface ThirdTeamRow {
   ga: number
   points: number
   goalDiff: number
-  status: 'Clasificado' | 'Eliminado'
+  status: 'Clasificado' | 'Eliminado' | 'Por definir'
 }
 
 function ThirdsTable({ thirdTeams }: { thirdTeams: ThirdTeamRow[] }) {
@@ -280,10 +281,11 @@ function ThirdsTable({ thirdTeams }: { thirdTeams: ThirdTeamRow[] }) {
           <tbody className="divide-y divide-sky-100">
             {thirdTeams.map((team, index) => {
               const isQualified = team.status === 'Clasificado'
+              const isPending = team.status === 'Por definir'
               return (
                 <tr
                   key={`${team.code}-${team.group}`}
-                  className={isQualified ? 'bg-emerald-50' : 'bg-rose-50'}
+                  className={isPending ? 'bg-white' : isQualified ? 'bg-emerald-50' : 'bg-rose-50'}
                 >
                   <td className="px-3 py-2 font-semibold text-slate-700">{index + 1}</td>
                   <td className="px-3 py-2">
@@ -311,10 +313,14 @@ function ThirdsTable({ thirdTeams }: { thirdTeams: ThirdTeamRow[] }) {
                   <td className="px-3 py-2 text-center">
                     <span
                       className={`rounded-full px-2 py-1 text-[10px] font-semibold ${
-                        isQualified ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+                        isPending
+                          ? 'bg-slate-100 text-slate-500'
+                          : isQualified
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : 'bg-rose-100 text-rose-700'
                       }`}
                     >
-                      {isQualified ? '✓ Clasificado' : '✕ Eliminado'}
+                      {isPending ? 'Por definir' : isQualified ? '✓ Clasificado' : '✕ Eliminado'}
                     </span>
                   </td>
                 </tr>
@@ -342,6 +348,7 @@ function GroupTable({
   group,
   teams,
   qualifiedThirdIds,
+  started,
 }: {
   group: string
   teams: Array<{
@@ -357,6 +364,7 @@ function GroupTable({
     points: number
   }>
   qualifiedThirdIds: Set<string>
+  started: boolean
 }) {
   return (
     <div className="rounded-xl border border-sky-200 bg-white p-4 shadow-sm">
@@ -382,7 +390,9 @@ function GroupTable({
           <div
             key={team.id}
             className={`grid grid-cols-[2fr_repeat(7,1fr)_1.3fr] gap-2 px-3 py-2 text-xs text-slate-700 ${
-              index === 0
+              !started
+                ? 'bg-white'
+                : index === 0
                 ? 'bg-emerald-50'
                 : index === 1
                 ? 'bg-sky-50'
@@ -406,7 +416,11 @@ function GroupTable({
             <span className="text-center">{team.ga}</span>
             <span className="text-center font-semibold text-slate-900">{team.points}</span>
             <span className="text-center">
-              {index < 2 ? (
+              {!started ? (
+                <span className="rounded-full bg-slate-100 px-2 py-1 text-[10px] font-semibold text-slate-500">
+                  Por definir
+                </span>
+              ) : index < 2 ? (
                 <span className="rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-semibold text-emerald-700">
                   Directo
                 </span>
@@ -863,6 +877,7 @@ export default function ResultsTabs({
         return {
           group: `Grupo ${group.group_letter}`,
           code: group.group_letter,
+          started: groupTeams.some((team: any) => team.played > 0),
           teams: groupTeams,
         }
       })
@@ -899,10 +914,11 @@ export default function ResultsTabs({
         return a.group.localeCompare(b.group)
       })
 
+    const anyMatchPlayed = groupTables.some((group) => group.started)
     const qualifiedSlots = Math.min(8, ranked.length)
     return ranked.map((team, index) => ({
       ...team,
-      status: index < qualifiedSlots ? 'Clasificado' : 'Eliminado',
+      status: !anyMatchPlayed ? 'Por definir' : index < qualifiedSlots ? 'Clasificado' : 'Eliminado',
     }))
   }, [groupTables])
 
@@ -970,6 +986,7 @@ export default function ResultsTabs({
                   group={group.group}
                   teams={group.teams}
                   qualifiedThirdIds={qualifiedThirdIds}
+                  started={group.started}
                 />
               ))}
             </div>

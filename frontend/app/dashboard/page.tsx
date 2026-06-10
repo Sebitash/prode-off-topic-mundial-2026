@@ -75,6 +75,11 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100">
       <DashboardNav displayName={displayName} isAdmin={user.is_admin} />
       <div className="mx-auto max-w-6xl px-4 py-8 space-y-8">
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <p>Ante cualquier problema o bug, por favor comunicarse con Sebastian al 1134947413 o sebastian.makkos1@gmail.com</p>
+          <p className="mt-1">¡Muy pronto se sumará un premio para el top 3 (o el equivalente en plata)!</p>
+        </div>
+
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             ¡Bienvenido, {user.nombre}!
