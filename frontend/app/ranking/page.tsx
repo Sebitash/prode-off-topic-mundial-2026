@@ -105,7 +105,6 @@ export default function RankingPage() {
                               {entry.nombre} {entry.apellido}
                               {entry.user_id === currentUserId ? ' (Tú)' : ''}
                             </p>
-                            <p className="text-[11px] text-slate-400">{entry.email}</p>
                           </div>
                         </div>
                       </td>
