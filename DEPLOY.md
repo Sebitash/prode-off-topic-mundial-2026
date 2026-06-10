@@ -75,6 +75,7 @@ En **Settings** del servicio backend:
 | `SUPABASE_DB_PASSWORD` | password **rotado** de la base |
 | `DATABASE_URL` | connection string completa de Supabase (con el password nuevo, URL-encoded) |
 | `JWT_SECRET` | secreto nuevo generado con `openssl rand -base64 48` |
+| `ADMIN_EMAILS` | email(s) con acceso a `/admin` para cargar resultados, separados por coma (ej. `vos@gmail.com`) |
 | `NEXT_PUBLIC_SUPABASE_URL` | Project URL de Supabase. Necesaria para validar el login con Google |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon public key de Supabase. Necesaria para validar el login con Google |
 

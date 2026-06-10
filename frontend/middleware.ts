@@ -7,7 +7,8 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/dashboard') ||
     pathname.startsWith('/matches') ||
     pathname.startsWith('/predictions') ||
-    pathname.startsWith('/ranking')
+    pathname.startsWith('/ranking') ||
+    pathname.startsWith('/admin')
 
   const isAuthRoute =
     pathname.startsWith('/auth/login') ||

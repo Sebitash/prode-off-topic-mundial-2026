@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { query } from '../config/db.js';
+import { isAdminEmail } from '../middleware/auth.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-mundial-2026';
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
@@ -78,6 +79,7 @@ export const login = async (req, res) => {
         email: user.email,
         nombre: user.nombre,
         apellido: user.apellido,
+        is_admin: isAdminEmail(user.email),
       },
     });
   } catch (error) {
@@ -152,6 +154,7 @@ export const googleAuth = async (req, res) => {
         email: user.email,
         nombre: user.nombre,
         apellido: user.apellido,
+        is_admin: isAdminEmail(user.email),
       },
     });
   } catch (error) {

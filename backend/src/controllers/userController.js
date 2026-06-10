@@ -1,4 +1,5 @@
 import { query } from '../config/db.js';
+import { isAdminEmail } from '../middleware/auth.js';
 
 // GET /api/user/me — datos del usuario autenticado + sus stats
 export const getMe = async (req, res) => {
@@ -33,6 +34,7 @@ export const getMe = async (req, res) => {
         ...user,
         total_predictions: parseInt(stats.total_predictions),
         total_points: parseInt(stats.total_points),
+        is_admin: isAdminEmail(user.email),
       }
     });
   } catch (error) {

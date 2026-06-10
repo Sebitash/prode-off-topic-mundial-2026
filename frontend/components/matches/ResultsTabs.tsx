@@ -8,7 +8,7 @@ function getToken(): string | null {
   return localStorage.getItem('token')
 }
 
-interface Match {
+export interface Match {
   id: string
   home_team: string
   away_team: string
@@ -19,7 +19,7 @@ interface Match {
   status: 'scheduled' | 'live' | 'finished'
 }
 
-const FLAG_CODES: Record<string, string> = {
+export const FLAG_CODES: Record<string, string> = {
   'MEX': 'mx',
   'RSA': 'za',
   'KOR': 'kr',
@@ -70,7 +70,7 @@ const FLAG_CODES: Record<string, string> = {
   'PAN': 'pa',
 }
 
-const TEAM_TO_GROUP: Record<string, string> = {
+export const TEAM_TO_GROUP: Record<string, string> = {
   'México': 'A',
   'Sudáfrica': 'A',
   'República de Corea': 'A',
@@ -121,7 +121,7 @@ const TEAM_TO_GROUP: Record<string, string> = {
   'Panamá': 'L',
 }
 
-const TEAM_TO_CODE: Record<string, string> = {
+export const TEAM_TO_CODE: Record<string, string> = {
   'México': 'MEX',
   'Sudáfrica': 'RSA',
   'República de Corea': 'KOR',
@@ -442,12 +442,12 @@ function GroupTable({
 }
 
 
-function isGroupStage(stage: string) {
+export function isGroupStage(stage: string) {
   const value = stage.toLowerCase()
   return value.includes('group') || value.includes('grupo')
 }
 
-function formatDate(value: string) {
+export function formatDate(value: string) {
   return new Date(value)
     .toLocaleString('es-AR', {
       timeZone: 'America/Argentina/Buenos_Aires',
@@ -799,7 +799,10 @@ export default function ResultsTabs({
             <button
               key={key}
               type="button"
-              onClick={() => setActivePrimary(key)}
+              onClick={() => {
+                setActivePrimary(key)
+                setActiveSecondary('Resultados')
+              }}
               className={`border-b-2 pb-3 transition ${
                 activePrimary === key ? 'border-sky-600 text-sky-700' : 'border-transparent'
               }`}
@@ -828,7 +831,7 @@ export default function ResultsTabs({
         )}
       </div>
 
-      {showSecondaryTabs && activeSecondary === 'Tablas de Posiciones' && (
+      {showSecondaryTabs && activePrimary === 'group' && activeSecondary === 'Tablas de Posiciones' && (
         <div className="grid gap-4">
           <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs text-emerald-700">
             Tablas oficiales segun los resultados reales del mundial. Los primeros 2 de cada grupo clasifican
@@ -853,7 +856,7 @@ export default function ResultsTabs({
         </div>
       )}
 
-      {showSecondaryTabs && activeSecondary === 'Mejores Terceros' && (
+      {showSecondaryTabs && activePrimary === 'group' && activeSecondary === 'Mejores Terceros' && (
         <div className="grid gap-4">
           <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs text-emerald-700">
             Clasificacion oficial de mejores terceros. Los 8 equipos mejor posicionados entre todos los terceros

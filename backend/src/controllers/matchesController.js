@@ -110,6 +110,53 @@ export const getGroupsSimple = async (req, res) => {
   }
 };
 
+// PATCH /api/matches/:id/result (solo admin)
+export const updateMatchResult = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { home_score, away_score } = req.body;
+
+    const matchResult = await query('SELECT * FROM matches WHERE id = $1', [id]);
+    if (matchResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Partido no encontrado' });
+    }
+
+    // Sin resultado: volver a 'scheduled' y dejar el partido vacío
+    if (home_score === null && away_score === null) {
+      const updated = await query(
+        `UPDATE matches
+         SET home_score = NULL, away_score = NULL, status = 'scheduled', updated_at = NOW()
+         WHERE id = $1
+         RETURNING *`,
+        [id]
+      );
+      await query('UPDATE predictions SET points = 0, updated_at = NOW() WHERE match_id = $1', [id]);
+      return res.json({ match: updated.rows[0] });
+    }
+
+    if (
+      !Number.isInteger(home_score) || !Number.isInteger(away_score) ||
+      home_score < 0 || away_score < 0
+    ) {
+      return res.status(400).json({ error: 'home_score y away_score deben ser números enteros >= 0' });
+    }
+
+    // Guardar resultado y marcar como finalizado: el trigger calcula los puntos
+    const updated = await query(
+      `UPDATE matches
+       SET home_score = $1, away_score = $2, status = 'finished', updated_at = NOW()
+       WHERE id = $3
+       RETURNING *`,
+      [home_score, away_score, id]
+    );
+
+    res.json({ match: updated.rows[0] });
+  } catch (error) {
+    console.error('updateMatchResult Error:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
 // GET /api/matches/teams
 export const getTeams = async (req, res) => {
   try {

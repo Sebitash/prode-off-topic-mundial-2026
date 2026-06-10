@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 
-export default function DashboardNav({ displayName }: { displayName: string }) {
+export default function DashboardNav({ displayName, isAdmin = false }: { displayName: string; isAdmin?: boolean }) {
   const router = useRouter()
   const pathname = usePathname()
 
@@ -48,6 +48,11 @@ export default function DashboardNav({ displayName }: { displayName: string }) {
             <Link href="/ranking" className={linkClassName('/ranking')}>
               Ranking
             </Link>
+            {isAdmin && (
+              <Link href="/admin" className={linkClassName('/admin')}>
+                Admin
+              </Link>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-3">
