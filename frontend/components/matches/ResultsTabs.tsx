@@ -703,6 +703,7 @@ export default function ResultsTabs({
   const [groups, setGroups] = useState<GroupRow[]>([])
   const [teams, setTeams] = useState<TeamRow[]>([])
   const [predictions, setPredictions] = useState<Record<string, { predicted_home_score: number; predicted_away_score: number }>>({})
+  const [predictionsLoaded, setPredictionsLoaded] = useState(!allowPredict)
 
   const { groupStages, knockoutStages } = useMemo(() => {
     const group: Record<string, Match[]> = {}
@@ -773,6 +774,8 @@ export default function ResultsTabs({
         }
       } catch (err) {
         console.warn('No se pudieron cargar las predicciones:', err)
+      } finally {
+        setPredictionsLoaded(true)
       }
     }
 
@@ -980,7 +983,13 @@ export default function ResultsTabs({
         </div>
       )}
 
-      {(!showSecondaryTabs || activeSecondary === 'Resultados') && activePrimary === 'group' && (
+      {(!showSecondaryTabs || activeSecondary === 'Resultados') && activePrimary === 'group' && allowPredict && !predictionsLoaded && (
+        <div className="rounded-2xl border border-sky-200 bg-white p-8 text-center shadow-sm">
+          <p className="text-slate-500">Cargando tus pronósticos...</p>
+        </div>
+      )}
+
+      {(!showSecondaryTabs || activeSecondary === 'Resultados') && activePrimary === 'group' && (!allowPredict || predictionsLoaded) && (
         <div className="grid gap-6">
         {Object.keys(matchesByGroup).length === 0 && (
           <div className="rounded-2xl border border-sky-200 bg-white p-8 text-center shadow-sm">
@@ -1009,7 +1018,13 @@ export default function ResultsTabs({
       </div>
       )}
 
-      {(!showSecondaryTabs || activeSecondary === 'Resultados') && activePrimary === 'knockout' && (
+      {(!showSecondaryTabs || activeSecondary === 'Resultados') && activePrimary === 'knockout' && allowPredict && !predictionsLoaded && (
+        <div className="rounded-2xl border border-sky-200 bg-white p-8 text-center shadow-sm">
+          <p className="text-slate-500">Cargando tus pronósticos...</p>
+        </div>
+      )}
+
+      {(!showSecondaryTabs || activeSecondary === 'Resultados') && activePrimary === 'knockout' && (!allowPredict || predictionsLoaded) && (
         <div className="grid gap-6">
         {stageEntries.length === 0 && (
           <div className="rounded-2xl border border-sky-200 bg-white p-8 text-center shadow-sm">
