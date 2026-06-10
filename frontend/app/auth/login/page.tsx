@@ -52,11 +52,20 @@ export default function LoginPage() {
   }
 
   const handleGoogleLogin = async () => {
-    setError('El login con Google requiere configuración adicional en el nuevo backend.')
-    setLoadingGoogle(false)
-    /* 
-    TODO: Implementar intercambio de token de Google en el backend
-    */
+    setError(null)
+    setLoadingGoogle(true)
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=/auth/google-bridge`,
+      },
+    })
+
+    if (error) {
+      setError(error.message)
+      setLoadingGoogle(false)
+    }
   }
 
   return (

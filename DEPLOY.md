@@ -75,6 +75,7 @@ En **Settings** del servicio backend:
 | `SUPABASE_DB_PASSWORD` | password **rotado** de la base |
 | `DATABASE_URL` | connection string completa de Supabase (con el password nuevo, URL-encoded) |
 | `JWT_SECRET` | secreto nuevo generado con `openssl rand -base64 48` |
+| `SUPABASE_JWT_SECRET` | JWT Secret del proyecto Supabase (Project Settings → API → JWT Settings → "JWT Secret"). Necesario para el login con Google |
 
 > Railway asigna `PORT` automáticamente — no hace falta definirlo, `backend/src/index.js` ya usa `process.env.PORT || 3001`.
 
@@ -113,6 +114,24 @@ En **Settings → Networking → Generate Domain**. Esta es la URL pública de l
 ### Verificar
 
 Abrí la URL del frontend, deberías ver la página de login/dashboard. Probá login, `/matches`, `/predictions`.
+
+---
+
+## 4.1 Login con Google (Supabase Auth)
+
+El botón "Continuar con Google" usa Supabase Auth para el OAuth y un endpoint propio (`POST /api/auth/google`) que crea/vincula el usuario en `login_users` y emite el JWT de la app.
+
+1. **Google Cloud Console** → APIs & Services → Credentials → tu OAuth Client (Web application):
+   - **Authorized JavaScript origins**: agregá la URL del proyecto Supabase (`https://dkcnxdpjycoosxcxckor.supabase.co`) y la URL del frontend en Railway.
+   - **Authorized redirect URIs**: `https://dkcnxdpjycoosxcxckor.supabase.co/auth/v1/callback`.
+2. **Supabase Dashboard** → Authentication → Providers → Google:
+   - Activar el provider y pegar **Client ID** y **Client Secret** (los del paso anterior). Esto NO va en el repo ni en Railway, solo en Supabase.
+3. **Supabase Dashboard** → Project Settings → API → JWT Settings → copiar el **JWT Secret**.
+4. En Railway, servicio **backend** → Variables → agregar `SUPABASE_JWT_SECRET` con el valor del paso 3 (ver tabla de variables del backend más arriba) y redeployar.
+
+### Verificar
+
+Click en "Continuar con Google" desde `/auth/login` → autorizás con tu cuenta de Google → te redirige a `/auth/callback` → `/auth/google-bridge` → `/dashboard`. Si falla, revisar los Deploy Logs del backend buscando `Google Auth Error`.
 
 ---
 
