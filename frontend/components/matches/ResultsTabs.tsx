@@ -249,7 +249,7 @@ interface ThirdTeamRow {
 
 function ThirdsTable({ thirdTeams }: { thirdTeams: ThirdTeamRow[] }) {
   return (
-    <div className="rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
+    <div className="min-w-0 rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
       <div className="flex items-center gap-3">
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 text-sky-700">★</span>
         <div>
@@ -261,7 +261,7 @@ function ThirdsTable({ thirdTeams }: { thirdTeams: ThirdTeamRow[] }) {
       </div>
 
       <div className="mt-4 overflow-x-auto rounded-lg border border-sky-100">
-        <table className="w-full text-left text-xs">
+        <table className="w-full min-w-[640px] text-left text-xs">
           <thead className="bg-sky-50 text-[11px] uppercase tracking-wider text-slate-500">
             <tr>
               <th className="px-3 py-2">#</th>
@@ -620,7 +620,7 @@ function ResultRow({
                   min="0"
                   value={homeScore}
                   onChange={(e) => setHomeScore(parseInt(e.target.value) || 0)}
-                  className="h-10 w-12 rounded-lg border border-slate-200 text-center text-sm"
+                  className="h-10 w-12 rounded-lg border border-slate-200 text-center text-sm font-semibold text-slate-900"
                 />
                 <span className="text-xs font-semibold text-slate-400">vs</span>
                 <input
@@ -628,7 +628,7 @@ function ResultRow({
                   min="0"
                   value={awayScore}
                   onChange={(e) => setAwayScore(parseInt(e.target.value) || 0)}
-                  className="h-10 w-12 rounded-lg border border-slate-200 text-center text-sm"
+                  className="h-10 w-12 rounded-lg border border-slate-200 text-center text-sm font-semibold text-slate-900"
                 />
               </>
             )
@@ -928,7 +928,7 @@ export default function ResultsTabs({
   )
 
   return (
-    <div className="grid gap-6">
+    <div className="grid min-w-0 gap-6">
       <div>
         <h1 className="text-3xl font-semibold text-slate-900">{title}</h1>
         <p className="mt-2 text-sm text-slate-600">{description}</p>
@@ -999,7 +999,7 @@ export default function ResultsTabs({
       )}
 
       {showSecondaryTabs && activePrimary === 'group' && activeSecondary === 'Mejores Terceros' && (
-        <div className="grid gap-4">
+        <div className="grid min-w-0 gap-4">
           <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs text-emerald-700">
             Clasificacion oficial de mejores terceros. Los 8 equipos mejor posicionados entre todos los terceros
             clasifican a la siguiente ronda.
