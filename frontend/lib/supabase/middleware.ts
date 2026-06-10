@@ -103,6 +103,7 @@ export async function updateSession(request: NextRequest) {
 
   const isAuthRoute = pathname.startsWith('/auth')
   const isAuthCallbackRoute = pathname.startsWith('/auth/callback')
+  const isPasswordResetRoute = pathname.startsWith('/auth/reset-password')
   const isProtectedRoute =
     pathname.startsWith('/dashboard') ||
     pathname.startsWith('/matches') ||
@@ -116,7 +117,7 @@ export async function updateSession(request: NextRequest) {
     return redirectResponse
   }
 
-  if (user && isAuthRoute && !isAuthCallbackRoute) {
+  if (user && isAuthRoute && !isAuthCallbackRoute && !isPasswordResetRoute) {
     const redirectUrl = new URL('/dashboard/rules', request.url)
     const redirectResponse = NextResponse.redirect(redirectUrl)
     response.cookies.getAll().forEach((cookie: { name: string; value: string }) => redirectResponse.cookies.set(cookie.name, cookie.value))

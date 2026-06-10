@@ -7,6 +7,37 @@ import { isAdminEmail } from '../middleware/auth.js';
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-mundial-2026';
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+// Crea (si no existe) el usuario en Supabase Auth para que pueda usar
+// "Olvidé mi contraseña" (Supabase solo manda el mail de recuperación
+// a usuarios que existen en auth.users).
+const ensureSupabaseAuthUser = async (email) => {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return;
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+        apikey: SUPABASE_SERVICE_ROLE_KEY,
+      },
+      body: JSON.stringify({
+        email,
+        password: crypto.randomUUID(),
+        email_confirm: true,
+      }),
+    });
+
+    if (!res.ok && res.status !== 422) {
+      const body = await res.json().catch(() => ({}));
+      console.error('ensureSupabaseAuthUser Error:', body);
+    }
+  } catch (error) {
+    console.error('ensureSupabaseAuthUser Error:', error);
+  }
+};
 
 export const signup = async (req, res) => {
   const { nombre, apellido, email, password } = req.body;
@@ -35,6 +66,9 @@ export const signup = async (req, res) => {
       'INSERT INTO login_users (nombre, apellido, email, password) VALUES ($1, $2, $3, $4) RETURNING id, email, nombre, apellido',
       [nombre, apellido, email, hashedPassword]
     );
+
+    // 5. Crear el usuario también en Supabase Auth (para "Olvidé mi contraseña")
+    await ensureSupabaseAuthUser(email);
 
     res.status(201).json({
       message: 'Usuario registrado con éxito',
@@ -159,6 +193,61 @@ export const googleAuth = async (req, res) => {
     });
   } catch (error) {
     console.error('Google Auth Error:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+// POST /api/auth/reset-password — actualizar la contraseña tras el flujo de
+// recuperación de Supabase (recibe el access_token de la sesión de recovery)
+export const resetPassword = async (req, res) => {
+  const { access_token, new_password } = req.body;
+
+  if (!access_token || !new_password) {
+    return res.status(400).json({ error: 'access_token y new_password son obligatorios' });
+  }
+
+  if (new_password.length < 6) {
+    return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
+  }
+
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    console.error('Reset Password Error: falta configurar NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY');
+    return res.status(500).json({ error: 'La recuperación de contraseña no está configurada en el servidor' });
+  }
+
+  try {
+    const supabaseUserRes = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        apikey: SUPABASE_ANON_KEY,
+      },
+    });
+
+    if (!supabaseUserRes.ok) {
+      return res.status(401).json({ error: 'La sesión de recuperación es inválida o expiró' });
+    }
+
+    const payload = await supabaseUserRes.json();
+    const email = payload.email;
+
+    if (!email) {
+      return res.status(400).json({ error: 'No se pudo obtener el email de la cuenta' });
+    }
+
+    const hashedPassword = await bcrypt.hash(new_password, 10);
+
+    const result = await query(
+      'UPDATE login_users SET password = $1 WHERE email = $2 RETURNING id, email, nombre, apellido',
+      [hashedPassword, email]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No existe una cuenta con este email' });
+    }
+
+    res.json({ message: 'Contraseña actualizada con éxito' });
+  } catch (error) {
+    console.error('Reset Password Error:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
