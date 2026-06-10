@@ -448,8 +448,17 @@ function isGroupStage(stage: string) {
 }
 
 function formatDate(value: string) {
-  const iso = new Date(value).toISOString()
-  return `${iso.slice(0, 10)} ${iso.slice(11, 16)}`
+  return new Date(value)
+    .toLocaleString('es-AR', {
+      timeZone: 'America/Argentina/Buenos_Aires',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    })
+    .replace(',', '')
 }
 
 function statusLabel(status: Match['status'], locked: boolean) {
