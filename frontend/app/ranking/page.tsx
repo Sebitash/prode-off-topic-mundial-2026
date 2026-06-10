@@ -107,7 +107,7 @@ export default function RankingPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4 text-center">{entry.total_predictions}</td>
+                      <td className="px-4 py-4 text-center font-semibold text-slate-900">{entry.total_predictions}</td>
                       <td className="px-4 py-4 text-center font-semibold text-slate-900">{entry.total_points}</td>
                     </tr>
                   ))
