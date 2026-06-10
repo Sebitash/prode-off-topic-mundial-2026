@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { API_URL } from '@/lib/config'
+import { getCache, setCache } from '@/lib/dataCache'
 
 function getToken(): string | null {
   if (typeof window === 'undefined') return null
@@ -497,6 +498,44 @@ function statusStyles(status: Match['status'], locked: boolean, allowPredict: bo
   return 'bg-sky-100 text-sky-700'
 }
 
+const MAX_SCORE = 20
+
+function ScoreStepper({
+  value,
+  onChange,
+  label,
+}: {
+  value: number
+  onChange: (value: number) => void
+  label: string
+}) {
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <button
+        type="button"
+        onClick={() => onChange(Math.min(MAX_SCORE, value + 1))}
+        disabled={value >= MAX_SCORE}
+        aria-label={`Sumar gol a ${label}`}
+        className="flex h-7 w-10 items-center justify-center rounded-lg border border-slate-200 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 disabled:opacity-30"
+      >
+        +
+      </button>
+      <span className="flex h-9 w-10 items-center justify-center rounded-lg border border-slate-200 text-sm font-semibold text-slate-900">
+        {value}
+      </span>
+      <button
+        type="button"
+        onClick={() => onChange(Math.max(0, value - 1))}
+        disabled={value <= 0}
+        aria-label={`Restar gol a ${label}`}
+        className="flex h-7 w-10 items-center justify-center rounded-lg border border-slate-200 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 disabled:opacity-30"
+      >
+        −
+      </button>
+    </div>
+  )
+}
+
 function ResultRow({
   match,
   userId,
@@ -647,21 +686,9 @@ function ResultRow({
             ) : (
               <>
                 <div className="flex items-center gap-3">
-                  <input
-                    type="number"
-                    min="0"
-                    value={homeScore}
-                    onChange={(e) => setHomeScore(parseInt(e.target.value) || 0)}
-                    className="h-10 w-12 rounded-lg border border-slate-200 text-center text-sm font-semibold text-slate-900"
-                  />
+                  <ScoreStepper value={homeScore} onChange={setHomeScore} label={match.home_team} />
                   <span className="text-xs font-semibold text-slate-400">vs</span>
-                  <input
-                    type="number"
-                    min="0"
-                    value={awayScore}
-                    onChange={(e) => setAwayScore(parseInt(e.target.value) || 0)}
-                    className="h-10 w-12 rounded-lg border border-slate-200 text-center text-sm font-semibold text-slate-900"
-                  />
+                  <ScoreStepper value={awayScore} onChange={setAwayScore} label={match.away_team} />
                 </div>
                 {showPenaltyPicker && (
                   <div className="flex flex-col items-center gap-1">
@@ -790,10 +817,10 @@ export default function ResultsTabs({
 }) {
   const [activePrimary, setActivePrimary] = useState<'group' | 'knockout'>('group')
   const [activeSecondary, setActiveSecondary] = useState('Resultados')
-  const [groups, setGroups] = useState<GroupRow[]>([])
+  const [groups, setGroups] = useState<GroupRow[]>(() => getCache<GroupRow[]>('groups') || [])
   const [teams, setTeams] = useState<TeamRow[]>([])
-  const [predictions, setPredictions] = useState<Record<string, { predicted_home_score: number; predicted_away_score: number; predicted_penalty_winner?: 'home' | 'away' | null; points?: number }>>({})
-  const [predictionsLoaded, setPredictionsLoaded] = useState(!allowPredict)
+  const [predictions, setPredictions] = useState<Record<string, { predicted_home_score: number; predicted_away_score: number; predicted_penalty_winner?: 'home' | 'away' | null; points?: number }>>(() => getCache('predictions') || {})
+  const [predictionsLoaded, setPredictionsLoaded] = useState(!allowPredict || !!getCache('predictions'))
 
   const { groupStages, knockoutStages } = useMemo(() => {
     const group: Record<string, Match[]> = {}
@@ -863,6 +890,7 @@ export default function ResultsTabs({
               points: p.points,
             }
           }
+          setCache('predictions', map)
           setPredictions(map)
         }
       } catch (err) {
@@ -876,13 +904,18 @@ export default function ResultsTabs({
   }, [allowPredict])
 
   const handlePredictionSaved = (matchId: string, prediction: { predicted_home_score: number; predicted_away_score: number; predicted_penalty_winner?: 'home' | 'away' | null }) => {
-    setPredictions((prev) => ({ ...prev, [matchId]: prediction }))
+    setPredictions((prev) => {
+      const next = { ...prev, [matchId]: prediction }
+      setCache('predictions', next)
+      return next
+    })
   }
 
   const handlePredictionDeleted = (matchId: string) => {
     setPredictions((prev) => {
       const next = { ...prev }
       delete next[matchId]
+      setCache('predictions', next)
       return next
     })
   }
@@ -899,6 +932,7 @@ export default function ResultsTabs({
 
         if (groupsRes.ok) {
           const data = await groupsRes.json()
+          setCache('groups', data.groups || [])
           setGroups(data.groups || [])
         }
       } catch (err) {

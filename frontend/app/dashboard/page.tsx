@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import DashboardNav from '@/components/ui/DashboardNav'
 import { API_URL } from '@/lib/config'
+import { getCache, setCache } from '@/lib/dataCache'
 
 interface UserData {
   id: string
@@ -25,9 +26,9 @@ interface Match {
 
 export default function DashboardPage() {
   const router = useRouter()
-  const [user, setUser] = useState<UserData | null>(null)
-  const [matches, setMatches] = useState<Match[]>([])
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<UserData | null>(() => getCache<UserData>('user_me') || null)
+  const [matches, setMatches] = useState<Match[]>(() => getCache<Match[]>('matches_scheduled') || [])
+  const [loading, setLoading] = useState(!user)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -51,6 +52,8 @@ export default function DashboardPage() {
         }
         const userData = await userRes.json()
         const matchesData = await matchesRes.json()
+        setCache('user_me', userData.user)
+        setCache('matches_scheduled', (matchesData.matches || []).slice(0, 5))
         setUser(userData.user)
         setMatches((matchesData.matches || []).slice(0, 5))
       })
@@ -58,7 +61,7 @@ export default function DashboardPage() {
       .finally(() => setLoading(false))
   }, [router])
 
-  if (loading) {
+  if (loading && !user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 flex items-center justify-center">
         <p className="text-slate-500">Cargando...</p>

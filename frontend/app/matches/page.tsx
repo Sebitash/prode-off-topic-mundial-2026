@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import DashboardNav from '@/components/ui/DashboardNav'
 import ResultsTabs from '@/components/matches/ResultsTabs'
 import { API_URL } from '@/lib/config'
+import { getCache, setCache } from '@/lib/dataCache'
 
 interface Match {
   id: string
@@ -19,11 +20,11 @@ interface Match {
 
 export default function MatchesPage() {
   const router = useRouter()
-  const [matches, setMatches] = useState<Match[]>([])
+  const [matches, setMatches] = useState<Match[]>(() => getCache<Match[]>('matches') || [])
   const [displayName, setDisplayName] = useState('')
   const [userId, setUserId] = useState('')
   const [isAdmin, setIsAdmin] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(matches.length === 0)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -51,13 +52,14 @@ export default function MatchesPage() {
           return
         }
         const data = await res.json()
+        setCache('matches', data.matches || [])
         setMatches(data.matches || [])
       })
       .catch(console.error)
       .finally(() => setLoading(false))
   }, [router])
 
-  if (loading) {
+  if (loading && matches.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 flex items-center justify-center">
         <p className="text-slate-500">Cargando partidos...</p>

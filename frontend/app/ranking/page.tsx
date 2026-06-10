@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import DashboardNav from '@/components/ui/DashboardNav'
 import { API_URL } from '@/lib/config'
+import { getCache, setCache } from '@/lib/dataCache'
 
 interface RankingEntry {
   user_id: string
@@ -16,11 +17,11 @@ interface RankingEntry {
 
 export default function RankingPage() {
   const router = useRouter()
-  const [ranking, setRanking] = useState<RankingEntry[]>([])
+  const [ranking, setRanking] = useState<RankingEntry[]>(() => getCache<RankingEntry[]>('ranking') || [])
   const [displayName, setDisplayName] = useState('')
   const [currentUserId, setCurrentUserId] = useState('')
   const [isAdmin, setIsAdmin] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(ranking.length === 0)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -48,13 +49,14 @@ export default function RankingPage() {
           return
         }
         const data = await res.json()
+        setCache('ranking', data.ranking || [])
         setRanking(data.ranking || [])
       })
       .catch(console.error)
       .finally(() => setLoading(false))
   }, [router])
 
-  if (loading) {
+  if (loading && ranking.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 flex items-center justify-center">
         <p className="text-slate-500">Cargando ranking...</p>
