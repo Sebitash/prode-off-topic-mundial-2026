@@ -143,7 +143,7 @@ export default function RulesPage() {
           </p>
           <p className="mt-4 text-sm text-slate-700">
             Participa en el juego de pronósticos más emocionante del Mundial 2026. Predice los resultados de los
-            partidos y qué equipos avanzan en cada fase. ¡Acumula puntos y corona te campeón del Prode!
+            partidos y qué equipos avanzan en cada fase. ¡Acumula puntos y coronate campeón del Prode!
           </p>
         </div>
 
