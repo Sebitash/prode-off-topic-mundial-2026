@@ -139,6 +139,8 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
+
+        <p className="text-center text-xs text-gray-400">Creado por Juan Sebastian Makkos</p>
       </div>
     </div>
   )
