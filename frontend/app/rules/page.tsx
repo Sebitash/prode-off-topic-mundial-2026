@@ -23,6 +23,12 @@ const scoringExamples = [
   'Real: México 2-0 | Tu pronóstico: Empate 1-1 → 0 pts ✗',
 ]
 
+const knockoutScoringExamples = [
+  'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Argentina 1-1 (gana penales) → 3 pts ✓',
+  'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Argentina gana 2-0 → 2 pts (acertaste el ganador, pero no el 1-1)',
+  'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Brasil gana → 0 pts ✗',
+]
+
 const maxPoints = [
   { label: 'Fase de Grupos', points: '216', detail: '69.2% del total' },
   { label: 'Fase Eliminatoria', points: '96', detail: '30.8% del total' },
@@ -50,14 +56,6 @@ const importantRules = [
     title: 'Partido por el Tercer Puesto',
     text: 'Suma puntos igual que cualquier otro partido: 2 puntos por acertar el ganador, +1 por el resultado exacto.',
   },
-]
-
-const tips = [
-  'Usa las sugerencias IA (icono ✨) para obtener predicciones basadas en el nivel de los equipos.',
-  'Usa "Llenar Aleatorio" para completar rápidamente un grupo y luego ajusta tus predicciones.',
-  'Revisa el Ranking regularmente para ver cómo te compara con otros participantes.',
-  'Completa tus predicciones temprano para evitar perder partidos.',
-  'No descuides las eliminatorias - representan el 30.8% de los puntos totales.',
 ]
 
 export default function RulesPage() {
@@ -209,6 +207,18 @@ export default function RulesPage() {
                 reglamentario, es decir, el empate (ej: 1-1), no el resultado de los penales.
               </p>
             </div>
+            <div className="mt-4 rounded-xl border border-sky-200 bg-white p-4">
+              <p className="text-sm font-semibold text-slate-900">
+                📊 Ejemplos de Puntuación
+              </p>
+              <ul className="mt-3 grid gap-2 text-xs text-slate-700">
+                {knockoutScoringExamples.map((example) => (
+                  <li key={example} className="rounded-lg border border-sky-100 bg-sky-50 px-3 py-2">
+                    {example}
+                  </li>
+                ))}
+              </ul>
+            </div>
             <p className="mt-3 text-xs text-slate-700">
               Máximo por partido: 3 puntos
             </p>
@@ -234,36 +244,21 @@ export default function RulesPage() {
           ))}
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-slate-900">
-              Reglas Importantes
-            </h3>
-            <div className="mt-4 grid gap-3">
-              {importantRules.map((rule) => (
-                <div key={rule.title} className="rounded-lg border border-sky-100 bg-sky-50 px-3 py-3">
-                  <p className="text-sm font-semibold text-slate-900">
-                    {rule.title}
-                  </p>
-                  <p className="mt-1 text-xs text-slate-600">
-                    {rule.text}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-slate-900">
-              Consejos para Ganar
-            </h3>
-            <ul className="mt-4 grid gap-2 text-xs text-slate-700">
-              {tips.map((tip) => (
-                <li key={tip} className="rounded-lg border border-sky-100 bg-sky-50 px-3 py-2">
-                  {tip}
-                </li>
-              ))}
-            </ul>
+        <div className="rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
+          <h3 className="text-lg font-semibold text-slate-900">
+            Reglas Importantes
+          </h3>
+          <div className="mt-4 grid gap-3">
+            {importantRules.map((rule) => (
+              <div key={rule.title} className="rounded-lg border border-sky-100 bg-sky-50 px-3 py-3">
+                <p className="text-sm font-semibold text-slate-900">
+                  {rule.title}
+                </p>
+                <p className="mt-1 text-xs text-slate-600">
+                  {rule.text}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
 
