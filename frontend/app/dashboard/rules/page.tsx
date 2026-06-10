@@ -23,25 +23,16 @@ const scoringExamples = [
   'Real: México 2-0 | Tu pronóstico: Empate 1-1 → 0 pts ✗',
 ]
 
-const knockoutScoring = [
-  { label: 'Dieciseisavos de Final (16 equipos)', points: '2 pts por equipo' },
-  { label: 'Octavos de Final (8 equipos)', points: '4 pts por equipo' },
-  { label: 'Cuartos de Final (4 equipos)', points: '6 pts por equipo' },
-  { label: 'Semifinales (2 equipos)', points: '8 pts por equipo' },
-  { label: 'Finalistas (2 equipos)', points: '10 pts por equipo' },
-  { label: 'Campeón del Mundial', points: '+10 pts bonus adicional' },
-]
-
 const maxPoints = [
-  { label: 'Fase de Grupos', points: '216', detail: '61.7% del total' },
-  { label: 'Fase Eliminatoria', points: '134', detail: '38.3% del total' },
-  { label: 'Puntos Máximos Totales', points: '350', detail: 'Total posible' },
+  { label: 'Fase de Grupos', points: '216', detail: '69.2% del total' },
+  { label: 'Fase Eliminatoria', points: '96', detail: '30.8% del total' },
+  { label: 'Puntos Máximos Totales', points: '312', detail: 'Total posible' },
 ]
 
 const importantRules = [
   {
     title: 'Puntaje por Partido (Aplica a Todos los Partidos)',
-    text: 'En cualquier partido del Mundial, ya sea de fase de grupos o eliminatorias: 2 puntos por acertar el ganador, +1 punto extra si además acertás el resultado exacto. Si el partido termina empatado y se define por penales, el ganador de la definición por penales es el "ganador" del partido a los efectos de estos puntos.',
+    text: 'En cualquier partido del Mundial, ya sea de fase de grupos o eliminatorias: 2 puntos por acertar el ganador, +1 punto extra si además acertás el resultado exacto. Si el partido termina empatado y se define por penales, el ganador de la definición por penales es el "ganador" del partido a los efectos de estos puntos, y el resultado exacto que vale el punto extra es el marcador del tiempo reglamentario (el empate, ej: 1-1), no el resultado de los penales.',
   },
   {
     title: 'Plazos de Pronósticos',
@@ -52,12 +43,12 @@ const importantRules = [
     text: 'Si no completas pronósticos para algún partido: 0 puntos para esos partidos. No hay penalización adicional.',
   },
   {
-    title: 'Fase Eliminatoria',
-    text: 'Solo importa qué equipo avanza, no el resultado del partido. Si un equipo gana en penales, cuenta como clasificado.',
+    title: 'Partidos "Por Definir"',
+    text: 'Los cruces de la fase eliminatoria se completan a medida que se conocen los clasificados de cada llave. Mientras el cruce figure como "Por definir" todavía no se puede cargar un pronóstico para ese partido.',
   },
   {
-    title: 'Partido Tercer Puesto',
-    text: 'El partido por el tercer puesto NO otorga puntos en este sistema.',
+    title: 'Partido por el Tercer Puesto',
+    text: 'Suma puntos igual que cualquier otro partido: 2 puntos por acertar el ganador, +1 por el resultado exacto.',
   },
 ]
 
@@ -66,7 +57,7 @@ const tips = [
   'Usa "Llenar Aleatorio" para completar rápidamente un grupo y luego ajusta tus predicciones.',
   'Revisa el Ranking regularmente para ver cómo te compara con otros participantes.',
   'Completa tus predicciones temprano para evitar perder partidos.',
-  'No descuides las eliminatorias - representan el 38% de los puntos totales.',
+  'No descuides las eliminatorias - representan el 30.8% de los puntos totales.',
 ]
 
 export default function RulesPage() {
@@ -193,30 +184,42 @@ export default function RulesPage() {
 
           <div className="rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
             <h3 className="text-lg font-semibold text-slate-900">
-              🏆 Fase Eliminatoria
+              🏆 Fase Eliminatoria (32 partidos)
             </h3>
             <p className="mt-2 text-sm text-slate-600">
-              En las eliminatorias, los puntos se otorgan por acertar qué equipos clasifican a la siguiente ronda (no
-              importa el resultado específico del partido).
+              Mismo sistema de puntos que la fase de grupos: 2 puntos por acertar el ganador, +1 punto extra por el
+              resultado exacto.
             </p>
             <div className="mt-4 grid gap-3">
-              {knockoutScoring.map((row) => (
-                <div key={row.label} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-sky-100 bg-sky-50 px-3 py-2">
-                  <span className="text-sm text-slate-800">
-                    {row.label}
-                  </span>
-                  <span className="rounded-full bg-sky-600 px-3 py-1 text-[11px] font-semibold text-white">
-                    {row.points}
-                  </span>
+              {groupScoring.map((row) => (
+                <div key={row.label} className="rounded-lg border border-sky-100 bg-sky-50 px-3 py-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-sm font-semibold text-slate-900">
+                      {row.label}
+                    </p>
+                    <span className="rounded-full bg-sky-600 px-3 py-1 text-[11px] font-semibold text-white">
+                      {row.points}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-xs text-slate-600">
+                    {row.detail}
+                  </p>
                 </div>
               ))}
             </div>
             <div className="mt-4 rounded-lg border border-sky-200 bg-sky-50 px-4 py-3">
               <p className="text-xs text-slate-600">
-                💡 Nota: Si aciertas al campeón, obtienes 10 pts por finalista + 10 pts por campeón = 20 puntos
-                totales por ese equipo.
+                ⚽ Si el partido se define por penales: el ganador de la serie de penales cuenta como "ganador" del
+                partido (2 pts), y el resultado exacto que vale el punto extra es el marcador del tiempo
+                reglamentario, es decir, el empate (ej: 1-1), no el resultado de los penales.
               </p>
             </div>
+            <p className="mt-3 text-xs text-slate-700">
+              Máximo por partido: 3 puntos
+            </p>
+            <p className="text-xs text-slate-700">
+              Total posible en fase eliminatoria: 96 puntos
+            </p>
           </div>
         </div>
 

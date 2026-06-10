@@ -463,6 +463,10 @@ export function isGroupStage(stage: string) {
   return value.includes('group') || value.includes('grupo')
 }
 
+export function isTBD(match: Match) {
+  return match.home_team === 'Por definir' || match.away_team === 'Por definir'
+}
+
 export function formatDate(value: string) {
   return new Date(value)
     .toLocaleString('es-AR', {
@@ -477,14 +481,16 @@ export function formatDate(value: string) {
     .replace(',', '')
 }
 
-function statusLabel(status: Match['status'], locked: boolean, allowPredict: boolean) {
+function statusLabel(status: Match['status'], locked: boolean, allowPredict: boolean, tbd: boolean) {
+  if (tbd) return 'Por definir'
   if (status === 'finished') return allowPredict ? 'Finalizado' : 'Resultado'
   if (status === 'live') return 'En vivo'
   if (allowPredict && locked) return 'Cerrado'
   return 'Por jugar'
 }
 
-function statusStyles(status: Match['status'], locked: boolean, allowPredict: boolean) {
+function statusStyles(status: Match['status'], locked: boolean, allowPredict: boolean, tbd: boolean) {
+  if (tbd) return 'bg-slate-100 text-slate-500'
   if (status === 'finished') return 'bg-slate-100 text-slate-700'
   if (status === 'live') return 'bg-rose-100 text-rose-700'
   if (allowPredict && locked) return 'bg-amber-100 text-amber-700'
@@ -517,8 +523,9 @@ function ResultRow({
   }, [prediction])
 
   const isFinished = match.status === 'finished'
+  const tbd = isTBD(match)
   const locked = Date.now() >= new Date(match.match_date).getTime() - 2 * 60 * 60 * 1000
-  const canPredict = allowPredict && !isFinished && !locked
+  const canPredict = allowPredict && !isFinished && !locked && !tbd
   const isSaved = !!prediction
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -604,7 +611,11 @@ function ResultRow({
         </div>
 
         <div className="flex items-center justify-center gap-3">
-          {canPredict ? (
+          {tbd ? (
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">
+              Por definir
+            </span>
+          ) : canPredict ? (
             isSaved ? (
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                 <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
@@ -675,10 +686,10 @@ function ResultRow({
           )}
         </span>
         <div className="flex items-center gap-3">
-          <span className={`rounded-full px-3 py-1 font-semibold ${statusStyles(match.status, locked, allowPredict)}`}>
-            {statusLabel(match.status, locked, allowPredict)}
+          <span className={`rounded-full px-3 py-1 font-semibold ${statusStyles(match.status, locked, allowPredict, tbd)}`}>
+            {statusLabel(match.status, locked, allowPredict, tbd)}
           </span>
-          {allowPredict && locked && !isFinished && (
+          {allowPredict && locked && !isFinished && !tbd && (
             <span className="text-slate-400">Las predicciones cierran 2hs antes del partido</span>
           )}
           {canPredict && (
@@ -759,8 +770,9 @@ export default function ResultsTabs({
   // Agrupar por grupos (A, B, C, etc.)
   const matchesByGroup = useMemo(() => {
     const groups: Record<string, Match[]> = {}
-    
+
     matches.forEach((match) => {
+      if (!isGroupStage(match.stage)) return
       const groupLetter = TEAM_TO_GROUP[match.home_team] || 'Unknown'
       if (!groups[groupLetter]) {
         groups[groupLetter] = []

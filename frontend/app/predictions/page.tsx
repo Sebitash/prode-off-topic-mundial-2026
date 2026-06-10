@@ -41,7 +41,7 @@ export default function PredictionsPage() {
       setIsAdmin(!!u.is_admin)
     }
 
-    // Todos los partidos de fase de grupos
+    // Todos los partidos: fase de grupos y fase eliminatoria
     fetch(`${API_URL}/api/matches`, {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -52,12 +52,7 @@ export default function PredictionsPage() {
           return
         }
         const data = await res.json()
-        const groupMatches = (data.matches || []).filter((match: Match) => {
-          const stage = `${match.stage || ''}`.toLowerCase()
-          const isGroup = stage.includes('group') || stage.includes('grupo')
-          return isGroup
-        })
-        setMatches(groupMatches)
+        setMatches(data.matches || [])
       })
       .catch(console.error)
       .finally(() => setLoading(false))
@@ -80,7 +75,7 @@ export default function PredictionsPage() {
           userId={userId}
           showSecondaryTabs={false}
           title="Tus Predicciones"
-          description="Completá los partidos de la fase de grupos y guardá tus pronósticos. Las predicciones cierran 2 horas antes del inicio de cada partido."
+          description="Completá tus pronósticos para la fase de grupos y la fase eliminatoria. Las predicciones cierran 2 horas antes del inicio de cada partido. Los cruces de eliminatorias 'Por definir' se habilitan cuando se conocen los equipos."
         />
       </div>
     </div>
