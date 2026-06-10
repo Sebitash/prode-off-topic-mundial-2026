@@ -461,17 +461,17 @@ export function formatDate(value: string) {
     .replace(',', '')
 }
 
-function statusLabel(status: Match['status'], locked: boolean) {
-  if (status === 'finished') return 'Finalizado'
+function statusLabel(status: Match['status'], locked: boolean, allowPredict: boolean) {
+  if (status === 'finished') return allowPredict ? 'Finalizado' : 'Resultado'
   if (status === 'live') return 'En vivo'
-  if (locked) return 'Cerrado'
+  if (allowPredict && locked) return 'Cerrado'
   return 'Por jugar'
 }
 
-function statusStyles(status: Match['status'], locked: boolean) {
+function statusStyles(status: Match['status'], locked: boolean, allowPredict: boolean) {
   if (status === 'finished') return 'bg-slate-100 text-slate-700'
   if (status === 'live') return 'bg-rose-100 text-rose-700'
-  if (locked) return 'bg-amber-100 text-amber-700'
+  if (allowPredict && locked) return 'bg-amber-100 text-amber-700'
   return 'bg-sky-100 text-sky-700'
 }
 
@@ -486,7 +486,7 @@ function ResultRow({
   match: Match
   userId: string
   allowPredict: boolean
-  prediction?: { predicted_home_score: number; predicted_away_score: number } | null
+  prediction?: { predicted_home_score: number; predicted_away_score: number; points?: number } | null
   onPredictionSaved?: (matchId: string, prediction: { predicted_home_score: number; predicted_away_score: number }) => void
   onPredictionDeleted?: (matchId: string) => void
 }) {
@@ -619,14 +619,21 @@ function ResultRow({
               </>
             )
           ) : (
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
-              <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
-                {match.home_score ?? '-'}
-              </span>
-              <span className="text-slate-400">vs</span>
-              <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
-                {match.away_score ?? '-'}
-              </span>
+            <div className="flex flex-col items-center gap-1">
+              <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+                <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
+                  {prediction ? prediction.predicted_home_score : match.home_score ?? '-'}
+                </span>
+                <span className="text-slate-400">vs</span>
+                <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
+                  {prediction ? prediction.predicted_away_score : match.away_score ?? '-'}
+                </span>
+              </div>
+              {prediction && (
+                <span className="text-[10px] text-slate-400">
+                  Tu pronóstico{isFinished && prediction.points !== undefined ? ` · ${prediction.points} pts` : ''}
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -645,10 +652,10 @@ function ResultRow({
       <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-3 text-xs text-slate-500 md:flex-row md:items-center md:justify-between">
         <span>{formatDate(match.match_date)}</span>
         <div className="flex items-center gap-3">
-          <span className={`rounded-full px-3 py-1 font-semibold ${statusStyles(match.status, locked)}`}>
-            {statusLabel(match.status, locked)}
+          <span className={`rounded-full px-3 py-1 font-semibold ${statusStyles(match.status, locked, allowPredict)}`}>
+            {statusLabel(match.status, locked, allowPredict)}
           </span>
-          {locked && !isFinished && (
+          {allowPredict && locked && !isFinished && (
             <span className="text-slate-400">Las predicciones cierran 2hs antes del partido</span>
           )}
           {canPredict && (
@@ -702,7 +709,7 @@ export default function ResultsTabs({
   const [activeSecondary, setActiveSecondary] = useState('Resultados')
   const [groups, setGroups] = useState<GroupRow[]>([])
   const [teams, setTeams] = useState<TeamRow[]>([])
-  const [predictions, setPredictions] = useState<Record<string, { predicted_home_score: number; predicted_away_score: number }>>({})
+  const [predictions, setPredictions] = useState<Record<string, { predicted_home_score: number; predicted_away_score: number; points?: number }>>({})
   const [predictionsLoaded, setPredictionsLoaded] = useState(!allowPredict)
 
   const { groupStages, knockoutStages } = useMemo(() => {
@@ -763,11 +770,12 @@ export default function ResultsTabs({
 
         if (res.ok) {
           const data = await res.json()
-          const map: Record<string, { predicted_home_score: number; predicted_away_score: number }> = {}
+          const map: Record<string, { predicted_home_score: number; predicted_away_score: number; points?: number }> = {}
           for (const p of data.predictions || []) {
             map[p.match_id] = {
               predicted_home_score: p.predicted_home_score,
               predicted_away_score: p.predicted_away_score,
+              points: p.points,
             }
           }
           setPredictions(map)
