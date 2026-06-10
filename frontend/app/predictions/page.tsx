@@ -75,7 +75,7 @@ export default function PredictionsPage() {
           userId={userId}
           showSecondaryTabs={false}
           title="Tus Predicciones"
-          description="Completá tus pronósticos para la fase de grupos y la fase eliminatoria. Las predicciones cierran 2 horas antes del inicio de cada partido. Los cruces de eliminatorias 'Por definir' se habilitan cuando se conocen los equipos."
+          description="Completá tus pronósticos para la fase de grupos y la fase eliminatoria. Las predicciones cierran 1 hora antes del inicio de cada partido. Los cruces de eliminatorias 'Por definir' se habilitan cuando se conocen los equipos."
         />
       </div>
     </div>
