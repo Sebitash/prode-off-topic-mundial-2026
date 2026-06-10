@@ -27,13 +27,21 @@ function AdminMatchRow({
 }) {
   const [homeScore, setHomeScore] = useState(match.home_score ?? 0)
   const [awayScore, setAwayScore] = useState(match.away_score ?? 0)
+  const [homePenalties, setHomePenalties] = useState<number | ''>(match.home_penalties ?? '')
+  const [awayPenalties, setAwayPenalties] = useState<number | ''>(match.away_penalties ?? '')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
   const hasResult = match.home_score !== null && match.away_score !== null
+  const isDraw = homeScore === awayScore
+  const showPenalties = isDraw && !isGroupStage(match.stage)
 
-  const updateResult = async (homeValue: number | null, awayValue: number | null) => {
+  const updateResult = async (
+    homeValue: number | null,
+    awayValue: number | null,
+    penalties?: { home: number; away: number } | null
+  ) => {
     setLoading(true)
     setError(null)
     setSuccess(false)
@@ -46,7 +54,12 @@ function AdminMatchRow({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ home_score: homeValue, away_score: awayValue }),
+        body: JSON.stringify({
+          home_score: homeValue,
+          away_score: awayValue,
+          home_penalties: penalties ? penalties.home : null,
+          away_penalties: penalties ? penalties.away : null,
+        }),
       })
 
       const data = await response.json()
@@ -65,6 +78,25 @@ function AdminMatchRow({
     }
   }
 
+  const handleSaveResult = () => {
+    if (!showPenalties) {
+      updateResult(homeScore, awayScore, null)
+      return
+    }
+
+    if (homePenalties === '' || awayPenalties === '') {
+      setError('Si el partido termina en penales, ingresá el resultado de la definición')
+      return
+    }
+
+    if (homePenalties === awayPenalties) {
+      setError('Los penales no pueden terminar empatados')
+      return
+    }
+
+    updateResult(homeScore, awayScore, { home: homePenalties, away: awayPenalties })
+  }
+
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -73,22 +105,44 @@ function AdminMatchRow({
           <p className="text-sm font-semibold text-slate-900">{match.home_team}</p>
         </div>
 
-        <div className="flex items-center justify-center gap-3">
-          <input
-            type="number"
-            min="0"
-            value={homeScore}
-            onChange={(e) => setHomeScore(parseInt(e.target.value) || 0)}
-            className="h-10 w-14 rounded-lg border border-slate-200 text-center text-sm"
-          />
-          <span className="text-xs font-semibold text-slate-400">vs</span>
-          <input
-            type="number"
-            min="0"
-            value={awayScore}
-            onChange={(e) => setAwayScore(parseInt(e.target.value) || 0)}
-            className="h-10 w-14 rounded-lg border border-slate-200 text-center text-sm"
-          />
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex items-center justify-center gap-3">
+            <input
+              type="number"
+              min="0"
+              value={homeScore}
+              onChange={(e) => setHomeScore(parseInt(e.target.value) || 0)}
+              className="h-10 w-14 rounded-lg border border-slate-200 text-center text-sm"
+            />
+            <span className="text-xs font-semibold text-slate-400">vs</span>
+            <input
+              type="number"
+              min="0"
+              value={awayScore}
+              onChange={(e) => setAwayScore(parseInt(e.target.value) || 0)}
+              className="h-10 w-14 rounded-lg border border-slate-200 text-center text-sm"
+            />
+          </div>
+          {showPenalties && (
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-[10px] font-semibold text-slate-400">Penales</span>
+              <input
+                type="number"
+                min="0"
+                value={homePenalties}
+                onChange={(e) => setHomePenalties(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
+                className="h-8 w-12 rounded-lg border border-slate-200 text-center text-xs"
+              />
+              <span className="text-xs font-semibold text-slate-400">-</span>
+              <input
+                type="number"
+                min="0"
+                value={awayPenalties}
+                onChange={(e) => setAwayPenalties(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
+                className="h-8 w-12 rounded-lg border border-slate-200 text-center text-xs"
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-3">
@@ -98,7 +152,14 @@ function AdminMatchRow({
       </div>
 
       <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-3 text-xs text-slate-500 md:flex-row md:items-center md:justify-between">
-        <span>{formatDate(match.match_date)}</span>
+        <span>
+          {formatDate(match.match_date)}
+          {match.status === 'finished' && match.home_penalties != null && match.away_penalties != null && (
+            <span className="ml-2 font-semibold text-slate-600">
+              · Penales {match.home_penalties}-{match.away_penalties}
+            </span>
+          )}
+        </span>
         <div className="flex items-center gap-3">
           <span
             className={`rounded-full px-3 py-1 font-semibold ${
@@ -110,7 +171,7 @@ function AdminMatchRow({
           <button
             type="button"
             disabled={loading}
-            onClick={() => updateResult(homeScore, awayScore)}
+            onClick={handleSaveResult}
             className="rounded-full bg-sky-600 px-4 py-1 text-xs font-semibold text-white transition hover:bg-sky-700 disabled:opacity-50"
           >
             {loading ? 'Guardando...' : 'Guardar resultado'}
@@ -119,7 +180,7 @@ function AdminMatchRow({
             <button
               type="button"
               disabled={loading}
-              onClick={() => updateResult(null, null)}
+              onClick={() => updateResult(null, null, null)}
               className="rounded-full bg-slate-200 px-4 py-1 text-xs font-semibold text-slate-700 transition hover:bg-slate-300 disabled:opacity-50"
             >
               Borrar resultado

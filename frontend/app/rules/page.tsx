@@ -6,14 +6,14 @@ import DashboardNav from '@/components/ui/DashboardNav'
 
 const groupScoring = [
   {
-    label: 'Acertar resultado',
+    label: 'Acertar el ganador',
     points: '2 puntos',
-    detail: 'Por predecir correctamente victoria local, visitante o empate.',
+    detail: 'Por predecir correctamente quién gana el partido (o el empate). Si el partido se define por penales, cuenta como "ganador" el equipo que se queda con la serie de penales.',
   },
   {
     label: 'Bonus por resultado exacto',
     points: '+1 punto',
-    detail: 'Puntos adicionales si aciertas el marcador exacto (ej: 2-1).',
+    detail: 'Punto adicional si además aciertas el marcador exacto del partido (ej: 2-1).',
   },
 ]
 
@@ -39,6 +39,10 @@ const maxPoints = [
 ]
 
 const importantRules = [
+  {
+    title: 'Puntaje por Partido (Aplica a Todos los Partidos)',
+    text: 'En cualquier partido del Mundial, ya sea de fase de grupos o eliminatorias: 2 puntos por acertar el ganador, +1 punto extra si además acertás el resultado exacto. Si el partido termina empatado y se define por penales, el ganador de la definición por penales es el "ganador" del partido a los efectos de estos puntos.',
+  },
   {
     title: 'Plazos de Pronósticos',
     text: 'Las predicciones de cada partido se cierran 2 horas antes de su inicio. Pasado ese momento no se aceptan cambios.',

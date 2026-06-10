@@ -14,6 +14,8 @@ export interface Match {
   away_team: string
   home_score: number | null
   away_score: number | null
+  home_penalties?: number | null
+  away_penalties?: number | null
   match_date: string
   stage: string
   status: 'scheduled' | 'live' | 'finished'
@@ -664,7 +666,14 @@ function ResultRow({
       </div>
 
       <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-3 text-xs text-slate-500 md:flex-row md:items-center md:justify-between">
-        <span>{formatDate(match.match_date)}</span>
+        <span>
+          {formatDate(match.match_date)}
+          {isFinished && match.home_penalties != null && match.away_penalties != null && (
+            <span className="ml-2 font-semibold text-slate-600">
+              · Penales {match.home_penalties}-{match.away_penalties}
+            </span>
+          )}
+        </span>
         <div className="flex items-center gap-3">
           <span className={`rounded-full px-3 py-1 font-semibold ${statusStyles(match.status, locked, allowPredict)}`}>
             {statusLabel(match.status, locked, allowPredict)}
