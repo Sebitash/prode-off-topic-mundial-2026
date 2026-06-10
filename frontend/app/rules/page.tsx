@@ -35,6 +35,10 @@ const importantRules = [
     text: 'En cualquier partido del Mundial, ya sea de fase de grupos o eliminatorias: 2 puntos por acertar el ganador, +1 punto extra si además acertás el resultado exacto. Si el partido termina empatado y se define por penales, el ganador de la definición por penales es el "ganador" del partido a los efectos de estos puntos, y el resultado exacto que vale el punto extra es el marcador del tiempo reglamentario (el empate, ej: 1-1), no el resultado de los penales.',
   },
   {
+    title: 'Pronóstico de Penales en Eliminatorias',
+    text: 'Si en un partido de eliminatorias predecís un empate (ej: 1-1), vas a tener que elegir además quién pensás que gana la definición por penales. Si el partido real también termina empatado en los 90\' y se define por penales, ese pronóstico cuenta como tu "ganador" a los efectos del puntaje (2 pts).',
+  },
+  {
     title: 'Plazos de Pronósticos',
     text: 'Las predicciones de cada partido se cierran 1 hora antes de su inicio. Pasado ese momento no se aceptan cambios.',
   },

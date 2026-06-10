@@ -508,18 +508,20 @@ function ResultRow({
   match: Match
   userId: string
   allowPredict: boolean
-  prediction?: { predicted_home_score: number; predicted_away_score: number; points?: number } | null
-  onPredictionSaved?: (matchId: string, prediction: { predicted_home_score: number; predicted_away_score: number }) => void
+  prediction?: { predicted_home_score: number; predicted_away_score: number; predicted_penalty_winner?: 'home' | 'away' | null; points?: number } | null
+  onPredictionSaved?: (matchId: string, prediction: { predicted_home_score: number; predicted_away_score: number; predicted_penalty_winner?: 'home' | 'away' | null }) => void
   onPredictionDeleted?: (matchId: string) => void
 }) {
   const [homeScore, setHomeScore] = useState<number>(prediction?.predicted_home_score ?? 0)
   const [awayScore, setAwayScore] = useState<number>(prediction?.predicted_away_score ?? 0)
+  const [penaltyWinner, setPenaltyWinner] = useState<'home' | 'away' | null>(prediction?.predicted_penalty_winner ?? null)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
 
   useEffect(() => {
     setHomeScore(prediction?.predicted_home_score ?? 0)
     setAwayScore(prediction?.predicted_away_score ?? 0)
+    setPenaltyWinner(prediction?.predicted_penalty_winner ?? null)
   }, [prediction])
 
   const isFinished = match.status === 'finished'
@@ -527,10 +529,18 @@ function ResultRow({
   const locked = Date.now() >= new Date(match.match_date).getTime() - 60 * 60 * 1000
   const canPredict = allowPredict && !isFinished && !locked && !tbd
   const isSaved = !!prediction
+  const showPenaltyPicker = homeScore === awayScore && !isGroupStage(match.stage)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!canPredict || isSaved) return
+
+    if (showPenaltyPicker && !penaltyWinner) {
+      alert('Predijiste un empate: elegí el ganador de la definición por penales')
+      return
+    }
+
+    const finalPenaltyWinner = showPenaltyPicker ? penaltyWinner : null
 
     setLoading(true)
     setSuccess(false)
@@ -547,6 +557,7 @@ function ResultRow({
           match_id: match.id,
           predicted_home_score: homeScore,
           predicted_away_score: awayScore,
+          predicted_penalty_winner: finalPenaltyWinner,
         }),
       })
 
@@ -556,7 +567,7 @@ function ResultRow({
       }
 
       setSuccess(true)
-      onPredictionSaved?.(match.id, { predicted_home_score: homeScore, predicted_away_score: awayScore })
+      onPredictionSaved?.(match.id, { predicted_home_score: homeScore, predicted_away_score: awayScore, predicted_penalty_winner: finalPenaltyWinner })
       setTimeout(() => setSuccess(false), 2500)
     } catch (error) {
       console.error('Error saving prediction:', error)
@@ -610,39 +621,73 @@ function ResultRow({
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex flex-col items-center justify-center gap-2">
           {tbd ? (
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">
               Por definir
             </span>
           ) : canPredict ? (
             isSaved ? (
-              <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
-                  {homeScore}
-                </span>
-                <span className="text-xs font-semibold text-slate-400">vs</span>
-                <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
-                  {awayScore}
-                </span>
+              <div className="flex flex-col items-center gap-1">
+                <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                  <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
+                    {homeScore}
+                  </span>
+                  <span className="text-xs font-semibold text-slate-400">vs</span>
+                  <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
+                    {awayScore}
+                  </span>
+                </div>
+                {prediction?.predicted_penalty_winner && (
+                  <span className="text-[10px] text-slate-500">
+                    Penales: {prediction.predicted_penalty_winner === 'home' ? match.home_team : match.away_team}
+                  </span>
+                )}
               </div>
             ) : (
               <>
-                <input
-                  type="number"
-                  min="0"
-                  value={homeScore}
-                  onChange={(e) => setHomeScore(parseInt(e.target.value) || 0)}
-                  className="h-10 w-12 rounded-lg border border-slate-200 text-center text-sm font-semibold text-slate-900"
-                />
-                <span className="text-xs font-semibold text-slate-400">vs</span>
-                <input
-                  type="number"
-                  min="0"
-                  value={awayScore}
-                  onChange={(e) => setAwayScore(parseInt(e.target.value) || 0)}
-                  className="h-10 w-12 rounded-lg border border-slate-200 text-center text-sm font-semibold text-slate-900"
-                />
+                <div className="flex items-center gap-3">
+                  <input
+                    type="number"
+                    min="0"
+                    value={homeScore}
+                    onChange={(e) => setHomeScore(parseInt(e.target.value) || 0)}
+                    className="h-10 w-12 rounded-lg border border-slate-200 text-center text-sm font-semibold text-slate-900"
+                  />
+                  <span className="text-xs font-semibold text-slate-400">vs</span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={awayScore}
+                    onChange={(e) => setAwayScore(parseInt(e.target.value) || 0)}
+                    className="h-10 w-12 rounded-lg border border-slate-200 text-center text-sm font-semibold text-slate-900"
+                  />
+                </div>
+                {showPenaltyPicker && (
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-[10px] font-semibold text-slate-500">¿Quién gana en penales?</span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setPenaltyWinner('home')}
+                        className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
+                          penaltyWinner === 'home' ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        }`}
+                      >
+                        {match.home_team}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPenaltyWinner('away')}
+                        className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
+                          penaltyWinner === 'away' ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        }`}
+                      >
+                        {match.away_team}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </>
             )
           ) : (
@@ -658,7 +703,11 @@ function ResultRow({
               </div>
               {prediction && (
                 <span className="text-[10px] text-slate-700">
-                  Tu pronóstico{isFinished && prediction.points !== undefined ? ` · ${prediction.points} pts` : ''}
+                  Tu pronóstico
+                  {prediction.predicted_penalty_winner
+                    ? ` (penales: ${prediction.predicted_penalty_winner === 'home' ? match.home_team : match.away_team})`
+                    : ''}
+                  {isFinished && prediction.points !== undefined ? ` · ${prediction.points} pts` : ''}
                 </span>
               )}
             </div>
@@ -743,7 +792,7 @@ export default function ResultsTabs({
   const [activeSecondary, setActiveSecondary] = useState('Resultados')
   const [groups, setGroups] = useState<GroupRow[]>([])
   const [teams, setTeams] = useState<TeamRow[]>([])
-  const [predictions, setPredictions] = useState<Record<string, { predicted_home_score: number; predicted_away_score: number; points?: number }>>({})
+  const [predictions, setPredictions] = useState<Record<string, { predicted_home_score: number; predicted_away_score: number; predicted_penalty_winner?: 'home' | 'away' | null; points?: number }>>({})
   const [predictionsLoaded, setPredictionsLoaded] = useState(!allowPredict)
 
   const { groupStages, knockoutStages } = useMemo(() => {
@@ -805,11 +854,12 @@ export default function ResultsTabs({
 
         if (res.ok) {
           const data = await res.json()
-          const map: Record<string, { predicted_home_score: number; predicted_away_score: number; points?: number }> = {}
+          const map: Record<string, { predicted_home_score: number; predicted_away_score: number; predicted_penalty_winner?: 'home' | 'away' | null; points?: number }> = {}
           for (const p of data.predictions || []) {
             map[p.match_id] = {
               predicted_home_score: p.predicted_home_score,
               predicted_away_score: p.predicted_away_score,
+              predicted_penalty_winner: p.predicted_penalty_winner,
               points: p.points,
             }
           }
@@ -825,7 +875,7 @@ export default function ResultsTabs({
     loadPredictions()
   }, [allowPredict])
 
-  const handlePredictionSaved = (matchId: string, prediction: { predicted_home_score: number; predicted_away_score: number }) => {
+  const handlePredictionSaved = (matchId: string, prediction: { predicted_home_score: number; predicted_away_score: number; predicted_penalty_winner?: 'home' | 'away' | null }) => {
     setPredictions((prev) => ({ ...prev, [matchId]: prediction }))
   }
 
