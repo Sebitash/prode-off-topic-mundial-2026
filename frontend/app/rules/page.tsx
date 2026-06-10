@@ -17,6 +17,19 @@ const groupScoring = [
   },
 ]
 
+const knockoutScoring = [
+  {
+    label: 'Acertar el ganador',
+    points: '3 puntos',
+    detail: 'Por predecir correctamente quién gana el partido (o el empate). Si el partido se define por penales, cuenta como "ganador" el equipo que se queda con la serie de penales.',
+  },
+  {
+    label: 'Bonus por resultado exacto',
+    points: '+2 puntos',
+    detail: 'Puntos adicionales si además aciertas el marcador exacto del partido (ej: 2-1).',
+  },
+]
+
 const scoringExamples = [
   'Real: México 2-0 | Tu pronóstico: México 2-0 → 3 pts ✓',
   'Real: México 2-0 | Tu pronóstico: México 1-0 → 2 pts',
@@ -24,25 +37,25 @@ const scoringExamples = [
 ]
 
 const knockoutScoringExamples = [
-  'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Argentina 1-1 (gana penales) → 3 pts ✓',
-  'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Argentina gana 2-0 → 2 pts (acertaste el ganador, pero no el 1-1)',
+  'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Argentina 1-1 (gana penales) → 5 pts ✓',
+  'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Argentina gana 2-0 → 3 pts (acertaste el ganador, pero no el 1-1)',
   'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Brasil gana → 0 pts ✗',
 ]
 
 const maxPoints = [
-  { label: 'Fase de Grupos', points: '216', detail: '69.2% del total' },
-  { label: 'Fase Eliminatoria', points: '96', detail: '30.8% del total' },
-  { label: 'Puntos Máximos Totales', points: '312', detail: 'Total posible' },
+  { label: 'Fase de Grupos', points: '216', detail: '57.4% del total' },
+  { label: 'Fase Eliminatoria', points: '160', detail: '42.6% del total' },
+  { label: 'Puntos Máximos Totales', points: '376', detail: 'Total posible' },
 ]
 
 const importantRules = [
   {
-    title: 'Puntaje por Partido (Aplica a Todos los Partidos)',
-    text: 'En cualquier partido del Mundial, ya sea de fase de grupos o eliminatorias: 2 puntos por acertar el ganador, +1 punto extra si además acertás el resultado exacto. Si el partido termina empatado y se define por penales, el ganador de la definición por penales es el "ganador" del partido a los efectos de estos puntos, y el resultado exacto que vale el punto extra es el marcador del tiempo reglamentario (el empate, ej: 1-1), no el resultado de los penales.',
+    title: 'Puntaje por Partido',
+    text: 'En fase de grupos: 2 puntos por acertar el ganador, +1 punto extra si además acertás el resultado exacto (máximo 3 pts). En fase eliminatoria: 3 puntos por acertar el ganador, +2 puntos extra si además acertás el resultado exacto (máximo 5 pts). Si el partido termina empatado y se define por penales, el ganador de la definición por penales es el "ganador" del partido a los efectos de estos puntos, y el resultado exacto que vale el bonus es el marcador del tiempo reglamentario (el empate, ej: 1-1), no el resultado de los penales.',
   },
   {
     title: 'Pronóstico de Penales en Eliminatorias',
-    text: 'Si en un partido de eliminatorias predecís un empate (ej: 1-1), vas a tener que elegir además quién pensás que gana la definición por penales. Si el partido real también termina empatado en los 90\' y se define por penales, ese pronóstico cuenta como tu "ganador" a los efectos del puntaje (2 pts).',
+    text: 'Si en un partido de eliminatorias predecís un empate (ej: 1-1), vas a tener que elegir además quién pensás que gana la definición por penales. Si el partido real también termina empatado en los 90\' y se define por penales, ese pronóstico cuenta como tu "ganador" a los efectos del puntaje (3 pts).',
   },
   {
     title: 'Plazos de Pronósticos',
@@ -58,7 +71,7 @@ const importantRules = [
   },
   {
     title: 'Partido por el Tercer Puesto',
-    text: 'Suma puntos igual que cualquier otro partido: 2 puntos por acertar el ganador, +1 por el resultado exacto.',
+    text: 'Suma puntos igual que cualquier otro partido de eliminatorias: 3 puntos por acertar el ganador, +2 por el resultado exacto.',
   },
 ]
 
@@ -184,11 +197,11 @@ export default function RulesPage() {
               🏆 Fase Eliminatoria (32 partidos)
             </h3>
             <p className="mt-2 text-sm text-slate-600">
-              Mismo sistema de puntos que la fase de grupos: 2 puntos por acertar el ganador, +1 punto extra por el
-              resultado exacto.
+              Sistema de puntos reforzado respecto a la fase de grupos: 3 puntos por acertar el ganador, +2 puntos
+              extra por el resultado exacto.
             </p>
             <div className="mt-4 grid gap-3">
-              {groupScoring.map((row) => (
+              {knockoutScoring.map((row) => (
                 <div key={row.label} className="rounded-lg border border-sky-100 bg-sky-50 px-3 py-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="text-sm font-semibold text-slate-900">
@@ -207,7 +220,7 @@ export default function RulesPage() {
             <div className="mt-4 rounded-lg border border-sky-200 bg-sky-50 px-4 py-3">
               <p className="text-xs text-slate-600">
                 ⚽ Si el partido se define por penales: el ganador de la serie de penales cuenta como "ganador" del
-                partido (2 pts), y el resultado exacto que vale el punto extra es el marcador del tiempo
+                partido (3 pts), y el resultado exacto que vale el bonus de +2 es el marcador del tiempo
                 reglamentario, es decir, el empate (ej: 1-1), no el resultado de los penales.
               </p>
             </div>
@@ -224,10 +237,10 @@ export default function RulesPage() {
               </ul>
             </div>
             <p className="mt-3 text-xs text-slate-700">
-              Máximo por partido: 3 puntos
+              Máximo por partido: 5 puntos
             </p>
             <p className="text-xs text-slate-700">
-              Total posible en fase eliminatoria: 96 puntos
+              Total posible en fase eliminatoria: 160 puntos
             </p>
           </div>
         </div>

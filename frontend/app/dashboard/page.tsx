@@ -21,7 +21,6 @@ interface Match {
   home_team: string
   away_team: string
   match_date: string
-  status: string
 }
 
 export default function DashboardPage() {
@@ -87,7 +86,7 @@ export default function DashboardPage() {
           <p className="text-gray-600">Tu panel del Prode Mundial 2026</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg shadow-md p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Tus Predicciones</h3>
             <p className="text-3xl font-bold text-blue-600">{user.total_predictions}</p>
@@ -97,11 +96,6 @@ export default function DashboardPage() {
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Total de Puntos</h3>
             <p className="text-3xl font-bold text-green-600">{user.total_points}</p>
             <p className="text-sm text-gray-500 mt-1">Puntos acumulados</p>
-          </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Próximos Partidos</h3>
-            <p className="text-3xl font-bold text-purple-600">{matches.length}</p>
-            <p className="text-sm text-gray-500 mt-1">Partidos para predecir</p>
           </div>
         </div>
 
@@ -129,9 +123,11 @@ export default function DashboardPage() {
                   <div key={match.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex-1">
                       <p className="font-medium text-gray-900">{match.home_team} vs {match.away_team}</p>
-                      <p className="text-xs text-gray-500">{new Date(match.match_date).toLocaleDateString('es-AR')}</p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(match.match_date).toLocaleDateString('es-AR')}{' '}
+                        {new Date(match.match_date).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
+                      </p>
                     </div>
-                    <span className="text-xs px-2 py-1 bg-sky-100 text-sky-800 rounded">{match.status}</span>
                   </div>
                 ))}
               </div>

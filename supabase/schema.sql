@@ -153,9 +153,11 @@ CREATE TRIGGER on_auth_user_created
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 -- Function to calculate points for predictions
--- Reglas: 2 puntos por acertar el ganador (si el partido termina empatado y se
+-- Reglas: por acertar el ganador (si el partido termina empatado y se
 -- define por penales, el ganador de la definición por penales es el ganador
--- a estos efectos) + 1 punto extra si además se acierta el resultado exacto.
+-- a estos efectos) + bonus extra si además se acierta el resultado exacto.
+-- En fase de grupos: 2 puntos por ganador + 1 por resultado exacto (máx 3).
+-- En fase eliminatoria: 3 puntos por ganador + 2 por resultado exacto (máx 5).
 -- Si el pronóstico fue empate y el partido real también termina empatado en
 -- los 90' y se define por penales, se usa predicted_penalty_winner como
 -- "ganador" pronosticado.
@@ -165,9 +167,22 @@ DECLARE
   pred RECORD;
   actual_winner TEXT;
   predicted_winner TEXT;
+  is_group BOOLEAN;
+  winner_points INT;
+  exact_score_points INT;
 BEGIN
   -- Only calculate when match is finished and has scores
   IF NEW.status = 'finished' AND NEW.home_score IS NOT NULL AND NEW.away_score IS NOT NULL THEN
+    is_group := (LOWER(NEW.stage) LIKE '%group%' OR LOWER(NEW.stage) LIKE '%grupo%');
+
+    IF is_group THEN
+      winner_points := 2;
+      exact_score_points := 1;
+    ELSE
+      winner_points := 3;
+      exact_score_points := 2;
+    END IF;
+
     IF NEW.home_score > NEW.away_score THEN
       actual_winner := 'home';
     ELSIF NEW.home_score < NEW.away_score THEN
@@ -192,10 +207,10 @@ BEGIN
 
       UPDATE predictions
       SET points =
-        (CASE WHEN predicted_winner = actual_winner THEN 2 ELSE 0 END)
+        (CASE WHEN predicted_winner = actual_winner THEN winner_points ELSE 0 END)
         + (CASE
              WHEN pred.predicted_home_score = NEW.home_score
-              AND pred.predicted_away_score = NEW.away_score THEN 1
+              AND pred.predicted_away_score = NEW.away_score THEN exact_score_points
              ELSE 0
            END),
       updated_at = NOW()

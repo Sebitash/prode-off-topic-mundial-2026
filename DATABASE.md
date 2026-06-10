@@ -138,20 +138,25 @@ Automatically creates a profile when a new user signs up via Supabase Auth.
 ### `calculate_prediction_points()`
 
 Calculates points for all predictions when a match finishes. Applies to **all matches**
-(group stage and knockout stage).
+(group stage and knockout stage), with different point values depending on the stage.
 
 **Trigger:** After UPDATE on matches when status = 'finished'
 **Scoring System:**
-- **2 points**: Correct winner (home win, away win, or draw). If the match ended tied
-  in regulation and was decided by a penalty shootout (`home_penalties`/`away_penalties`),
-  the penalty shootout winner is used as the "winner" for this purpose.
-- **+1 point**: Bonus if the exact regulation score (`home_score`/`away_score`) is also correct.
+- **Group stage**: 2 points for the correct winner, +1 point bonus for the exact
+  regulation score (max 3 pts).
+- **Knockout stage**: 3 points for the correct winner, +2 points bonus for the exact
+  regulation score (max 5 pts).
+- If the match ended tied in regulation and was decided by a penalty shootout
+  (`home_penalties`/`away_penalties`), the penalty shootout winner is used as the
+  "winner" for this purpose.
 - **0 points**: Incorrect winner prediction.
 
 **Logic:**
 ```sql
-points = (CASE WHEN predicted_winner = actual_winner THEN 2 ELSE 0 END)
-       + (CASE WHEN exact_score THEN 1 ELSE 0 END)
+-- winner_points = 2, exact_score_points = 1 for group stage
+-- winner_points = 3, exact_score_points = 2 for knockout stage
+points = (CASE WHEN predicted_winner = actual_winner THEN winner_points ELSE 0 END)
+       + (CASE WHEN exact_score THEN exact_score_points ELSE 0 END)
 ```
 
 ---
