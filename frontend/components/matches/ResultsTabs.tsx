@@ -680,6 +680,8 @@ export default function ResultsTabs({
   const stageEntries = Object.entries(stages)
 
   useEffect(() => {
+    if (!showSecondaryTabs) return
+
     const loadGroupsAndTeams = async () => {
       const token = getToken()
       const headers = { Authorization: `Bearer ${token}` }
@@ -697,7 +699,7 @@ export default function ResultsTabs({
     }
 
     loadGroupsAndTeams()
-  }, [])
+  }, [showSecondaryTabs])
 
   const groupTables = useMemo<GroupStanding[]>(() => {
     // Los grupos ya vienen con sus equipos y posiciones del API

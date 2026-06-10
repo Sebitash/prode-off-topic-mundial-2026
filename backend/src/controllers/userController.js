@@ -7,7 +7,14 @@ export const getMe = async (req, res) => {
     const userId = req.user.id;
 
     const userResult = await query(
-      'SELECT id, nombre, apellido, email, created_at FROM login_users WHERE id = $1',
+      `SELECT
+         u.id, u.nombre, u.apellido, u.email, u.created_at,
+         COUNT(p.id) as total_predictions,
+         COALESCE(SUM(p.points), 0) as total_points
+       FROM login_users u
+       LEFT JOIN predictions p ON p.user_id = u.id
+       WHERE u.id = $1
+       GROUP BY u.id`,
       [userId]
     );
 
@@ -15,25 +22,13 @@ export const getMe = async (req, res) => {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    const user = userResult.rows[0];
-
-    // Stats del usuario
-    const statsResult = await query(
-      `SELECT
-         COUNT(p.id) as total_predictions,
-         COALESCE(SUM(p.points), 0) as total_points
-       FROM predictions p
-       WHERE p.user_id = $1`,
-      [userId]
-    );
-
-    const stats = statsResult.rows[0];
+    const { total_predictions, total_points, ...user } = userResult.rows[0];
 
     res.json({
       user: {
         ...user,
-        total_predictions: parseInt(stats.total_predictions),
-        total_points: parseInt(stats.total_points),
+        total_predictions: parseInt(total_predictions),
+        total_points: parseInt(total_points),
         is_admin: isAdminEmail(user.email),
       }
     });

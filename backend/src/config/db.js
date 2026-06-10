@@ -12,7 +12,12 @@ const pool = new Pool({
   database: 'postgres',
   ssl: {
     rejectUnauthorized: false
-  }
+  },
+  // Mantener conexiones abiertas: reabrir TLS contra el pooler de Supabase
+  // (en otra región/nube) en cada request agrega varios cientos de ms.
+  max: 10,
+  idleTimeoutMillis: 0,
+  keepAlive: true,
 });
 
 export const query = (text, params) => pool.query(text, params);
