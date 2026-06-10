@@ -42,8 +42,10 @@ export const upsertPrediction = async (req, res) => {
     }
 
     const match = matchResult.rows[0];
-    if (match.status !== 'scheduled') {
-      return res.status(400).json({ error: 'No se puede modificar la predicción de un partido que ya inició o terminó' });
+    const kickoff = new Date(match.match_date).getTime();
+    const twoHoursBeforeMs = kickoff - 2 * 60 * 60 * 1000;
+    if (match.status !== 'scheduled' || Date.now() >= twoHoursBeforeMs) {
+      return res.status(400).json({ error: 'Las predicciones para este partido están cerradas (cierran 2 horas antes del inicio)' });
     }
 
     // Upsert: insertar o actualizar si ya existe

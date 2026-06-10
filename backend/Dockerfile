@@ -3,9 +3,11 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+RUN npm install --omit=dev
 
 COPY . .
 
-# Backend is usually a worker or CLI in this stage
-CMD ["npm", "run", "test-api"]
+ENV NODE_ENV=production
+EXPOSE 3001
+
+CMD ["npm", "start"]

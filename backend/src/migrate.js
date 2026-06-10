@@ -17,7 +17,7 @@ async function runMigration() {
     host: '44.238.118.41',
     port: 5432,
     user: 'postgres.uhxhqbqmlurlxtydvqad',
-    password: process.env.SUPABASE_DB_PASSWORD || 'p$7vj%xxw/58FT$',
+    password: process.env.SUPABASE_DB_PASSWORD,
     database: 'postgres',
     ssl: {
       rejectUnauthorized: false

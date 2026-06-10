@@ -452,15 +452,17 @@ function formatDate(value: string) {
   return `${iso.slice(0, 10)} ${iso.slice(11, 16)}`
 }
 
-function statusLabel(status: Match['status']) {
+function statusLabel(status: Match['status'], locked: boolean) {
   if (status === 'finished') return 'Finalizado'
   if (status === 'live') return 'En vivo'
+  if (locked) return 'Cerrado'
   return 'Por jugar'
 }
 
-function statusStyles(status: Match['status']) {
+function statusStyles(status: Match['status'], locked: boolean) {
   if (status === 'finished') return 'bg-slate-100 text-slate-700'
   if (status === 'live') return 'bg-rose-100 text-rose-700'
+  if (locked) return 'bg-amber-100 text-amber-700'
   return 'bg-sky-100 text-sky-700'
 }
 
@@ -479,8 +481,8 @@ function ResultRow({
   const [success, setSuccess] = useState(false)
 
   const isFinished = match.status === 'finished'
-  const isPast = new Date(match.match_date) < new Date()
-  const canPredict = allowPredict && !isFinished && !isPast
+  const locked = Date.now() >= new Date(match.match_date).getTime() - 2 * 60 * 60 * 1000
+  const canPredict = allowPredict && !isFinished && !locked
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -581,9 +583,12 @@ function ResultRow({
       <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-3 text-xs text-slate-500 md:flex-row md:items-center md:justify-between">
         <span>{formatDate(match.match_date)}</span>
         <div className="flex items-center gap-3">
-          <span className={`rounded-full px-3 py-1 font-semibold ${statusStyles(match.status)}`}>
-            {statusLabel(match.status)}
+          <span className={`rounded-full px-3 py-1 font-semibold ${statusStyles(match.status, locked)}`}>
+            {statusLabel(match.status, locked)}
           </span>
+          {locked && !isFinished && (
+            <span className="text-slate-400">Las predicciones cierran 2hs antes del partido</span>
+          )}
           {canPredict && (
             <button
               type="submit"

@@ -78,7 +78,7 @@ export default function PredictionsPage() {
           userId={userId}
           showSecondaryTabs={false}
           title="Tus Predicciones"
-          description="Completá los partidos de la fase de grupos y guardá tus pronósticos"
+          description="Completá los partidos de la fase de grupos y guardá tus pronósticos. Las predicciones cierran 2 horas antes del inicio de cada partido."
         />
       </div>
     </div>

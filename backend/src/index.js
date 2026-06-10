@@ -28,14 +28,9 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Exportar para Vercel
-export default app;
-
-// Solo listen en desarrollo local
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
-    console.log(`📋 Rutas disponibles:
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`📋 Rutas disponibles:
   POST /api/auth/signup
   POST /api/auth/login
   GET  /api/matches
@@ -43,5 +38,6 @@ if (process.env.NODE_ENV !== 'production') {
   POST /api/predictions
   GET  /api/ranking
   GET  /api/user/me`);
-  });
-}
+});
+
+export default app;

@@ -20,7 +20,9 @@ services:
       dockerfile: Dockerfile
     env_file:
       - ./backend/.env
+    ports:
+      - "3001:3001"
     volumes:
       - ./backend:/app
       - /app/node_modules
-    command: npm run test-api # Or keep-alive for now
+    command: npm run dev

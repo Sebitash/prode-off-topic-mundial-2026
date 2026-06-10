@@ -41,7 +41,7 @@ const maxPoints = [
 const importantRules = [
   {
     title: 'Plazos de Pronósticos',
-    text: 'Todos los pronósticos deben estar registrados antes del inicio de cada partido. No se aceptan cambios una vez iniciado.',
+    text: 'Las predicciones de cada partido se cierran 2 horas antes de su inicio. Pasado ese momento no se aceptan cambios.',
   },
   {
     title: 'Pronósticos Incompletos',
