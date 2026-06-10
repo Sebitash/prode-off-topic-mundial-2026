@@ -42,6 +42,8 @@ World Cup matches information.
 | away_team   | TEXT      | Away team name                                 |
 | home_score  | INTEGER   | Home team score (nullable until finished)      |
 | away_score  | INTEGER   | Away team score (nullable until finished)      |
+| home_penalties | INTEGER | Home team penalty shootout score (nullable, only set if regulation ended in a draw) |
+| away_penalties | INTEGER | Away team penalty shootout score (nullable, only set if regulation ended in a draw) |
 | match_date  | TIMESTAMP | When the match is/was played                   |
 | stage       | TEXT      | Tournament stage (e.g., "Group Stage")         |
 | status      | TEXT      | Match status: 'scheduled', 'live', 'finished'  |
@@ -135,21 +137,21 @@ Automatically creates a profile when a new user signs up via Supabase Auth.
 
 ### `calculate_prediction_points()`
 
-Calculates points for all predictions when a match finishes.
+Calculates points for all predictions when a match finishes. Applies to **all matches**
+(group stage and knockout stage).
 
 **Trigger:** After UPDATE on matches when status = 'finished'
 **Scoring System:**
-- **3 points**: Exact score prediction
-- **1 point**: Correct outcome (winner or draw)
-- **0 points**: Incorrect prediction
+- **2 points**: Correct winner (home win, away win, or draw). If the match ended tied
+  in regulation and was decided by a penalty shootout (`home_penalties`/`away_penalties`),
+  the penalty shootout winner is used as the "winner" for this purpose.
+- **+1 point**: Bonus if the exact regulation score (`home_score`/`away_score`) is also correct.
+- **0 points**: Incorrect winner prediction.
 
 **Logic:**
 ```sql
-CASE
-  WHEN exact_score THEN 3
-  WHEN correct_outcome THEN 1
-  ELSE 0
-END
+points = (CASE WHEN predicted_winner = actual_winner THEN 2 ELSE 0 END)
+       + (CASE WHEN exact_score THEN 1 ELSE 0 END)
 ```
 
 ---

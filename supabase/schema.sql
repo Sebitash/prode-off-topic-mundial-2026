@@ -30,11 +30,20 @@ CREATE TABLE IF NOT EXISTS matches (
   away_team TEXT NOT NULL,
   home_score INTEGER,
   away_score INTEGER,
+  home_penalties INTEGER,
+  away_penalties INTEGER,
   match_date TIMESTAMP WITH TIME ZONE NOT NULL,
   stage TEXT NOT NULL,
   status TEXT DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'live', 'finished')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL,
+  CONSTRAINT matches_penalties_valid CHECK (
+    (home_penalties IS NULL AND away_penalties IS NULL)
+    OR (
+      home_penalties >= 0 AND away_penalties >= 0
+      AND home_penalties <> away_penalties
+    )
+  )
 );
 
 -- Create predictions table
@@ -143,34 +152,52 @@ CREATE TRIGGER on_auth_user_created
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 -- Function to calculate points for predictions
+-- Reglas: 2 puntos por acertar el ganador (si el partido termina empatado y se
+-- define por penales, el ganador de la definición por penales es el ganador
+-- a estos efectos) + 1 punto extra si además se acierta el resultado exacto.
 CREATE OR REPLACE FUNCTION calculate_prediction_points()
 RETURNS TRIGGER AS $$
 DECLARE
   pred RECORD;
+  actual_winner TEXT;
+  predicted_winner TEXT;
 BEGIN
   -- Only calculate when match is finished and has scores
   IF NEW.status = 'finished' AND NEW.home_score IS NOT NULL AND NEW.away_score IS NOT NULL THEN
+    IF NEW.home_score > NEW.away_score THEN
+      actual_winner := 'home';
+    ELSIF NEW.home_score < NEW.away_score THEN
+      actual_winner := 'away';
+    ELSIF NEW.home_penalties IS NOT NULL AND NEW.away_penalties IS NOT NULL
+          AND NEW.home_penalties <> NEW.away_penalties THEN
+      actual_winner := CASE WHEN NEW.home_penalties > NEW.away_penalties THEN 'home' ELSE 'away' END;
+    ELSE
+      actual_winner := 'draw';
+    END IF;
+
     -- Update all predictions for this match
-    FOR pred IN 
+    FOR pred IN
       SELECT * FROM predictions WHERE match_id = NEW.id
     LOOP
+      predicted_winner := CASE
+        WHEN pred.predicted_home_score > pred.predicted_away_score THEN 'home'
+        WHEN pred.predicted_home_score < pred.predicted_away_score THEN 'away'
+        ELSE 'draw'
+      END;
+
       UPDATE predictions
-      SET points = CASE
-        -- Exact score: 3 points
-        WHEN pred.predicted_home_score = NEW.home_score 
-         AND pred.predicted_away_score = NEW.away_score THEN 3
-        -- Correct winner/draw: 1 point
-        WHEN (pred.predicted_home_score > pred.predicted_away_score AND NEW.home_score > NEW.away_score)
-          OR (pred.predicted_home_score < pred.predicted_away_score AND NEW.home_score < NEW.away_score)
-          OR (pred.predicted_home_score = pred.predicted_away_score AND NEW.home_score = NEW.away_score) THEN 1
-        -- Incorrect: 0 points
-        ELSE 0
-      END,
+      SET points =
+        (CASE WHEN predicted_winner = actual_winner THEN 2 ELSE 0 END)
+        + (CASE
+             WHEN pred.predicted_home_score = NEW.home_score
+              AND pred.predicted_away_score = NEW.away_score THEN 1
+             ELSE 0
+           END),
       updated_at = NOW()
       WHERE id = pred.id;
     END LOOP;
   END IF;
-  
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
