@@ -13,6 +13,7 @@ interface UserData {
   email: string
   total_points: number
   total_predictions: number
+  is_admin: boolean
 }
 
 interface Match {
@@ -72,7 +73,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100">
-      <DashboardNav displayName={displayName} />
+      <DashboardNav displayName={displayName} isAdmin={user.is_admin} />
       <div className="mx-auto max-w-6xl px-4 py-8 space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">

@@ -67,6 +67,7 @@ const tips = [
 
 export default function RulesPage() {
   const [displayName, setDisplayName] = useState('')
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -76,6 +77,7 @@ export default function RulesPage() {
         try {
           const user = JSON.parse(userData)
           setDisplayName(`${user.nombre} ${user.apellido}`)
+          setIsAdmin(!!user.is_admin)
         } catch (e) {
           console.error('Error parsing user data')
         }
@@ -85,7 +87,7 @@ export default function RulesPage() {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100">
-      <DashboardNav displayName={displayName} />
+      <DashboardNav displayName={displayName} isAdmin={isAdmin} />
       <div className="relative overflow-hidden">
         <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
         <div className="absolute -bottom-32 left-0 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />

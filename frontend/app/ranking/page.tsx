@@ -19,6 +19,7 @@ export default function RankingPage() {
   const [ranking, setRanking] = useState<RankingEntry[]>([])
   const [displayName, setDisplayName] = useState('')
   const [currentUserId, setCurrentUserId] = useState('')
+  const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -34,6 +35,7 @@ export default function RankingPage() {
       const u = JSON.parse(storedUser)
       setDisplayName(`${u.nombre} ${u.apellido}`)
       setCurrentUserId(u.id)
+      setIsAdmin(!!u.is_admin)
     }
 
     fetch(`${API_URL}/api/ranking`, {
@@ -62,7 +64,7 @@ export default function RankingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100">
-      <DashboardNav displayName={displayName} />
+      <DashboardNav displayName={displayName} isAdmin={isAdmin} />
       <div className="mx-auto max-w-6xl px-4 py-8">
         <div>
           <h1 className="text-3xl font-semibold text-slate-900">Ranking</h1>

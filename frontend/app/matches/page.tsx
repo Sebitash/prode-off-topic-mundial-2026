@@ -22,6 +22,7 @@ export default function MatchesPage() {
   const [matches, setMatches] = useState<Match[]>([])
   const [displayName, setDisplayName] = useState('')
   const [userId, setUserId] = useState('')
+  const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -37,6 +38,7 @@ export default function MatchesPage() {
       const u = JSON.parse(storedUser)
       setDisplayName(`${u.nombre} ${u.apellido}`)
       setUserId(u.id)
+      setIsAdmin(!!u.is_admin)
     }
 
     fetch(`${API_URL}/api/matches`, {
@@ -65,7 +67,7 @@ export default function MatchesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100">
-      <DashboardNav displayName={displayName} />
+      <DashboardNav displayName={displayName} isAdmin={isAdmin} />
       <div className="mx-auto max-w-6xl px-4 py-8">
         <ResultsTabs
           matches={matches}
