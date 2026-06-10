@@ -75,7 +75,8 @@ En **Settings** del servicio backend:
 | `SUPABASE_DB_PASSWORD` | password **rotado** de la base |
 | `DATABASE_URL` | connection string completa de Supabase (con el password nuevo, URL-encoded) |
 | `JWT_SECRET` | secreto nuevo generado con `openssl rand -base64 48` |
-| `SUPABASE_JWT_SECRET` | JWT Secret del proyecto Supabase (Project Settings → API → JWT Settings → "JWT Secret"). Necesario para el login con Google |
+| `NEXT_PUBLIC_SUPABASE_URL` | Project URL de Supabase. Necesaria para validar el login con Google |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon public key de Supabase. Necesaria para validar el login con Google |
 
 > Railway asigna `PORT` automáticamente — no hace falta definirlo, `backend/src/index.js` ya usa `process.env.PORT || 3001`.
 
@@ -126,8 +127,10 @@ El botón "Continuar con Google" usa Supabase Auth para el OAuth y un endpoint p
    - **Authorized redirect URIs**: `https://dkcnxdpjycoosxcxckor.supabase.co/auth/v1/callback`.
 2. **Supabase Dashboard** → Authentication → Providers → Google:
    - Activar el provider y pegar **Client ID** y **Client Secret** (los del paso anterior). Esto NO va en el repo ni en Railway, solo en Supabase.
-3. **Supabase Dashboard** → Project Settings → API → JWT Settings → copiar el **JWT Secret**.
-4. En Railway, servicio **backend** → Variables → agregar `SUPABASE_JWT_SECRET` con el valor del paso 3 (ver tabla de variables del backend más arriba) y redeployar.
+3. En Railway, servicio **backend** → Variables → agregar `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY` (mismos valores que el frontend, ver tabla de variables del backend más arriba) y redeployar.
+4. **Supabase Dashboard** → Authentication → URL Configuration:
+   - **Site URL**: URL del frontend en Railway.
+   - **Redirect URLs**: agregar `https://<tu-frontend>.up.railway.app/auth/callback` y `https://<tu-frontend>.up.railway.app/**`.
 
 ### Verificar
 

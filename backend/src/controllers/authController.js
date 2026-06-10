@@ -4,7 +4,8 @@ import crypto from 'crypto';
 import { query } from '../config/db.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-mundial-2026';
-const SUPABASE_JWT_SECRET = process.env.SUPABASE_JWT_SECRET;
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
 
 export const signup = async (req, res) => {
   const { nombre, apellido, email, password } = req.body;
@@ -92,21 +93,26 @@ export const googleAuth = async (req, res) => {
     return res.status(400).json({ error: 'access_token requerido' });
   }
 
-  if (!SUPABASE_JWT_SECRET) {
-    console.error('Google Auth Error: falta configurar SUPABASE_JWT_SECRET');
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    console.error('Google Auth Error: falta configurar NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY');
     return res.status(500).json({ error: 'Login con Google no está configurado en el servidor' });
   }
 
   try {
-    let payload;
-    try {
-      payload = jwt.verify(access_token, SUPABASE_JWT_SECRET);
-    } catch (err) {
+    const supabaseUserRes = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        apikey: SUPABASE_ANON_KEY,
+      },
+    });
+
+    if (!supabaseUserRes.ok) {
       return res.status(401).json({ error: 'Token de Google inválido o expirado' });
     }
 
+    const payload = await supabaseUserRes.json();
     const email = payload.email;
-    const googleId = payload.sub;
+    const googleId = payload.id;
 
     if (!email) {
       return res.status(400).json({ error: 'No se pudo obtener el email de la cuenta de Google' });
