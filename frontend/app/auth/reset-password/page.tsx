@@ -78,26 +78,26 @@ export default function ResetPasswordPage() {
 
   if (checkingSession) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-sky-100 via-sky-50 to-sky-200 px-4">
-        <p className="text-sm text-slate-500">Cargando...</p>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-sky-100 via-sky-50 to-sky-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 px-4">
+        <p className="text-sm text-slate-500 dark:text-slate-400">Cargando...</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-100 via-sky-50 to-sky-200 px-4 py-10">
-      <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
+    <div className="min-h-screen bg-gradient-to-b from-sky-100 via-sky-50 to-sky-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 px-4 py-10">
+      <div className="mx-auto w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-8 shadow-xl">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 overflow-hidden rounded-full">
             <Image src={logo} alt="Prode Mundial" width={48} height={48} className="h-12 w-12 object-cover" priority />
           </div>
-          <h1 className="mt-4 text-2xl font-semibold text-slate-900">
+          <h1 className="mt-4 text-2xl font-semibold text-slate-900 dark:text-slate-100">
             Nueva contraseña
           </h1>
         </div>
 
         {!validSession ? (
-          <div className="mt-6 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600">
+          <div className="mt-6 rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 px-4 py-3 text-sm text-rose-600 dark:text-rose-400">
             El link de recuperación es inválido o expiró.{' '}
             <Link href="/auth/forgot-password" className="font-semibold underline">
               Solicitá uno nuevo
@@ -107,13 +107,13 @@ export default function ResetPasswordPage() {
         ) : (
           <form onSubmit={handleSubmit} className="mt-6 space-y-6">
             {error && (
-              <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600">
+              <div className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 px-4 py-3 text-sm text-rose-600 dark:text-rose-400">
                 {error}
               </div>
             )}
 
             <div>
-              <label htmlFor="password" className="mb-2 block text-sm font-medium text-slate-700">
+              <label htmlFor="password" className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Nueva contraseña
               </label>
               <input
@@ -122,13 +122,13 @@ export default function ResetPasswordPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-900 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
                 placeholder="••••••••"
               />
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium text-slate-700">
+              <label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Confirmar contraseña
               </label>
               <input
@@ -137,7 +137,7 @@ export default function ResetPasswordPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-900 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
                 placeholder="••••••••"
               />
             </div>

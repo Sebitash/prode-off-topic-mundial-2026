@@ -7,10 +7,28 @@
   --foreground: #171717;
 }
 
+.dark {
+  --background: #0f172a;
+  --foreground: #e2e8f0;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #1e293b;
+  color: #e2e8f0;
+  border-color: #334155;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b;
 }
 
 @layer utilities {

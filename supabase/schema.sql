@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS public.login_users (
   email TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
   google_id TEXT,
+  theme TEXT NOT NULL DEFAULT 'light' CHECK (theme IN ('light', 'dark')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL
 );

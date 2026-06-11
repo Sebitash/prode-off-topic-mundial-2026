@@ -98,11 +98,11 @@ function AdminMatchRow({
   }
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-sm">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-1 items-center gap-3">
           <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[match.home_team] || 'xx'] || 'xx'} w-10 h-10 rounded`}></span>
-          <p className="text-sm font-semibold text-slate-900">{match.home_team}</p>
+          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{match.home_team}</p>
         </div>
 
         <div className="flex flex-col items-center gap-2">
@@ -112,50 +112,50 @@ function AdminMatchRow({
               min="0"
               value={homeScore}
               onChange={(e) => setHomeScore(parseInt(e.target.value) || 0)}
-              className="h-10 w-14 rounded-lg border border-slate-200 text-center text-sm"
+              className="h-10 w-14 rounded-lg border border-slate-200 dark:border-slate-700 text-center text-sm"
             />
-            <span className="text-xs font-semibold text-slate-400">vs</span>
+            <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">vs</span>
             <input
               type="number"
               min="0"
               value={awayScore}
               onChange={(e) => setAwayScore(parseInt(e.target.value) || 0)}
-              className="h-10 w-14 rounded-lg border border-slate-200 text-center text-sm"
+              className="h-10 w-14 rounded-lg border border-slate-200 dark:border-slate-700 text-center text-sm"
             />
           </div>
           {showPenalties && (
             <div className="flex items-center justify-center gap-2">
-              <span className="text-[10px] font-semibold text-slate-400">Penales</span>
+              <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500">Penales</span>
               <input
                 type="number"
                 min="0"
                 value={homePenalties}
                 onChange={(e) => setHomePenalties(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
-                className="h-8 w-12 rounded-lg border border-slate-200 text-center text-xs"
+                className="h-8 w-12 rounded-lg border border-slate-200 dark:border-slate-700 text-center text-xs"
               />
-              <span className="text-xs font-semibold text-slate-400">-</span>
+              <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">-</span>
               <input
                 type="number"
                 min="0"
                 value={awayPenalties}
                 onChange={(e) => setAwayPenalties(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
-                className="h-8 w-12 rounded-lg border border-slate-200 text-center text-xs"
+                className="h-8 w-12 rounded-lg border border-slate-200 dark:border-slate-700 text-center text-xs"
               />
             </div>
           )}
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-3">
-          <p className="text-sm font-semibold text-slate-900">{match.away_team}</p>
+          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{match.away_team}</p>
           <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[match.away_team] || 'xx'] || 'xx'} w-10 h-10 rounded`}></span>
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-3 text-xs text-slate-500 md:flex-row md:items-center md:justify-between">
+      <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 dark:border-slate-700 pt-3 text-xs text-slate-500 dark:text-slate-400 md:flex-row md:items-center md:justify-between">
         <span>
           {formatDate(match.match_date)}
           {match.status === 'finished' && match.home_penalties != null && match.away_penalties != null && (
-            <span className="ml-2 font-semibold text-slate-600">
+            <span className="ml-2 font-semibold text-slate-600 dark:text-slate-400">
               · Penales {match.home_penalties}-{match.away_penalties}
             </span>
           )}
@@ -163,7 +163,7 @@ function AdminMatchRow({
         <div className="flex items-center gap-3">
           <span
             className={`rounded-full px-3 py-1 font-semibold ${
-              match.status === 'finished' ? 'bg-slate-100 text-slate-700' : 'bg-sky-100 text-sky-700'
+              match.status === 'finished' ? 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300' : 'bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-400'
             }`}
           >
             {match.status === 'finished' ? 'Finalizado' : 'Por jugar'}
@@ -181,13 +181,13 @@ function AdminMatchRow({
               type="button"
               disabled={loading}
               onClick={() => updateResult(null, null, null)}
-              className="rounded-full bg-slate-200 px-4 py-1 text-xs font-semibold text-slate-700 transition hover:bg-slate-300 disabled:opacity-50"
+              className="rounded-full bg-slate-200 dark:bg-slate-600 px-4 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300 transition hover:bg-slate-300 dark:bg-slate-600 disabled:opacity-50"
             >
               Borrar resultado
             </button>
           )}
-          {success && <span className="text-sky-700">Guardado</span>}
-          {error && <span className="text-rose-600">{error}</span>}
+          {success && <span className="text-sky-700 dark:text-sky-400">Guardado</span>}
+          {error && <span className="text-rose-600 dark:text-rose-400">{error}</span>}
         </div>
       </div>
     </div>
@@ -272,8 +272,8 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 flex items-center justify-center">
-        <p className="text-slate-500">Cargando...</p>
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex items-center justify-center">
+        <p className="text-slate-500 dark:text-slate-400">Cargando...</p>
       </div>
     )
   }
@@ -281,12 +281,12 @@ export default function AdminPage() {
   if (!authorized) return null
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <DashboardNav displayName={displayName} isAdmin />
       <div className="mx-auto max-w-6xl px-4 py-8 space-y-8">
         <div>
-          <h1 className="text-3xl font-semibold text-slate-900">Panel de Administración</h1>
-          <p className="mt-2 text-sm text-slate-600">
+          <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">Panel de Administración</h1>
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
             Cargá el resultado de cada partido y guardalo para calcular los puntos automáticamente. Si no
             cargás resultado, el partido queda "Por jugar".
           </p>
@@ -294,8 +294,8 @@ export default function AdminPage() {
 
         <div className="grid gap-6">
           {groupStages.map(([groupLetter, matchList]) => (
-            <div key={groupLetter} className="rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900">Grupo {groupLetter}</h2>
+            <div key={groupLetter} className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Grupo {groupLetter}</h2>
               <div className="mt-4 grid gap-4">
                 {matchList.map((match) => (
                   <AdminMatchRow key={match.id} match={match} onSaved={handleSaved} />
@@ -305,8 +305,8 @@ export default function AdminPage() {
           ))}
 
           {knockoutStages.map(([stage, matchList]) => (
-            <div key={stage} className="rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900">{stage}</h2>
+            <div key={stage} className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{stage}</h2>
               <div className="mt-4 grid gap-4">
                 {matchList.map((match) => (
                   <AdminMatchRow key={match.id} match={match} onSaved={handleSaved} />

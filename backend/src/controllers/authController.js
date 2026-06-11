@@ -113,6 +113,7 @@ export const login = async (req, res) => {
         email: user.email,
         nombre: user.nombre,
         apellido: user.apellido,
+        theme: user.theme,
         is_admin: isAdminEmail(user.email),
       },
     });
@@ -166,7 +167,7 @@ export const googleAuth = async (req, res) => {
     if (!user) {
       const randomPassword = await bcrypt.hash(crypto.randomUUID(), 10);
       const inserted = await query(
-        'INSERT INTO login_users (nombre, apellido, email, password, google_id) VALUES ($1, $2, $3, $4, $5) RETURNING id, email, nombre, apellido',
+        'INSERT INTO login_users (nombre, apellido, email, password, google_id) VALUES ($1, $2, $3, $4, $5) RETURNING id, email, nombre, apellido, theme',
         [nombre, apellido, email, randomPassword, googleId]
       );
       user = inserted.rows[0];
@@ -188,6 +189,7 @@ export const googleAuth = async (req, res) => {
         email: user.email,
         nombre: user.nombre,
         apellido: user.apellido,
+        theme: user.theme,
         is_admin: isAdminEmail(user.email),
       },
     });

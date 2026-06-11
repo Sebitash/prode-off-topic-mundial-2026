@@ -3,11 +3,13 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useTheme } from '@/lib/theme-context'
 
 export default function DashboardNav({ displayName, isAdmin = false }: { displayName: string; isAdmin?: boolean }) {
   const router = useRouter()
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
+  const { theme, toggleTheme } = useTheme()
 
   useEffect(() => {
     setMenuOpen(false)
@@ -15,11 +17,11 @@ export default function DashboardNav({ displayName, isAdmin = false }: { display
 
   const linkClassName = (href: string) =>
     pathname === href
-      ? 'text-sky-800'
-      : 'text-slate-700 hover:text-sky-700'
+      ? 'text-sky-800 dark:text-sky-400'
+      : 'text-slate-700 hover:text-sky-700 dark:text-slate-300 dark:hover:text-sky-400'
 
   const mobileLinkClassName = (href: string) =>
-    `rounded-lg px-3 py-2 ${pathname === href ? 'bg-sky-50 text-sky-800' : 'text-slate-700 hover:bg-sky-50 hover:text-sky-700'}`
+    `rounded-lg px-3 py-2 ${pathname === href ? 'bg-sky-50 text-sky-800 dark:bg-slate-800 dark:text-sky-400' : 'text-slate-700 hover:bg-sky-50 hover:text-sky-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-sky-400'}`
 
   const handleLogout = () => {
     localStorage.removeItem('token')
@@ -37,7 +39,7 @@ export default function DashboardNav({ displayName, isAdmin = false }: { display
   }
 
   return (
-    <nav className="border-b border-sky-200/60 bg-white/80 shadow-sm backdrop-blur">
+    <nav className="border-b border-sky-200/60 bg-white/80 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900/80">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <div className="flex items-center space-x-8">
           <button
@@ -89,9 +91,18 @@ export default function DashboardNav({ displayName, isAdmin = false }: { display
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="hidden text-xs text-slate-500 md:inline">
+          <span className="hidden text-xs text-slate-500 dark:text-slate-400 md:inline">
             {displayName}
           </span>
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
+            title={theme === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
+            className="flex h-8 w-8 items-center justify-center rounded-full text-base transition hover:bg-sky-50 dark:hover:bg-slate-800"
+          >
+            {theme === 'dark' ? '🌙' : '☀️'}
+          </button>
           <button
             onClick={handleLogout}
             className="rounded-full bg-sky-600 px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-sky-700"
@@ -102,7 +113,7 @@ export default function DashboardNav({ displayName, isAdmin = false }: { display
       </div>
 
       {menuOpen && (
-        <div className="border-t border-sky-200/60 bg-white px-4 py-3 md:hidden">
+        <div className="border-t border-sky-200/60 bg-white px-4 py-3 dark:border-slate-800 dark:bg-slate-900 md:hidden">
           <div className="flex flex-col gap-1 text-sm font-semibold">
             <Link href="/dashboard" className={mobileLinkClassName('/dashboard')}>
               Inicio
@@ -125,9 +136,17 @@ export default function DashboardNav({ displayName, isAdmin = false }: { display
               </Link>
             )}
           </div>
-          <p className="mt-3 border-t border-sky-100 pt-3 text-xs text-slate-500">
-            {displayName}
-          </p>
+          <div className="mt-3 flex items-center justify-between border-t border-sky-100 pt-3 text-xs text-slate-500 dark:border-slate-700 dark:text-slate-400">
+            <p>{displayName}</p>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
+              className="flex h-8 w-8 items-center justify-center rounded-full text-base transition hover:bg-sky-50 dark:hover:bg-slate-800"
+            >
+              {theme === 'dark' ? '🌙' : '☀️'}
+            </button>
+          </div>
         </div>
       )}
     </nav>

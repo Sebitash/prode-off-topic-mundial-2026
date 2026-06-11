@@ -10,13 +10,13 @@ export default function PublicNav({ linkClassName }: { linkClassName?: string })
     const base = linkClassName ? `${linkClassName} ` : ''
     return pathname === href
       ? `${base}text-sky-800`
-      : `${base}text-slate-700 hover:text-sky-700`
+      : `${base}text-slate-700 dark:text-slate-300 hover:text-sky-700 dark:text-sky-400`
   }
 
   return (
     <nav className="relative z-10 border-b border-sky-200/60 bg-white/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <button type="button" className="flex items-center gap-2 text-lg font-semibold text-sky-700">
+        <button type="button" className="flex items-center gap-2 text-lg font-semibold text-sky-700 dark:text-sky-400">
           <span className="text-xl">⚽</span>
           Prode 2026
         </button>
@@ -29,7 +29,7 @@ export default function PublicNav({ linkClassName }: { linkClassName?: string })
         <div className="flex items-center gap-2">
           <Link
             href="/auth/login"
-            className="rounded-full border border-sky-300 px-4 py-1.5 text-xs font-semibold text-sky-700 transition hover:bg-sky-50"
+            className="rounded-full border border-sky-300 dark:border-slate-600 px-4 py-1.5 text-xs font-semibold text-sky-700 dark:text-sky-400 transition hover:bg-sky-50 dark:bg-sky-950/40"
           >
             Ingresar
           </Link>

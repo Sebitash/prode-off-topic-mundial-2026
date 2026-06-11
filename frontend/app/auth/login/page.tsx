@@ -69,29 +69,29 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-100 via-sky-50 to-sky-200 px-4 py-10">
-      <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
+    <div className="min-h-screen bg-gradient-to-b from-sky-100 via-sky-50 to-sky-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 px-4 py-10">
+      <div className="mx-auto w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-8 shadow-xl">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 overflow-hidden rounded-full">
             <Image src={logo} alt="Prode Mundial" width={48} height={48} className="h-12 w-12 object-cover" priority />
           </div>
-          <h1 className="mt-4 text-2xl font-semibold text-slate-900">
+          <h1 className="mt-4 text-2xl font-semibold text-slate-900 dark:text-slate-100">
             Prode Mundial 2026
           </h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Ingresa a tu cuenta para participar
           </p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
           {error && (
-            <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600">
+            <div className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 px-4 py-3 text-sm text-rose-600 dark:text-rose-400">
               {error}
             </div>
           )}
 
           <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">
+            <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Email
             </label>
             <input
@@ -100,17 +100,17 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-900 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
               placeholder="tu@email.com"
             />
           </div>
 
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Contrasena
               </label>
-              <Link href="/auth/forgot-password" className="text-xs font-semibold text-sky-600 hover:text-sky-700">
+              <Link href="/auth/forgot-password" className="text-xs font-semibold text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:text-sky-400">
                 ¿Olvidaste tu contraseña?
               </Link>
             </div>
@@ -121,13 +121,13 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full rounded-lg border border-slate-200 px-4 py-2 pr-10 text-sm font-semibold text-slate-900 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 pr-10 text-sm font-semibold text-slate-900 dark:text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
                 placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((value) => !value)}
-                className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-500 hover:text-slate-700"
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300"
                 aria-label={showPassword ? 'Ocultar contrasena' : 'Mostrar contrasena'}
               >
                 <svg
@@ -167,10 +167,10 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="my-5 flex items-center gap-3 text-xs font-semibold text-slate-400">
-          <div className="h-px flex-1 bg-slate-200" />
+        <div className="my-5 flex items-center gap-3 text-xs font-semibold text-slate-400 dark:text-slate-500">
+          <div className="h-px flex-1 bg-slate-200 dark:bg-slate-600" />
           O CONTINUA CON
-          <div className="h-px flex-1 bg-slate-200" />
+          <div className="h-px flex-1 bg-slate-200 dark:bg-slate-600" />
         </div>
 
         <button
@@ -185,9 +185,9 @@ export default function LoginPage() {
           {loadingGoogle ? 'Conectando...' : 'Continuar con Google'}
         </button>
 
-        <p className="mt-5 text-center text-sm text-slate-500">
+        <p className="mt-5 text-center text-sm text-slate-500 dark:text-slate-400">
           No tienes cuenta?{' '}
-          <Link href="/auth/signup" className="font-semibold text-sky-600 hover:text-sky-700">
+          <Link href="/auth/signup" className="font-semibold text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:text-sky-400">
             Registrate aqui
           </Link>
         </p>

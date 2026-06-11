@@ -62,27 +62,27 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-100 via-sky-50 to-sky-200 px-4 py-10">
-      <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
+    <div className="min-h-screen bg-gradient-to-b from-sky-100 via-sky-50 to-sky-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 px-4 py-10">
+      <div className="mx-auto w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-8 shadow-xl">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 overflow-hidden rounded-full">
             <Image src={logo} alt="Prode Mundial" width={48} height={48} className="h-12 w-12 object-cover" priority />
           </div>
-          <h1 className="mt-4 text-2xl font-semibold text-slate-900">Crear cuenta</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="mt-4 text-2xl font-semibold text-slate-900 dark:text-slate-100">Crear cuenta</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Registrate para participar en el Prode Mundial 2026
           </p>
         </div>
 
         <form onSubmit={handleSignUp} className="space-y-6">
           {error && (
-            <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600">
+            <div className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 px-4 py-3 text-sm text-rose-600 dark:text-rose-400">
               {error}
             </div>
           )}
 
           <div>
-            <label htmlFor="firstName" className="mb-2 block text-sm font-medium text-slate-700">
+            <label htmlFor="firstName" className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Nombre *
             </label>
             <input
@@ -91,13 +91,13 @@ export default function SignUpPage() {
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
-              className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-900 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
               placeholder="Juan"
             />
           </div>
 
           <div>
-            <label htmlFor="lastName" className="mb-2 block text-sm font-medium text-slate-700">
+            <label htmlFor="lastName" className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Apellido *
             </label>
             <input
@@ -106,13 +106,13 @@ export default function SignUpPage() {
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               required
-              className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-900 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
               placeholder="Perez"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">
+            <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Email
             </label>
             <input
@@ -121,13 +121,13 @@ export default function SignUpPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-900 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
               placeholder="tu@email.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="mb-2 block text-sm font-medium text-slate-700">
+            <label htmlFor="password" className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Contrasena
             </label>
             <div className="relative">
@@ -138,13 +138,13 @@ export default function SignUpPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full rounded-lg border border-slate-200 px-4 py-2 pr-10 text-sm font-semibold text-slate-900 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 pr-10 text-sm font-semibold text-slate-900 dark:text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
                 placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((value) => !value)}
-                className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-500 hover:text-slate-700"
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300"
                 aria-label={showPassword ? 'Ocultar contrasena' : 'Mostrar contrasena'}
               >
                 <svg
@@ -176,7 +176,7 @@ export default function SignUpPage() {
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium text-slate-700">
+            <label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Confirmar contrasena
             </label>
             <div className="relative">
@@ -187,13 +187,13 @@ export default function SignUpPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full rounded-lg border border-slate-200 px-4 py-2 pr-10 text-sm font-semibold text-slate-900 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 pr-10 text-sm font-semibold text-slate-900 dark:text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
                 placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword((value) => !value)}
-                className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-500 hover:text-slate-700"
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300"
                 aria-label={showConfirmPassword ? 'Ocultar contrasena' : 'Mostrar contrasena'}
               >
                 <svg
@@ -232,9 +232,9 @@ export default function SignUpPage() {
             {loading ? 'Creando cuenta...' : 'Crear cuenta'}
           </button>
         </form>
-        <p className="mt-5 text-center text-sm text-slate-500">
+        <p className="mt-5 text-center text-sm text-slate-500 dark:text-slate-400">
           Ya tienes cuenta?{' '}
-          <Link href="/auth/login" className="font-semibold text-sky-600 hover:text-sky-700">
+          <Link href="/auth/login" className="font-semibold text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:text-sky-400">
             Inicia sesion
           </Link>
         </p>

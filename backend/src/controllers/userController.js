@@ -8,7 +8,7 @@ export const getMe = async (req, res) => {
 
     const userResult = await query(
       `SELECT
-         u.id, u.nombre, u.apellido, u.email, u.created_at,
+         u.id, u.nombre, u.apellido, u.email, u.theme, u.created_at,
          COUNT(p.id) as total_predictions,
          COALESCE(SUM(p.points), 0) as total_points
        FROM login_users u
@@ -34,6 +34,25 @@ export const getMe = async (req, res) => {
     });
   } catch (error) {
     console.error('getMe Error:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+// PATCH /api/user/theme — actualiza la preferencia de tema (light/dark) del usuario
+export const updateTheme = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { theme } = req.body;
+
+    if (theme !== 'light' && theme !== 'dark') {
+      return res.status(400).json({ error: 'El tema debe ser "light" o "dark"' });
+    }
+
+    await query('UPDATE login_users SET theme = $1 WHERE id = $2', [theme, userId]);
+
+    res.json({ theme });
+  } catch (error) {
+    console.error('updateTheme Error:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };

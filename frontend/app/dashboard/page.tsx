@@ -63,8 +63,8 @@ export default function DashboardPage() {
 
   if (loading && !user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 flex items-center justify-center">
-        <p className="text-slate-500">Cargando...</p>
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex items-center justify-center">
+        <p className="text-slate-500 dark:text-slate-400">Cargando...</p>
       </div>
     )
   }
@@ -74,37 +74,37 @@ export default function DashboardPage() {
   const displayName = `${user.nombre} ${user.apellido}`
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <DashboardNav displayName={displayName} isAdmin={user.is_admin} />
       <div className="mx-auto max-w-6xl px-4 py-8 space-y-8">
-        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 text-sm text-amber-800 dark:text-amber-400">
           <p>Ante cualquier problema o bug, por favor comunicarse con Sebastian a sebastian.makkos2@gmail.com</p>
           <p className="mt-1">¡Muy pronto se sumará un premio para el top 3 (o el equivalente en plata)!</p>
         </div>
 
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">
             ¡Bienvenido, {user.nombre}!
           </h1>
-          <p className="text-gray-600">Tu panel del Prode Mundial 2026</p>
+          <p className="text-gray-600 dark:text-slate-400">Tu panel del Prode Mundial 2026</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Tus Predicciones</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-2">Tus Predicciones</h3>
             <p className="text-3xl font-bold text-blue-600">{user.total_predictions}</p>
-            <p className="text-sm text-gray-500 mt-1">Total realizadas</p>
+            <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Total realizadas</p>
           </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Total de Puntos</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-2">Total de Puntos</h3>
             <p className="text-3xl font-bold text-green-600">{user.total_points}</p>
-            <p className="text-sm text-gray-500 mt-1">Puntos acumulados</p>
+            <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Puntos acumulados</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Acciones Rápidas</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-4">Acciones Rápidas</h2>
             <div className="space-y-3">
               <Link href="/matches" className="block w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors text-center">
                 Ver todos los partidos
@@ -118,15 +118,15 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Próximos Partidos</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-4">Próximos Partidos</h2>
             {matches.length > 0 ? (
               <div className="space-y-3">
                 {matches.map((match) => (
-                  <div key={match.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={match.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-800/60 rounded-lg">
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">{match.home_team} vs {match.away_team}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="font-medium text-gray-900 dark:text-slate-100">{match.home_team} vs {match.away_team}</p>
+                      <p className="text-xs text-gray-500 dark:text-slate-400">
                         {new Date(match.match_date).toLocaleDateString('es-AR')}{' '}
                         {new Date(match.match_date).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
                       </p>
@@ -135,12 +135,12 @@ export default function DashboardPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500">No hay partidos próximos.</p>
+              <p className="text-gray-500 dark:text-slate-400">No hay partidos próximos.</p>
             )}
           </div>
         </div>
 
-        <p className="text-center text-xs text-gray-400">Creado por Juan Sebastian Makkos · Sin fines de lucro</p>
+        <p className="text-center text-xs text-gray-400 dark:text-slate-500">Creado por Juan Sebastian Makkos · Sin fines de lucro</p>
       </div>
     </div>
   )

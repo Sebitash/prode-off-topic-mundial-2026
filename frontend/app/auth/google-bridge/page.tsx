@@ -51,10 +51,10 @@ export default function GoogleBridgePage() {
   }, [router])
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-sky-100 via-sky-50 to-sky-200 px-4">
-      <div className="text-center text-sm text-slate-600">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-sky-100 via-sky-50 to-sky-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 px-4">
+      <div className="text-center text-sm text-slate-600 dark:text-slate-400">
         {error ? (
-          <p className="text-rose-600">{error}</p>
+          <p className="text-rose-600 dark:text-rose-400">{error}</p>
         ) : (
           <p>Conectando con Google...</p>
         )}

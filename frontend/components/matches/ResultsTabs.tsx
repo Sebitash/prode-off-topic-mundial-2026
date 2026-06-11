@@ -252,20 +252,20 @@ interface ThirdTeamRow {
 
 function ThirdsTable({ thirdTeams }: { thirdTeams: ThirdTeamRow[] }) {
   return (
-    <div className="min-w-0 rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
+    <div className="min-w-0 rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
       <div className="flex items-center gap-3">
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 text-sky-700">★</span>
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-400">★</span>
         <div>
-          <h3 className="text-lg font-semibold text-slate-900">Tabla de Mejores Terceros</h3>
-          <p className="text-xs text-slate-500">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Tabla de Mejores Terceros</h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             Los 8 mejores terceros clasifican a la siguiente ronda (Dieciseisavos de final)
           </p>
         </div>
       </div>
 
-      <div className="mt-4 overflow-x-auto rounded-lg border border-sky-100">
+      <div className="mt-4 overflow-x-auto rounded-lg border border-sky-100 dark:border-slate-700">
         <table className="w-full min-w-[640px] text-left text-xs">
-          <thead className="bg-sky-50 text-[11px] uppercase tracking-wider text-slate-500">
+          <thead className="bg-sky-50 dark:bg-sky-950/40 text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400">
             <tr>
               <th className="px-3 py-2">#</th>
               <th className="px-3 py-2">Equipo</th>
@@ -281,22 +281,22 @@ function ThirdsTable({ thirdTeams }: { thirdTeams: ThirdTeamRow[] }) {
               <th className="px-3 py-2 text-center">Estado</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-sky-100">
+          <tbody className="divide-y divide-sky-100 dark:divide-slate-700">
             {thirdTeams.map((team, index) => {
               const isQualified = team.status === 'Clasificado'
               const isPending = team.status === 'Por definir'
               return (
                 <tr
                   key={`${team.code}-${team.group}`}
-                  className={isPending ? 'bg-white' : isQualified ? 'bg-emerald-50' : 'bg-rose-50'}
+                  className={isPending ? 'bg-white dark:bg-slate-800' : isQualified ? 'bg-emerald-50 dark:bg-emerald-950/30' : 'bg-rose-50 dark:bg-rose-950/30'}
                 >
-                  <td className="px-3 py-2 font-semibold text-slate-900">{index + 1}</td>
+                  <td className="px-3 py-2 font-semibold text-slate-900 dark:text-slate-100">{index + 1}</td>
                   <td className="px-3 py-2">
-                    <div className="font-semibold text-slate-800 flex items-center gap-2">
+                    <div className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
                       <span className={`fi fi-${FLAG_CODES[team.code] || 'xx'} w-10 h-10`}></span>
                       <div>
                         <div>{team.name}</div>
-                        <div className="text-[10px] text-slate-400">{team.code}</div>
+                        <div className="text-[10px] text-slate-400 dark:text-slate-500">{team.code}</div>
                       </div>
                     </div>
                   </td>
@@ -312,15 +312,15 @@ function ThirdsTable({ thirdTeams }: { thirdTeams: ThirdTeamRow[] }) {
                   <td className="px-3 py-2 text-center">{team.gf}</td>
                   <td className="px-3 py-2 text-center">{team.ga}</td>
                   <td className="px-3 py-2 text-center">{team.goalDiff}</td>
-                  <td className="px-3 py-2 text-center font-semibold text-slate-800">{team.points}</td>
+                  <td className="px-3 py-2 text-center font-semibold text-slate-800 dark:text-slate-200">{team.points}</td>
                   <td className="px-3 py-2 text-center">
                     <span
                       className={`rounded-full px-2 py-1 text-[10px] font-semibold ${
                         isPending
-                          ? 'bg-slate-100 text-slate-500'
+                          ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
                           : isQualified
-                          ? 'bg-emerald-100 text-emerald-700'
-                          : 'bg-rose-100 text-rose-700'
+                          ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400'
+                          : 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400'
                       }`}
                     >
                       {isPending ? 'Por definir' : isQualified ? '✓ Clasificado' : '✕ Eliminado'}
@@ -333,8 +333,8 @@ function ThirdsTable({ thirdTeams }: { thirdTeams: ThirdTeamRow[] }) {
         </table>
       </div>
 
-      <div className="mt-4 rounded-lg bg-sky-50 px-4 py-3 text-xs text-slate-600">
-        <p className="font-semibold text-slate-700">Criterios de Clasificacion (en orden):</p>
+      <div className="mt-4 rounded-lg bg-sky-50 dark:bg-sky-950/40 px-4 py-3 text-xs text-slate-600 dark:text-slate-400">
+        <p className="font-semibold text-slate-700 dark:text-slate-300">Criterios de Clasificacion (en orden):</p>
         <ol className="mt-2 grid gap-1">
           <li>1. Mayor cantidad de puntos obtenidos</li>
           <li>2. Mejor diferencia de goles</li>
@@ -370,15 +370,15 @@ function GroupTable({
   started: boolean
 }) {
   return (
-    <div className="rounded-xl border border-sky-200 bg-white p-4 shadow-sm">
-      <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sky-100 text-xs text-sky-700">
+    <div className="rounded-xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-sm">
+      <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
+        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sky-100 dark:bg-sky-900/40 text-xs text-sky-700 dark:text-sky-400">
           {group.split(' ')[1]}
         </span>
         {group}
       </div>
-      <div className="mt-3 rounded-lg border border-sky-100">
-        <div className="grid grid-cols-[2fr_repeat(7,1fr)_1.3fr] gap-2 border-b border-sky-100 bg-sky-50 px-3 py-2 text-[11px] font-semibold uppercase text-slate-500">
+      <div className="mt-3 rounded-lg border border-sky-100 dark:border-slate-700">
+        <div className="grid grid-cols-[2fr_repeat(7,1fr)_1.3fr] gap-2 border-b border-sky-100 dark:border-slate-700 bg-sky-50 dark:bg-sky-950/40 px-3 py-2 text-[11px] font-semibold uppercase text-slate-500 dark:text-slate-400">
           <span>Equipo</span>
           <span className="text-center">PJ</span>
           <span className="text-center">G</span>
@@ -392,23 +392,23 @@ function GroupTable({
         {teams.map((team, index) => (
           <div
             key={team.id}
-            className={`grid grid-cols-[2fr_repeat(7,1fr)_1.3fr] gap-2 px-3 py-2 text-xs text-slate-900 ${
+            className={`grid grid-cols-[2fr_repeat(7,1fr)_1.3fr] gap-2 px-3 py-2 text-xs text-slate-900 dark:text-slate-100 ${
               !started
-                ? 'bg-white'
+                ? 'bg-white dark:bg-slate-800'
                 : index === 0
-                ? 'bg-emerald-50'
+                ? 'bg-emerald-50 dark:bg-emerald-950/30'
                 : index === 1
-                ? 'bg-sky-50'
+                ? 'bg-sky-50 dark:bg-sky-950/40'
                 : index === 2
-                ? 'bg-amber-50'
-                : 'bg-white'
+                ? 'bg-amber-50 dark:bg-amber-950/30'
+                : 'bg-white dark:bg-slate-800'
             }`}
           >
-            <span className="font-semibold text-slate-800 flex items-center gap-2">
+            <span className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
               <span className={`fi fi-${FLAG_CODES[team.code] || 'xx'} w-10 h-10`}></span>
               <div>
                 <div>{team.name}</div>
-                <div className="text-[10px] text-slate-400">{team.code}</div>
+                <div className="text-[10px] text-slate-400 dark:text-slate-500">{team.code}</div>
               </div>
             </span>
             <span className="text-center">{team.played}</span>
@@ -417,22 +417,22 @@ function GroupTable({
             <span className="text-center">{team.lost}</span>
             <span className="text-center">{team.gf}</span>
             <span className="text-center">{team.ga}</span>
-            <span className="text-center font-semibold text-slate-900">{team.points}</span>
+            <span className="text-center font-semibold text-slate-900 dark:text-slate-100">{team.points}</span>
             <span className="text-center">
               {!started ? (
-                <span className="rounded-full bg-slate-100 px-2 py-1 text-[10px] font-semibold text-slate-500">
+                <span className="rounded-full bg-slate-100 dark:bg-slate-700 px-2 py-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400">
                   Por definir
                 </span>
               ) : index < 2 ? (
-                <span className="rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-semibold text-emerald-700">
+                <span className="rounded-full bg-emerald-100 dark:bg-emerald-900/30 px-2 py-1 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">
                   Directo
                 </span>
               ) : index === 2 && qualifiedThirdIds.has(team.id) ? (
-                <span className="rounded-full bg-sky-100 px-2 py-1 text-[10px] font-semibold text-sky-700">
+                <span className="rounded-full bg-sky-100 dark:bg-sky-900/40 px-2 py-1 text-[10px] font-semibold text-sky-700 dark:text-sky-400">
                   Mejor tercero
                 </span>
               ) : (
-                <span className="rounded-full bg-slate-100 px-2 py-1 text-[10px] font-semibold text-slate-600">
+                <span className="rounded-full bg-slate-100 dark:bg-slate-700 px-2 py-1 text-[10px] font-semibold text-slate-600 dark:text-slate-400">
                   Eliminado
                 </span>
               )}
@@ -440,7 +440,7 @@ function GroupTable({
           </div>
         ))}
       </div>
-      <div className="mt-2 flex flex-wrap gap-3 text-[11px] text-slate-500">
+      <div className="mt-2 flex flex-wrap gap-3 text-[11px] text-slate-500 dark:text-slate-400">
         <span className="flex items-center gap-1">
           <span className="h-2 w-2 rounded-full bg-emerald-400" />
           Clasificado directo
@@ -450,7 +450,7 @@ function GroupTable({
           Mejor tercero
         </span>
         <span className="flex items-center gap-1">
-          <span className="h-2 w-2 rounded-full bg-slate-300" />
+          <span className="h-2 w-2 rounded-full bg-slate-300 dark:bg-slate-600" />
           Eliminado
         </span>
       </div>
@@ -491,11 +491,11 @@ function statusLabel(status: Match['status'], locked: boolean, allowPredict: boo
 }
 
 function statusStyles(status: Match['status'], locked: boolean, allowPredict: boolean, tbd: boolean) {
-  if (tbd) return 'bg-slate-100 text-slate-500'
-  if (status === 'finished') return 'bg-slate-100 text-slate-700'
-  if (status === 'live') return 'bg-rose-100 text-rose-700'
-  if (allowPredict && locked) return 'bg-amber-100 text-amber-700'
-  return 'bg-sky-100 text-sky-700'
+  if (tbd) return 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+  if (status === 'finished') return 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+  if (status === 'live') return 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400'
+  if (allowPredict && locked) return 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+  return 'bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-400'
 }
 
 const MAX_SCORE = 20
@@ -516,11 +516,11 @@ function ScoreStepper({
         onClick={() => onChange(Math.min(MAX_SCORE, value + 1))}
         disabled={value >= MAX_SCORE}
         aria-label={`Sumar gol a ${label}`}
-        className="flex h-7 w-10 items-center justify-center rounded-lg border border-slate-200 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 disabled:opacity-30"
+        className="flex h-7 w-10 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-600 dark:text-slate-400 transition hover:bg-slate-100 dark:bg-slate-700 disabled:opacity-30"
       >
         +
       </button>
-      <span className="flex h-9 w-10 items-center justify-center rounded-lg border border-slate-200 text-sm font-semibold text-slate-900">
+      <span className="flex h-9 w-10 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-900 dark:text-slate-100">
         {value}
       </span>
       <button
@@ -528,7 +528,7 @@ function ScoreStepper({
         onClick={() => onChange(Math.max(0, value - 1))}
         disabled={value <= 0}
         aria-label={`Restar gol a ${label}`}
-        className="flex h-7 w-10 items-center justify-center rounded-lg border border-slate-200 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 disabled:opacity-30"
+        className="flex h-7 w-10 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-600 dark:text-slate-400 transition hover:bg-slate-100 dark:bg-slate-700 disabled:opacity-30"
       >
         −
       </button>
@@ -647,38 +647,38 @@ function ResultRow({
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+      className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-sm"
     >
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-1 items-center gap-3">
           <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[match.home_team] || 'xx'] || 'xx'} w-10 h-10 rounded`}></span>
           <div>
-            <p className="text-sm font-semibold text-slate-900">{match.home_team}</p>
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{match.home_team}</p>
             {isFinished && match.home_score !== null && (
-              <p className="text-lg font-semibold text-sky-700">{match.home_score}</p>
+              <p className="text-lg font-semibold text-sky-700 dark:text-sky-400">{match.home_score}</p>
             )}
           </div>
         </div>
 
         <div className="flex flex-col items-center justify-center gap-2">
           {tbd ? (
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">
+            <span className="rounded-full bg-slate-100 dark:bg-slate-700 px-3 py-1 text-xs font-semibold text-slate-500 dark:text-slate-400">
               Por definir
             </span>
           ) : canPredict ? (
             isSaved ? (
               <div className="flex flex-col items-center gap-1">
-                <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                  <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
+                <div className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                  <span className="h-9 w-10 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-center leading-9">
                     {homeScore}
                   </span>
-                  <span className="text-xs font-semibold text-slate-400">vs</span>
-                  <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
+                  <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">vs</span>
+                  <span className="h-9 w-10 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-center leading-9">
                     {awayScore}
                   </span>
                 </div>
                 {prediction?.predicted_penalty_winner && (
-                  <span className="text-[10px] text-slate-500">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400">
                     Penales: {prediction.predicted_penalty_winner === 'home' ? match.home_team : match.away_team}
                   </span>
                 )}
@@ -687,18 +687,18 @@ function ResultRow({
               <>
                 <div className="flex items-center gap-3">
                   <ScoreStepper value={homeScore} onChange={setHomeScore} label={match.home_team} />
-                  <span className="text-xs font-semibold text-slate-400">vs</span>
+                  <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">vs</span>
                   <ScoreStepper value={awayScore} onChange={setAwayScore} label={match.away_team} />
                 </div>
                 {showPenaltyPicker && (
                   <div className="flex flex-col items-center gap-1">
-                    <span className="text-[10px] font-semibold text-slate-500">¿Quién gana en penales?</span>
+                    <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">¿Quién gana en penales?</span>
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
                         onClick={() => setPenaltyWinner('home')}
                         className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
-                          penaltyWinner === 'home' ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                          penaltyWinner === 'home' ? 'bg-sky-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:bg-slate-600'
                         }`}
                       >
                         {match.home_team}
@@ -707,7 +707,7 @@ function ResultRow({
                         type="button"
                         onClick={() => setPenaltyWinner('away')}
                         className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
-                          penaltyWinner === 'away' ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                          penaltyWinner === 'away' ? 'bg-sky-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:bg-slate-600'
                         }`}
                       >
                         {match.away_team}
@@ -719,17 +719,17 @@ function ResultRow({
             )
           ) : (
             <div className="flex flex-col items-center gap-1">
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-900">
-                <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
+              <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-slate-100">
+                <span className="h-9 w-10 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-center leading-9">
                   {prediction ? prediction.predicted_home_score : match.home_score ?? '-'}
                 </span>
-                <span className="text-slate-400">vs</span>
-                <span className="h-9 w-10 rounded-lg border border-slate-200 bg-slate-50 text-center leading-9">
+                <span className="text-slate-400 dark:text-slate-500">vs</span>
+                <span className="h-9 w-10 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-center leading-9">
                   {prediction ? prediction.predicted_away_score : match.away_score ?? '-'}
                 </span>
               </div>
               {prediction && (
-                <span className="text-[10px] text-slate-700">
+                <span className="text-[10px] text-slate-700 dark:text-slate-300">
                   Tu pronóstico
                   {prediction.predicted_penalty_winner
                     ? ` (penales: ${prediction.predicted_penalty_winner === 'home' ? match.home_team : match.away_team})`
@@ -743,20 +743,20 @@ function ResultRow({
 
         <div className="flex flex-1 items-center justify-end gap-3">
           <div className="text-right">
-            <p className="text-sm font-semibold text-slate-900">{match.away_team}</p>
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{match.away_team}</p>
             {isFinished && match.away_score !== null && (
-              <p className="text-lg font-semibold text-sky-700">{match.away_score}</p>
+              <p className="text-lg font-semibold text-sky-700 dark:text-sky-400">{match.away_score}</p>
             )}
           </div>
           <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[match.away_team] || 'xx'] || 'xx'} w-10 h-10 rounded`}></span>
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-3 text-xs text-slate-500 md:flex-row md:items-center md:justify-between">
+      <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 dark:border-slate-700 pt-3 text-xs text-slate-500 dark:text-slate-400 md:flex-row md:items-center md:justify-between">
         <span>
           {formatDate(match.match_date)}
           {isFinished && match.home_penalties != null && match.away_penalties != null && (
-            <span className="ml-2 font-semibold text-slate-600">
+            <span className="ml-2 font-semibold text-slate-600 dark:text-slate-400">
               · Penales {match.home_penalties}-{match.away_penalties}
             </span>
           )}
@@ -766,19 +766,19 @@ function ResultRow({
             {statusLabel(match.status, locked, allowPredict, tbd)}
           </span>
           {allowPredict && locked && !isFinished && !tbd && (
-            <span className="text-slate-400">Las predicciones cierran 1h antes del partido</span>
+            <span className="text-slate-400 dark:text-slate-500">Las predicciones cierran 1h antes del partido</span>
           )}
           {canPredict && (
             isSaved ? (
               <>
-                <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                <span className="rounded-full bg-emerald-100 dark:bg-emerald-900/30 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
                   Guardado
                 </span>
                 <button
                   type="button"
                   onClick={handleCancel}
                   disabled={loading}
-                  className="rounded-full border border-slate-300 px-4 py-1 text-xs font-semibold text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"
+                  className="rounded-full border border-slate-300 dark:border-slate-600 px-4 py-1 text-xs font-semibold text-slate-600 dark:text-slate-400 transition hover:bg-slate-50 dark:bg-slate-800/60 disabled:opacity-50"
                 >
                   {loading ? 'Cancelando...' : 'Cancelar'}
                 </button>
@@ -793,7 +793,7 @@ function ResultRow({
               </button>
             )
           )}
-          {success && <span className="text-sky-700">Pronostico guardado</span>}
+          {success && <span className="text-sky-700 dark:text-sky-400">Pronostico guardado</span>}
         </div>
       </div>
     </form>
@@ -1035,12 +1035,12 @@ export default function ResultsTabs({
   return (
     <div className="grid min-w-0 gap-6">
       <div>
-        <h1 className="text-3xl font-semibold text-slate-900">{title}</h1>
-        <p className="mt-2 text-sm text-slate-600">{description}</p>
+        <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">{title}</h1>
+        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{description}</p>
       </div>
 
-      <div className="border-b border-slate-200">
-        <div className="flex flex-wrap gap-4 text-sm font-semibold text-slate-500">
+      <div className="border-b border-slate-200 dark:border-slate-700">
+        <div className="flex flex-wrap gap-4 text-sm font-semibold text-slate-500 dark:text-slate-400">
           {(Object.keys(PRIMARY_TAB_LABELS) as Array<'group' | 'knockout'>).map((key) => (
             <button
               key={key}
@@ -1050,7 +1050,7 @@ export default function ResultsTabs({
                 setActiveSecondary('Resultados')
               }}
               className={`border-b-2 pb-3 transition ${
-                activePrimary === key ? 'border-sky-600 text-sky-700' : 'border-transparent'
+                activePrimary === key ? 'border-sky-600 text-sky-700 dark:text-sky-400' : 'border-transparent'
               }`}
             >
               {PRIMARY_TAB_LABELS[key]}
@@ -1058,7 +1058,7 @@ export default function ResultsTabs({
           ))}
         </div>
         {showSecondaryTabs && activePrimary === 'group' && (
-          <div className="mt-3 flex flex-wrap gap-3 text-xs font-semibold text-slate-500">
+          <div className="mt-3 flex flex-wrap gap-3 text-xs font-semibold text-slate-500 dark:text-slate-400">
             {SECONDARY_TABS.map((label, index) => (
               <button
                 key={label}
@@ -1066,8 +1066,8 @@ export default function ResultsTabs({
                 onClick={() => setActiveSecondary(label)}
                 className={`rounded-full px-3 py-1 ${
                   activeSecondary === label
-                    ? 'bg-sky-100 text-sky-700'
-                    : 'bg-slate-100 text-slate-400'
+                    ? 'bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-400'
+                    : 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500'
                 }`}
               >
                 {label}
@@ -1079,7 +1079,7 @@ export default function ResultsTabs({
 
       {showSecondaryTabs && activePrimary === 'group' && activeSecondary === 'Tablas de Posiciones' && (
         <div className="grid gap-4">
-          <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs text-emerald-700">
+          <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-2 text-xs text-emerald-700 dark:text-emerald-400">
             Tablas oficiales segun los resultados reales del mundial. Los primeros 2 de cada grupo clasifican
             directamente, y los mejores 8 terceros tambien avanzan.
           </div>
@@ -1096,8 +1096,8 @@ export default function ResultsTabs({
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-sky-200 bg-white p-8 text-center shadow-sm">
-              <p className="text-slate-600">No hay grupos cargados todavía.</p>
+            <div className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-8 text-center shadow-sm">
+              <p className="text-slate-600 dark:text-slate-400">No hay grupos cargados todavía.</p>
             </div>
           )}
         </div>
@@ -1105,7 +1105,7 @@ export default function ResultsTabs({
 
       {showSecondaryTabs && activePrimary === 'group' && activeSecondary === 'Mejores Terceros' && (
         <div className="grid min-w-0 gap-4">
-          <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs text-emerald-700">
+          <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-2 text-xs text-emerald-700 dark:text-emerald-400">
             Clasificacion oficial de mejores terceros. Los 8 equipos mejor posicionados entre todos los terceros
             clasifican a la siguiente ronda.
           </div>
@@ -1114,22 +1114,22 @@ export default function ResultsTabs({
       )}
 
       {(!showSecondaryTabs || activeSecondary === 'Resultados') && activePrimary === 'group' && allowPredict && !predictionsLoaded && (
-        <div className="rounded-2xl border border-sky-200 bg-white p-8 text-center shadow-sm">
-          <p className="text-slate-500">Cargando tus pronósticos...</p>
+        <div className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-8 text-center shadow-sm">
+          <p className="text-slate-500 dark:text-slate-400">Cargando tus pronósticos...</p>
         </div>
       )}
 
       {(!showSecondaryTabs || activeSecondary === 'Resultados') && activePrimary === 'group' && (!allowPredict || predictionsLoaded) && (
         <div className="grid gap-6">
         {Object.keys(matchesByGroup).length === 0 && (
-          <div className="rounded-2xl border border-sky-200 bg-white p-8 text-center shadow-sm">
-            <p className="text-slate-600">No hay partidos disponibles.</p>
+          <div className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-8 text-center shadow-sm">
+            <p className="text-slate-600 dark:text-slate-400">No hay partidos disponibles.</p>
           </div>
         )}
 
         {Object.entries(matchesByGroup).map(([groupLetter, matchList]) => (
-          <div key={groupLetter} className="rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-slate-900">Grupo {groupLetter}</h2>
+          <div key={groupLetter} className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Grupo {groupLetter}</h2>
             <div className="mt-4 grid gap-4">
               {matchList.map((match) => (
                 <ResultRow
@@ -1149,22 +1149,22 @@ export default function ResultsTabs({
       )}
 
       {(!showSecondaryTabs || activeSecondary === 'Resultados') && activePrimary === 'knockout' && allowPredict && !predictionsLoaded && (
-        <div className="rounded-2xl border border-sky-200 bg-white p-8 text-center shadow-sm">
-          <p className="text-slate-500">Cargando tus pronósticos...</p>
+        <div className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-8 text-center shadow-sm">
+          <p className="text-slate-500 dark:text-slate-400">Cargando tus pronósticos...</p>
         </div>
       )}
 
       {(!showSecondaryTabs || activeSecondary === 'Resultados') && activePrimary === 'knockout' && (!allowPredict || predictionsLoaded) && (
         <div className="grid gap-6">
         {stageEntries.length === 0 && (
-          <div className="rounded-2xl border border-sky-200 bg-white p-8 text-center shadow-sm">
-            <p className="text-slate-600">No hay partidos disponibles.</p>
+          <div className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-8 text-center shadow-sm">
+            <p className="text-slate-600 dark:text-slate-400">No hay partidos disponibles.</p>
           </div>
         )}
 
         {stageEntries.map(([stage, list]) => (
-          <div key={stage} className="rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-slate-900">{stage}</h2>
+          <div key={stage} className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{stage}</h2>
             <div className="mt-4 grid gap-4">
               {list.map((match) => (
                 <ResultRow

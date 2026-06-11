@@ -61,14 +61,14 @@ export default function MatchesPage() {
 
   if (loading && matches.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 flex items-center justify-center">
-        <p className="text-slate-500">Cargando partidos...</p>
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex items-center justify-center">
+        <p className="text-slate-500 dark:text-slate-400">Cargando partidos...</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <DashboardNav displayName={displayName} isAdmin={isAdmin} />
       <div className="mx-auto max-w-6xl px-4 py-8">
         <ResultsTabs
