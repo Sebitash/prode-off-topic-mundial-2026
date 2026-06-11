@@ -78,7 +78,7 @@ export default function DashboardPage() {
       <DashboardNav displayName={displayName} isAdmin={user.is_admin} />
       <div className="mx-auto max-w-6xl px-4 py-8 space-y-8">
         <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          <p>Ante cualquier problema o bug, por favor comunicarse con Sebastian al 1134947413 o sebastian.makkos1@gmail.com</p>
+          <p>Ante cualquier problema o bug, por favor comunicarse con Sebastian a sebastian.makkos2@gmail.com</p>
           <p className="mt-1">¡Muy pronto se sumará un premio para el top 3 (o el equivalente en plata)!</p>
         </div>
 
@@ -140,7 +140,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <p className="text-center text-xs text-gray-400">Creado por Juan Sebastian Makkos</p>
+        <p className="text-center text-xs text-gray-400">Creado por Juan Sebastian Makkos · Sin fines de lucro</p>
       </div>
     </div>
   )

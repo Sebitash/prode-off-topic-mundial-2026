@@ -74,6 +74,28 @@ export default function RankingPage() {
         </div>
 
         <div className="mt-6 rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-slate-900">Premios</h2>
+          <p className="mt-1 text-sm text-slate-600">Premios para el top 3 del ranking final (a confirmar)</p>
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-center">
+              <p className="text-2xl">🥇</p>
+              <p className="mt-1 text-sm font-semibold text-slate-900">1° Puesto</p>
+              <p className="mt-1 text-xs text-slate-500">A definir</p>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-center">
+              <p className="text-2xl">🥈</p>
+              <p className="mt-1 text-sm font-semibold text-slate-900">2° Puesto</p>
+              <p className="mt-1 text-xs text-slate-500">A definir</p>
+            </div>
+            <div className="rounded-xl border border-orange-200 bg-orange-50 p-4 text-center">
+              <p className="text-2xl">🥉</p>
+              <p className="mt-1 text-sm font-semibold text-slate-900">3° Puesto</p>
+              <p className="mt-1 text-xs text-slate-500">A definir</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
           <h2 className="text-lg font-semibold text-slate-900">Tabla de Posiciones</h2>
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-left text-xs">
