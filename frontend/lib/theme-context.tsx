@@ -47,6 +47,36 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const initial = readStoredTheme()
     setTheme(initial)
     applyTheme(initial)
+
+    // La DB es la fuente de verdad: si el usuario cambió el tema en otro
+    // dispositivo, lo sincronizamos acá para no quedarnos con el valor
+    // viejo guardado en este navegador.
+    const token = localStorage.getItem('token')
+    if (token) {
+      fetch(`${API_URL}/api/user/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          const serverTheme = data?.user?.theme
+          if (serverTheme === 'light' || serverTheme === 'dark') {
+            setTheme(serverTheme)
+            applyTheme(serverTheme)
+            localStorage.setItem('theme', serverTheme)
+
+            const storedUser = localStorage.getItem('user')
+            if (storedUser) {
+              try {
+                const u = JSON.parse(storedUser)
+                localStorage.setItem('user', JSON.stringify({ ...u, theme: serverTheme }))
+              } catch {
+                // ignore
+              }
+            }
+          }
+        })
+        .catch(() => {})
+    }
   }, [])
 
   const toggleTheme = () => {
