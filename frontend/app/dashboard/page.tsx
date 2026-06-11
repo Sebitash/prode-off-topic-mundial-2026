@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import DashboardNav from '@/components/ui/DashboardNav'
+import { FLAG_CODES, TEAM_TO_CODE } from '@/components/matches/ResultsTabs'
 import { API_URL } from '@/lib/config'
 import { getCache, setCache } from '@/lib/dataCache'
 
@@ -22,6 +23,66 @@ interface Match {
   home_team: string
   away_team: string
   match_date: string
+}
+
+function useCountdown(targetDate: string) {
+  const [now, setNow] = useState(() => Date.now())
+
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const diff = new Date(targetDate).getTime() - now
+  if (diff <= 0) return null
+
+  return {
+    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((diff / (1000 * 60)) % 60),
+    seconds: Math.floor((diff / 1000) % 60),
+  }
+}
+
+function CountdownUnit({ value, label }: { value: number; label: string }) {
+  return (
+    <div className="flex min-w-[56px] flex-col items-center rounded-lg bg-white/10 px-3 py-2">
+      <span className="text-2xl font-bold tabular-nums">{String(value).padStart(2, '0')}</span>
+      <span className="text-[10px] uppercase tracking-wide text-sky-100">{label}</span>
+    </div>
+  )
+}
+
+function NextMatchCountdown({ match }: { match: Match }) {
+  const countdown = useCountdown(match.match_date)
+
+  if (!countdown) return null
+
+  return (
+    <div className="rounded-lg bg-gradient-to-r from-sky-600 to-sky-700 dark:from-sky-900 dark:to-slate-800 p-6 text-white shadow-md">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-sky-100">⏱ Próximo partido</p>
+      <p className="mb-3 flex items-center gap-2 text-lg font-bold">
+        <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[match.home_team] || 'xx'] || 'xx'} w-6 h-6 rounded`}></span>
+        {match.home_team} vs {match.away_team}
+        <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[match.away_team] || 'xx'] || 'xx'} w-6 h-6 rounded`}></span>
+      </p>
+      <div className="flex gap-3">
+        <CountdownUnit value={countdown.days} label="Días" />
+        <CountdownUnit value={countdown.hours} label="Hs" />
+        <CountdownUnit value={countdown.minutes} label="Min" />
+        <CountdownUnit value={countdown.seconds} label="Seg" />
+      </div>
+      <p className="mt-3 text-xs text-sky-100">
+        {new Date(match.match_date).toLocaleString('es-AR', {
+          timeZone: 'America/Argentina/Buenos_Aires',
+          day: '2-digit',
+          month: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        })} hs (ARG) · Las predicciones cierran 1 hora antes
+      </p>
+    </div>
+  )
 }
 
 export default function DashboardPage() {
@@ -94,6 +155,8 @@ export default function DashboardPage() {
           </h1>
           <p className="text-gray-600 dark:text-slate-400">Tu panel del Prode Mundial 2026</p>
         </div>
+
+        {matches.length > 0 && <NextMatchCountdown match={matches[0]} />}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
