@@ -13,7 +13,7 @@ const groupScoring = [
   {
     label: 'Bonus por resultado exacto',
     points: '+1 punto',
-    detail: 'Punto adicional si además aciertas el marcador exacto del partido (ej: 2-1).',
+    detail: 'Punto adicional si además acertás el marcador exacto del partido (ej: 2-1).',
   },
 ]
 
@@ -26,7 +26,7 @@ const knockoutScoring = [
   {
     label: 'Bonus por resultado exacto',
     points: '+2 puntos',
-    detail: 'Puntos adicionales si además aciertas el marcador exacto del partido (ej: 2-1).',
+    detail: 'Puntos adicionales si además acertás el marcador exacto del partido (ej: 2-1).',
   },
 ]
 
@@ -139,11 +139,11 @@ export default function RulesPage() {
             ¡Bienvenido al Prode Mundial 2026!
           </h2>
           <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
-            Predice los resultados y compite por el primer lugar.
+            Predecí los resultados y competí por el primer lugar.
           </p>
           <p className="mt-4 text-sm text-slate-700 dark:text-slate-300">
-            Participa en el juego de pronósticos más emocionante del Mundial 2026. Predice los resultados de los
-            partidos y qué equipos avanzan en cada fase. ¡Acumula puntos y coronate campeón del Prode!
+            Participa en el juego de pronósticos más emocionante del Mundial 2026. Predecí los resultados de los
+            partidos y qué equipos avanzan en cada fase. ¡Acumulá puntos y coronate campeón del Prode!
           </p>
         </div>
 
