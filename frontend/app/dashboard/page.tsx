@@ -25,26 +25,6 @@ interface Match {
   match_date: string
 }
 
-function useCountdown(targetDate: string) {
-  const [now, setNow] = useState(() => Date.now())
-
-  useEffect(() => {
-    const interval = setInterval(() => setNow(Date.now()), 1000)
-    return () => clearInterval(interval)
-  }, [])
-
-  const diff = new Date(targetDate).getTime() - now
-  if (diff <= 0) return null
-
-  return {
-    totalMs: diff,
-    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-    minutes: Math.floor((diff / (1000 * 60)) % 60),
-    seconds: Math.floor((diff / 1000) % 60),
-  }
-}
-
 function CountdownUnit({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex min-w-[56px] flex-col items-center rounded-lg bg-white/10 px-3 py-2">
@@ -54,22 +34,46 @@ function CountdownUnit({ value, label }: { value: number; label: string }) {
   )
 }
 
-function NextMatchCountdown({ match }: { match: Match }) {
-  const countdown = useCountdown(match.match_date)
+function NextMatchCountdown({ matches }: { matches: Match[] }) {
+  const [now, setNow] = useState(() => Date.now())
 
-  if (!countdown) return null
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const match = matches.find((m) => new Date(m.match_date).getTime() > now)
+  if (!match) return null
+
+  const targetTime = new Date(match.match_date).getTime()
+  const nextMatches = matches.filter((m) => new Date(m.match_date).getTime() === targetTime)
+
+  const diff = targetTime - now
+  const countdown = {
+    totalMs: diff,
+    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((diff / (1000 * 60)) % 60),
+    seconds: Math.floor((diff / 1000) % 60),
+  }
 
   const predictionsClosed = countdown.totalMs <= 60 * 60 * 1000
-  const closingTime = new Date(new Date(match.match_date).getTime() - 60 * 60 * 1000)
+  const closingTime = new Date(targetTime - 60 * 60 * 1000)
 
   return (
     <div className="flex flex-col items-center rounded-lg bg-gradient-to-r from-sky-600 to-sky-700 dark:from-sky-900 dark:to-slate-800 p-6 text-center text-white shadow-md">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-sky-100">⏱ Próximo partido</p>
-      <p className="mb-3 flex items-center gap-2 text-lg font-bold">
-        <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[match.home_team] || 'xx'] || 'xx'} w-6 h-6 rounded`}></span>
-        {match.home_team} vs {match.away_team}
-        <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[match.away_team] || 'xx'] || 'xx'} w-6 h-6 rounded`}></span>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-sky-100">
+        ⏱ {nextMatches.length > 1 ? 'Próximos partidos' : 'Próximo partido'}
       </p>
+      <div className="mb-3 flex flex-col items-center gap-1">
+        {nextMatches.map((m) => (
+          <p key={m.id} className="flex items-center gap-2 text-lg font-bold">
+            <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[m.home_team] || 'xx'] || 'xx'} w-6 h-6 rounded`}></span>
+            {m.home_team} vs {m.away_team}
+            <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[m.away_team] || 'xx'] || 'xx'} w-6 h-6 rounded`}></span>
+          </p>
+        ))}
+      </div>
       <div className="flex gap-3">
         <CountdownUnit value={countdown.days} label="Días" />
         <CountdownUnit value={countdown.hours} label="Hs" />
@@ -77,7 +81,7 @@ function NextMatchCountdown({ match }: { match: Match }) {
         <CountdownUnit value={countdown.seconds} label="Seg" />
       </div>
       <p className="mt-3 text-xs text-sky-100">
-        {new Date(match.match_date).toLocaleString('es-AR', {
+        {new Date(targetTime).toLocaleString('es-AR', {
           timeZone: 'America/Argentina/Buenos_Aires',
           day: '2-digit',
           month: '2-digit',
@@ -94,7 +98,7 @@ function NextMatchCountdown({ match }: { match: Match }) {
       </p>
       {predictionsClosed && (
         <p className="mt-2 rounded-full bg-amber-400/20 px-3 py-1 text-xs font-semibold text-amber-200">
-          🔒 Las predicciones para este partido ya están cerradas
+          🔒 {nextMatches.length > 1 ? 'Las predicciones para estos partidos ya están cerradas' : 'Las predicciones para este partido ya están cerradas'}
         </p>
       )}
     </div>
@@ -184,7 +188,7 @@ export default function DashboardPage() {
           <p className="text-gray-600 dark:text-slate-400">Tu panel del Prode Mundial 2026</p>
         </div>
 
-        {matches.length > 0 && <NextMatchCountdown match={matches[0]} />}
+        {matches.length > 0 && <NextMatchCountdown matches={matches} />}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
