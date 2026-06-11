@@ -79,6 +79,7 @@ export default function PredictionsPage() {
           title="Tus Predicciones"
           description="Completá tus pronósticos para la fase de grupos y la fase eliminatoria. Las predicciones cierran 1 hora antes del inicio de cada partido. Los cruces de eliminatorias 'Por definir' se habilitan cuando se conocen los equipos."
         />
+        <p className="mt-8 text-center text-xs text-gray-400 dark:text-slate-500">Creado por Juan Sebastian Makkos · Sin fines de lucro</p>
       </div>
     </div>
   )

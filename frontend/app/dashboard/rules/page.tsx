@@ -108,7 +108,7 @@ export default function RulesPage() {
             ← Volver al Dashboard
           </Link>
         </div>
-        <div className="rounded-2xl border border-sky-200/60 bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-6 shadow-sm">
+        <div className="rounded-2xl border border-sky-200/60 dark:border-slate-700 bg-gradient-to-br from-sky-50 via-white to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-6 shadow-sm">
           <p className="text-sm uppercase tracking-[0.3em] text-sky-700 dark:text-sky-400">
             Reglas del Juego
           </p>
@@ -302,6 +302,8 @@ export default function RulesPage() {
             </Link>
           </div>
         </div>
+
+        <p className="text-center text-xs text-gray-400 dark:text-slate-500">Creado por Juan Sebastian Makkos · Sin fines de lucro</p>
       </section>
       </div>
     </div>

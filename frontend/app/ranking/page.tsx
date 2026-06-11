@@ -145,6 +145,8 @@ export default function RankingPage() {
             </table>
           </div>
         </div>
+
+        <p className="mt-8 text-center text-xs text-gray-400 dark:text-slate-500">Creado por Juan Sebastian Makkos · Sin fines de lucro</p>
       </div>
     </div>
   )

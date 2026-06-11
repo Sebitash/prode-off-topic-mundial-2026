@@ -77,6 +77,12 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <DashboardNav displayName={displayName} isAdmin={user.is_admin} />
       <div className="mx-auto max-w-6xl px-4 py-8 space-y-8">
+        <div className="rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/30 px-4 py-3 text-sm text-sky-800 dark:text-sky-400">
+          <p>
+            <span className="font-semibold">Novedad:</span> ahora podés cambiar entre tema claro ☀️ y oscuro 🌙 con el botón al lado de "Logout", arriba a la derecha.
+          </p>
+        </div>
+
         <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 text-sm text-amber-800 dark:text-amber-400">
           <p>Ante cualquier problema o bug, por favor comunicarse con Sebastian a sebastian.makkos2@gmail.com</p>
           <p className="mt-1">¡Muy pronto se sumará un premio para el top 3 (o el equivalente en plata)!</p>
