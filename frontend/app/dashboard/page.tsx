@@ -37,6 +37,7 @@ function useCountdown(targetDate: string) {
   if (diff <= 0) return null
 
   return {
+    totalMs: diff,
     days: Math.floor(diff / (1000 * 60 * 60 * 24)),
     hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
     minutes: Math.floor((diff / (1000 * 60)) % 60),
@@ -57,6 +58,9 @@ function NextMatchCountdown({ match }: { match: Match }) {
   const countdown = useCountdown(match.match_date)
 
   if (!countdown) return null
+
+  const predictionsClosed = countdown.totalMs <= 60 * 60 * 1000
+  const closingTime = new Date(new Date(match.match_date).getTime() - 60 * 60 * 1000)
 
   return (
     <div className="flex flex-col items-center rounded-lg bg-gradient-to-r from-sky-600 to-sky-700 dark:from-sky-900 dark:to-slate-800 p-6 text-center text-white shadow-md">
@@ -79,8 +83,20 @@ function NextMatchCountdown({ match }: { match: Match }) {
           month: '2-digit',
           hour: '2-digit',
           minute: '2-digit',
-        })} hs (ARG) · Las predicciones cierran 1 hora antes
+        })} hs (ARG) · Las predicciones cierran a las{' '}
+        {closingTime.toLocaleString('es-AR', {
+          timeZone: 'America/Argentina/Buenos_Aires',
+          day: '2-digit',
+          month: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        })} hs
       </p>
+      {predictionsClosed && (
+        <p className="mt-2 rounded-full bg-amber-400/20 px-3 py-1 text-xs font-semibold text-amber-200">
+          🔒 Las predicciones para este partido ya están cerradas
+        </p>
+      )}
     </div>
   )
 }
