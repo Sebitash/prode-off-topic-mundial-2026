@@ -232,17 +232,17 @@ export default function DashboardPage() {
                         {new Date(match.match_date).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
-                    {predicted ? (
+                    {locked ? (
+                      <span className="flex-shrink-0 rounded-lg bg-slate-200 dark:bg-slate-700 px-3 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                        Predicción cerrada
+                      </span>
+                    ) : predicted ? (
                       <Link
                         href={`/predictions?match=${match.id}`}
                         className="flex-shrink-0 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700"
                       >
                         Predicción completa
                       </Link>
-                    ) : locked ? (
-                      <span className="flex-shrink-0 rounded-lg bg-slate-200 dark:bg-slate-700 px-3 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                        Predicción cerrada
-                      </span>
                     ) : (
                       <Link
                         href={`/predictions?match=${match.id}`}
