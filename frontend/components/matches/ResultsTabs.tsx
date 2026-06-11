@@ -459,6 +459,41 @@ function GroupTable({
 }
 
 
+function CollapsibleSection({
+  title,
+  children,
+}: {
+  title: string
+  children: React.ReactNode
+}) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <div className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        className="flex w-full items-center justify-between gap-3 p-6 text-left"
+      >
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{title}</h2>
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={`h-5 w-5 flex-shrink-0 text-slate-400 dark:text-slate-500 transition-transform ${open ? 'rotate-180' : ''}`}
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+      {open && <div className="grid gap-4 px-6 pb-6">{children}</div>}
+    </div>
+  )
+}
+
 export function isGroupStage(stage: string) {
   const value = stage.toLowerCase()
   return value.includes('group') || value.includes('grupo')
@@ -1128,22 +1163,19 @@ export default function ResultsTabs({
         )}
 
         {Object.entries(matchesByGroup).map(([groupLetter, matchList]) => (
-          <div key={groupLetter} className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Grupo {groupLetter}</h2>
-            <div className="mt-4 grid gap-4">
-              {matchList.map((match) => (
-                <ResultRow
-                  key={match.id}
-                  match={match}
-                  userId={userId}
-                  allowPredict={allowPredict}
-                  prediction={predictions[match.id]}
-                  onPredictionSaved={handlePredictionSaved}
-                  onPredictionDeleted={handlePredictionDeleted}
-                />
-              ))}
-            </div>
-          </div>
+          <CollapsibleSection key={groupLetter} title={`Grupo ${groupLetter}`}>
+            {matchList.map((match) => (
+              <ResultRow
+                key={match.id}
+                match={match}
+                userId={userId}
+                allowPredict={allowPredict}
+                prediction={predictions[match.id]}
+                onPredictionSaved={handlePredictionSaved}
+                onPredictionDeleted={handlePredictionDeleted}
+              />
+            ))}
+          </CollapsibleSection>
         ))}
       </div>
       )}
@@ -1163,22 +1195,19 @@ export default function ResultsTabs({
         )}
 
         {stageEntries.map(([stage, list]) => (
-          <div key={stage} className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{stage}</h2>
-            <div className="mt-4 grid gap-4">
-              {list.map((match) => (
-                <ResultRow
-                  key={match.id}
-                  match={match}
-                  userId={userId}
-                  allowPredict={allowPredict}
-                  prediction={predictions[match.id]}
-                  onPredictionSaved={handlePredictionSaved}
-                  onPredictionDeleted={handlePredictionDeleted}
-                />
-              ))}
-            </div>
-          </div>
+          <CollapsibleSection key={stage} title={stage}>
+            {list.map((match) => (
+              <ResultRow
+                key={match.id}
+                match={match}
+                userId={userId}
+                allowPredict={allowPredict}
+                prediction={predictions[match.id]}
+                onPredictionSaved={handlePredictionSaved}
+                onPredictionDeleted={handlePredictionDeleted}
+              />
+            ))}
+          </CollapsibleSection>
         ))}
       </div>
       )}
