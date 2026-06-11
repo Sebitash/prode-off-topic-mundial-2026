@@ -89,6 +89,9 @@ export default function DashboardPage() {
   const router = useRouter()
   const [user, setUser] = useState<UserData | null>(() => getCache<UserData>('user_me') || null)
   const [matches, setMatches] = useState<Match[]>(() => getCache<Match[]>('matches_scheduled') || [])
+  const [predictedMatchIds, setPredictedMatchIds] = useState<Set<string>>(
+    () => new Set(Object.keys(getCache<Record<string, unknown>>('predictions') || {}))
+  )
   const [loading, setLoading] = useState(!user)
 
   useEffect(() => {
@@ -103,8 +106,9 @@ export default function DashboardPage() {
     Promise.all([
       fetch(`${API_URL}/api/user/me`, { headers }),
       fetch(`${API_URL}/api/matches?status=scheduled`, { headers }),
+      fetch(`${API_URL}/api/predictions`, { headers }),
     ])
-      .then(async ([userRes, matchesRes]) => {
+      .then(async ([userRes, matchesRes, predictionsRes]) => {
         if (userRes.status === 401) {
           localStorage.removeItem('token')
           localStorage.removeItem('user')
@@ -117,6 +121,11 @@ export default function DashboardPage() {
         setCache('matches_scheduled', (matchesData.matches || []).slice(0, 5))
         setUser(userData.user)
         setMatches((matchesData.matches || []).slice(0, 5))
+
+        if (predictionsRes.ok) {
+          const predictionsData = await predictionsRes.json()
+          setPredictedMatchIds(new Set((predictionsData.predictions || []).map((p: { match_id: string }) => p.match_id)))
+        }
       })
       .catch(console.error)
       .finally(() => setLoading(false))
@@ -205,9 +214,11 @@ export default function DashboardPage() {
                     </div>
                     <Link
                       href={`/predictions?match=${match.id}`}
-                      className="flex-shrink-0 rounded-lg bg-sky-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-sky-700"
+                      className={`flex-shrink-0 rounded-lg px-3 py-2 text-xs font-semibold text-white transition ${
+                        predictedMatchIds.has(match.id) ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-sky-600 hover:bg-sky-700'
+                      }`}
                     >
-                      Predecir
+                      {predictedMatchIds.has(match.id) ? 'Predicción completa' : 'Predecir'}
                     </Link>
                   </div>
                 ))}

@@ -585,6 +585,7 @@ function ResultRow({
   onPredictionSaved,
   onPredictionDeleted,
   highlight = false,
+  groupLabel,
 }: {
   match: Match
   userId: string
@@ -593,6 +594,7 @@ function ResultRow({
   onPredictionSaved?: (matchId: string, prediction: { predicted_home_score: number; predicted_away_score: number; predicted_penalty_winner?: 'home' | 'away' | null }) => void
   onPredictionDeleted?: (matchId: string) => void
   highlight?: boolean
+  groupLabel?: string
 }) {
   const [homeScore, setHomeScore] = useState<number>(prediction?.predicted_home_score ?? 0)
   const [awayScore, setAwayScore] = useState<number>(prediction?.predicted_away_score ?? 0)
@@ -800,6 +802,11 @@ function ResultRow({
 
       <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 dark:border-slate-700 pt-3 text-xs text-slate-500 dark:text-slate-400 md:flex-row md:items-center md:justify-between">
         <span>
+          {groupLabel && (
+            <span className="mr-2 rounded-full bg-sky-100 dark:bg-sky-900/40 px-2 py-1 text-[10px] font-semibold text-sky-700 dark:text-sky-400">
+              {groupLabel}
+            </span>
+          )}
           {formatDate(match.match_date)}
           {isFinished && match.home_penalties != null && match.away_penalties != null && (
             <span className="ml-2 font-semibold text-slate-600 dark:text-slate-400">
@@ -865,6 +872,7 @@ export default function ResultsTabs({
 }) {
   const [activePrimary, setActivePrimary] = useState<'group' | 'knockout'>('group')
   const [activeSecondary, setActiveSecondary] = useState('Resultados')
+  const [sortMode, setSortMode] = useState<'group' | 'date'>('group')
   const [groups, setGroups] = useState<GroupRow[]>(() => getCache<GroupRow[]>('groups') || [])
   const [teams, setTeams] = useState<TeamRow[]>([])
   const [predictions, setPredictions] = useState<Record<string, { predicted_home_score: number; predicted_away_score: number; predicted_penalty_winner?: 'home' | 'away' | null; points?: number }>>(() => getCache('predictions') || {})
@@ -915,6 +923,19 @@ export default function ResultsTabs({
 
   const stages = activePrimary === 'group' ? groupStages : knockoutStages
   const stageEntries = Object.entries(stages)
+
+  // Listas planas ordenadas por fecha, con la etiqueta de grupo/instancia de cada partido.
+  const groupMatchesByDate = useMemo(() => {
+    return Object.entries(matchesByGroup)
+      .flatMap(([groupLetter, matchList]) => matchList.map((match) => ({ match, label: `Grupo ${groupLetter}` })))
+      .sort((a, b) => new Date(a.match.match_date).getTime() - new Date(b.match.match_date).getTime())
+  }, [matchesByGroup])
+
+  const knockoutMatchesByDate = useMemo(() => {
+    return Object.entries(knockoutStages)
+      .flatMap(([stage, matchList]) => matchList.map((match) => ({ match, label: stage })))
+      .sort((a, b) => new Date(a.match.match_date).getTime() - new Date(b.match.match_date).getTime())
+  }, [knockoutStages])
 
   // Si llegamos con un partido para destacar, nos posicionamos en la pestaña
   // (grupos/eliminatorias) que le corresponde.
@@ -1144,6 +1165,34 @@ export default function ResultsTabs({
         )}
       </div>
 
+      {!showSecondaryTabs && (
+        <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+          <span>Ordenar por:</span>
+          <button
+            type="button"
+            onClick={() => setSortMode('group')}
+            className={`rounded-full px-3 py-1 transition ${
+              sortMode === 'group'
+                ? 'bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-400'
+                : 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500'
+            }`}
+          >
+            Grupo
+          </button>
+          <button
+            type="button"
+            onClick={() => setSortMode('date')}
+            className={`rounded-full px-3 py-1 transition ${
+              sortMode === 'date'
+                ? 'bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-400'
+                : 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500'
+            }`}
+          >
+            Fecha
+          </button>
+        </div>
+      )}
+
       {showSecondaryTabs && activePrimary === 'group' && activeSecondary === 'Tablas de Posiciones' && (
         <div className="grid gap-4">
           <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-2 text-xs text-emerald-700 dark:text-emerald-400">
@@ -1194,26 +1243,42 @@ export default function ResultsTabs({
           </div>
         )}
 
-        {Object.entries(matchesByGroup).map(([groupLetter, matchList]) => (
-          <CollapsibleSection
-            key={groupLetter}
-            title={`Grupo ${groupLetter}`}
-            defaultOpen={matchList.some((match) => match.id === highlightMatchId)}
-          >
-            {matchList.map((match) => (
-              <ResultRow
-                key={match.id}
-                match={match}
-                userId={userId}
-                allowPredict={allowPredict}
-                prediction={predictions[match.id]}
-                onPredictionSaved={handlePredictionSaved}
-                onPredictionDeleted={handlePredictionDeleted}
-                highlight={match.id === highlightMatchId}
-              />
-            ))}
-          </CollapsibleSection>
-        ))}
+        {sortMode === 'group' ? (
+          Object.entries(matchesByGroup).map(([groupLetter, matchList]) => (
+            <CollapsibleSection
+              key={groupLetter}
+              title={`Grupo ${groupLetter}`}
+              defaultOpen={matchList.some((match) => match.id === highlightMatchId)}
+            >
+              {matchList.map((match) => (
+                <ResultRow
+                  key={match.id}
+                  match={match}
+                  userId={userId}
+                  allowPredict={allowPredict}
+                  prediction={predictions[match.id]}
+                  onPredictionSaved={handlePredictionSaved}
+                  onPredictionDeleted={handlePredictionDeleted}
+                  highlight={match.id === highlightMatchId}
+                />
+              ))}
+            </CollapsibleSection>
+          ))
+        ) : (
+          groupMatchesByDate.map(({ match, label }) => (
+            <ResultRow
+              key={match.id}
+              match={match}
+              userId={userId}
+              allowPredict={allowPredict}
+              prediction={predictions[match.id]}
+              onPredictionSaved={handlePredictionSaved}
+              onPredictionDeleted={handlePredictionDeleted}
+              highlight={match.id === highlightMatchId}
+              groupLabel={label}
+            />
+          ))
+        )}
       </div>
       )}
 
@@ -1231,26 +1296,42 @@ export default function ResultsTabs({
           </div>
         )}
 
-        {stageEntries.map(([stage, list]) => (
-          <CollapsibleSection
-            key={stage}
-            title={stage}
-            defaultOpen={list.some((match) => match.id === highlightMatchId)}
-          >
-            {list.map((match) => (
-              <ResultRow
-                key={match.id}
-                match={match}
-                userId={userId}
-                allowPredict={allowPredict}
-                prediction={predictions[match.id]}
-                onPredictionSaved={handlePredictionSaved}
-                onPredictionDeleted={handlePredictionDeleted}
-                highlight={match.id === highlightMatchId}
-              />
-            ))}
-          </CollapsibleSection>
-        ))}
+        {sortMode === 'group' ? (
+          stageEntries.map(([stage, list]) => (
+            <CollapsibleSection
+              key={stage}
+              title={stage}
+              defaultOpen={list.some((match) => match.id === highlightMatchId)}
+            >
+              {list.map((match) => (
+                <ResultRow
+                  key={match.id}
+                  match={match}
+                  userId={userId}
+                  allowPredict={allowPredict}
+                  prediction={predictions[match.id]}
+                  onPredictionSaved={handlePredictionSaved}
+                  onPredictionDeleted={handlePredictionDeleted}
+                  highlight={match.id === highlightMatchId}
+                />
+              ))}
+            </CollapsibleSection>
+          ))
+        ) : (
+          knockoutMatchesByDate.map(({ match, label }) => (
+            <ResultRow
+              key={match.id}
+              match={match}
+              userId={userId}
+              allowPredict={allowPredict}
+              prediction={predictions[match.id]}
+              onPredictionSaved={handlePredictionSaved}
+              onPredictionDeleted={handlePredictionDeleted}
+              highlight={match.id === highlightMatchId}
+              groupLabel={label}
+            />
+          ))
+        )}
       </div>
       )}
     </div>
