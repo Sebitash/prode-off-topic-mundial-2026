@@ -39,17 +39,37 @@ const ensureSupabaseAuthUser = async (email) => {
   }
 };
 
+// Calcula la edad en años a partir de una fecha de nacimiento (YYYY-MM-DD)
+const getAge = (birthDateStr) => {
+  const birthDate = new Date(birthDateStr);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+};
+
 export const signup = async (req, res) => {
-  const { nombre, apellido, email, password } = req.body;
+  const { nombre, apellido, email, password, fecha_nacimiento } = req.body;
 
   try {
     // 1. Validations
-    if (!nombre || !apellido || !email || !password) {
+    if (!nombre || !apellido || !email || !password || !fecha_nacimiento) {
       return res.status(400).json({ error: 'Todos los campos son obligatorios' });
     }
 
     if (password.length < 6) {
       return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
+    }
+
+    if (Number.isNaN(new Date(fecha_nacimiento).getTime())) {
+      return res.status(400).json({ error: 'La fecha de nacimiento no es válida' });
+    }
+
+    if (getAge(fecha_nacimiento) < 18) {
+      return res.status(400).json({ error: 'Debes ser mayor de 18 años para registrarte' });
     }
 
     // 2. Check if user exists
@@ -63,8 +83,8 @@ export const signup = async (req, res) => {
 
     // 4. Insert user
     const newUser = await query(
-      'INSERT INTO login_users (nombre, apellido, email, password) VALUES ($1, $2, $3, $4) RETURNING id, email, nombre, apellido',
-      [nombre, apellido, email, hashedPassword]
+      'INSERT INTO login_users (nombre, apellido, email, password, birth_date) VALUES ($1, $2, $3, $4, $5) RETURNING id, email, nombre, apellido',
+      [nombre, apellido, email, hashedPassword, fecha_nacimiento]
     );
 
     // 5. Crear el usuario también en Supabase Auth (para "Olvidé mi contraseña")

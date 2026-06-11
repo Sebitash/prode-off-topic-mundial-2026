@@ -8,12 +8,30 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import logo from '../../c38ba24b5b87da3b6be5ebf465027ad8.png'
 export const dynamic = "force-dynamic";
+
+function isAtLeast18(birthDateStr: string): boolean {
+  if (!birthDateStr) return false
+
+  const birthDate = new Date(birthDateStr)
+  if (Number.isNaN(birthDate.getTime())) return false
+
+  const today = new Date()
+  let age = today.getFullYear() - birthDate.getFullYear()
+  const monthDiff = today.getMonth() - birthDate.getMonth()
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--
+  }
+
+  return age >= 18
+}
+
 export default function SignUpPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [birthDate, setBirthDate] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -32,6 +50,12 @@ export default function SignUpPage() {
       return
     }
 
+    if (!isAtLeast18(birthDate)) {
+      setError('Debes ser mayor de 18 años para registrarte')
+      setLoading(false)
+      return
+    }
+
     try {
       const response = await fetch(`${API_URL}/api/auth/signup`, {
         method: 'POST',
@@ -43,6 +67,7 @@ export default function SignUpPage() {
           apellido: lastName,
           email,
           password,
+          fecha_nacimiento: birthDate,
         }),
       });
 
@@ -109,6 +134,22 @@ export default function SignUpPage() {
               className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
               placeholder="Perez"
             />
+          </div>
+
+          <div>
+            <label htmlFor="birthDate" className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Fecha de nacimiento *
+            </label>
+            <input
+              id="birthDate"
+              type="date"
+              value={birthDate}
+              onChange={(e) => setBirthDate(e.target.value)}
+              required
+              max={new Date().toISOString().split('T')[0]}
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
+            />
+            <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">Debés ser mayor de 18 años para registrarte</p>
           </div>
 
           <div>
