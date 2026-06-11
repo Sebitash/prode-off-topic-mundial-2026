@@ -219,7 +219,11 @@ export default function DashboardPage() {
             <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-4">Próximos Partidos</h2>
             {matches.length > 0 ? (
               <div className="space-y-3">
-                {matches.map((match) => (
+                {matches.map((match) => {
+                  const predicted = predictedMatchIds.has(match.id)
+                  const locked = Date.now() >= new Date(match.match_date).getTime() - 60 * 60 * 1000
+
+                  return (
                   <div key={match.id} className="flex items-center justify-between gap-3 p-3 bg-gray-50 dark:bg-slate-800/60 rounded-lg">
                     <div className="flex-1">
                       <p className="font-medium text-gray-900 dark:text-slate-100">{match.home_team} vs {match.away_team}</p>
@@ -228,16 +232,28 @@ export default function DashboardPage() {
                         {new Date(match.match_date).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
-                    <Link
-                      href={`/predictions?match=${match.id}`}
-                      className={`flex-shrink-0 rounded-lg px-3 py-2 text-xs font-semibold text-white transition ${
-                        predictedMatchIds.has(match.id) ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-sky-600 hover:bg-sky-700'
-                      }`}
-                    >
-                      {predictedMatchIds.has(match.id) ? 'Predicción completa' : 'Predecir'}
-                    </Link>
+                    {predicted ? (
+                      <Link
+                        href={`/predictions?match=${match.id}`}
+                        className="flex-shrink-0 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700"
+                      >
+                        Predicción completa
+                      </Link>
+                    ) : locked ? (
+                      <span className="flex-shrink-0 rounded-lg bg-slate-200 dark:bg-slate-700 px-3 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                        Predicción cerrada
+                      </span>
+                    ) : (
+                      <Link
+                        href={`/predictions?match=${match.id}`}
+                        className="flex-shrink-0 rounded-lg bg-sky-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-sky-700"
+                      >
+                        Predecir
+                      </Link>
+                    )}
                   </div>
-                ))}
+                  )
+                })}
               </div>
             ) : (
               <p className="text-gray-500 dark:text-slate-400">No hay partidos próximos.</p>
