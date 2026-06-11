@@ -461,12 +461,18 @@ function GroupTable({
 
 function CollapsibleSection({
   title,
+  defaultOpen = false,
   children,
 }: {
   title: string
+  defaultOpen?: boolean
   children: React.ReactNode
 }) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(defaultOpen)
+
+  useEffect(() => {
+    if (defaultOpen) setOpen(true)
+  }, [defaultOpen])
 
   return (
     <div className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm overflow-hidden">
@@ -578,6 +584,7 @@ function ResultRow({
   prediction,
   onPredictionSaved,
   onPredictionDeleted,
+  highlight = false,
 }: {
   match: Match
   userId: string
@@ -585,6 +592,7 @@ function ResultRow({
   prediction?: { predicted_home_score: number; predicted_away_score: number; predicted_penalty_winner?: 'home' | 'away' | null; points?: number } | null
   onPredictionSaved?: (matchId: string, prediction: { predicted_home_score: number; predicted_away_score: number; predicted_penalty_winner?: 'home' | 'away' | null }) => void
   onPredictionDeleted?: (matchId: string) => void
+  highlight?: boolean
 }) {
   const [homeScore, setHomeScore] = useState<number>(prediction?.predicted_home_score ?? 0)
   const [awayScore, setAwayScore] = useState<number>(prediction?.predicted_away_score ?? 0)
@@ -681,8 +689,11 @@ function ResultRow({
 
   return (
     <form
+      id={`match-${match.id}`}
       onSubmit={handleSubmit}
-      className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-sm"
+      className={`rounded-xl border bg-white dark:bg-slate-800 p-4 shadow-sm transition ${
+        highlight ? 'border-sky-400 ring-2 ring-sky-300 dark:ring-sky-600' : 'border-slate-200 dark:border-slate-700'
+      }`}
     >
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-1 items-center gap-3">
@@ -842,6 +853,7 @@ export default function ResultsTabs({
   showSecondaryTabs = true,
   title = 'Resultados y Cronograma',
   description = 'Sigue los resultados reales del Mundial 2026',
+  highlightMatchId = null,
 }: {
   matches: Match[]
   userId: string
@@ -849,6 +861,7 @@ export default function ResultsTabs({
   showSecondaryTabs?: boolean
   title?: string
   description?: string
+  highlightMatchId?: string | null
 }) {
   const [activePrimary, setActivePrimary] = useState<'group' | 'knockout'>('group')
   const [activeSecondary, setActiveSecondary] = useState('Resultados')
@@ -902,6 +915,25 @@ export default function ResultsTabs({
 
   const stages = activePrimary === 'group' ? groupStages : knockoutStages
   const stageEntries = Object.entries(stages)
+
+  // Si llegamos con un partido para destacar, nos posicionamos en la pestaña
+  // (grupos/eliminatorias) que le corresponde.
+  useEffect(() => {
+    if (!highlightMatchId) return
+    const match = matches.find((m) => m.id === highlightMatchId)
+    if (!match) return
+    setActivePrimary(isGroupStage(match.stage) ? 'group' : 'knockout')
+    setActiveSecondary('Resultados')
+  }, [highlightMatchId, matches])
+
+  // Hacemos scroll hasta el partido destacado una vez que su sección esté abierta.
+  useEffect(() => {
+    if (!highlightMatchId) return
+    const timer = setTimeout(() => {
+      document.getElementById(`match-${highlightMatchId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [highlightMatchId, activePrimary, matches])
 
   useEffect(() => {
     if (!allowPredict) return
@@ -1163,7 +1195,11 @@ export default function ResultsTabs({
         )}
 
         {Object.entries(matchesByGroup).map(([groupLetter, matchList]) => (
-          <CollapsibleSection key={groupLetter} title={`Grupo ${groupLetter}`}>
+          <CollapsibleSection
+            key={groupLetter}
+            title={`Grupo ${groupLetter}`}
+            defaultOpen={matchList.some((match) => match.id === highlightMatchId)}
+          >
             {matchList.map((match) => (
               <ResultRow
                 key={match.id}
@@ -1173,6 +1209,7 @@ export default function ResultsTabs({
                 prediction={predictions[match.id]}
                 onPredictionSaved={handlePredictionSaved}
                 onPredictionDeleted={handlePredictionDeleted}
+                highlight={match.id === highlightMatchId}
               />
             ))}
           </CollapsibleSection>
@@ -1195,7 +1232,11 @@ export default function ResultsTabs({
         )}
 
         {stageEntries.map(([stage, list]) => (
-          <CollapsibleSection key={stage} title={stage}>
+          <CollapsibleSection
+            key={stage}
+            title={stage}
+            defaultOpen={list.some((match) => match.id === highlightMatchId)}
+          >
             {list.map((match) => (
               <ResultRow
                 key={match.id}
@@ -1205,6 +1246,7 @@ export default function ResultsTabs({
                 prediction={predictions[match.id]}
                 onPredictionSaved={handlePredictionSaved}
                 onPredictionDeleted={handlePredictionDeleted}
+                highlight={match.id === highlightMatchId}
               />
             ))}
           </CollapsibleSection>

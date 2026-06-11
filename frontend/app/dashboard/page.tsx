@@ -195,7 +195,7 @@ export default function DashboardPage() {
             {matches.length > 0 ? (
               <div className="space-y-3">
                 {matches.map((match) => (
-                  <div key={match.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-800/60 rounded-lg">
+                  <div key={match.id} className="flex items-center justify-between gap-3 p-3 bg-gray-50 dark:bg-slate-800/60 rounded-lg">
                     <div className="flex-1">
                       <p className="font-medium text-gray-900 dark:text-slate-100">{match.home_team} vs {match.away_team}</p>
                       <p className="text-xs text-gray-500 dark:text-slate-400">
@@ -203,6 +203,12 @@ export default function DashboardPage() {
                         {new Date(match.match_date).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
+                    <Link
+                      href={`/predictions?match=${match.id}`}
+                      className="flex-shrink-0 rounded-lg bg-sky-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-sky-700"
+                    >
+                      Predecir
+                    </Link>
                   </div>
                 ))}
               </div>
