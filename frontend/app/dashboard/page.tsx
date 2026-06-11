@@ -113,6 +113,12 @@ export default function DashboardPage() {
     () => new Set(Object.keys(getCache<Record<string, unknown>>('predictions') || {}))
   )
   const [loading, setLoading] = useState(!user)
+  const [now, setNow] = useState(() => Date.now())
+
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 30 * 1000)
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -138,9 +144,9 @@ export default function DashboardPage() {
         const userData = await userRes.json()
         const matchesData = await matchesRes.json()
         setCache('user_me', userData.user)
-        setCache('matches_scheduled', (matchesData.matches || []).slice(0, 5))
+        setCache('matches_scheduled', (matchesData.matches || []).slice(0, 12))
         setUser(userData.user)
-        setMatches((matchesData.matches || []).slice(0, 5))
+        setMatches((matchesData.matches || []).slice(0, 12))
 
         if (predictionsRes.ok) {
           const predictionsData = await predictionsRes.json()
@@ -162,6 +168,7 @@ export default function DashboardPage() {
   if (!user) return null
 
   const displayName = `${user.nombre} ${user.apellido}`
+  const upcomingMatches = matches.filter((m) => new Date(m.match_date).getTime() > now).slice(0, 5)
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
@@ -188,7 +195,7 @@ export default function DashboardPage() {
           <p className="text-gray-600 dark:text-slate-400">Tu panel del Prode Mundial 2026</p>
         </div>
 
-        {matches.length > 0 && <NextMatchCountdown matches={matches} />}
+        {upcomingMatches.length > 0 && <NextMatchCountdown matches={upcomingMatches} />}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
@@ -221,9 +228,9 @@ export default function DashboardPage() {
 
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-4">Próximos Partidos</h2>
-            {matches.length > 0 ? (
+            {upcomingMatches.length > 0 ? (
               <div className="space-y-3">
-                {matches.map((match) => {
+                {upcomingMatches.map((match) => {
                   const predicted = predictedMatchIds.has(match.id)
                   const locked = Date.now() >= new Date(match.match_date).getTime() - 60 * 60 * 1000
 
