@@ -378,7 +378,7 @@ function GroupTable({
         {group}
       </div>
       <div className="mt-3 rounded-lg border border-sky-100 dark:border-slate-700">
-        <div className="grid grid-cols-[2fr_repeat(7,1fr)_1.3fr] gap-2 border-b border-sky-100 dark:border-slate-700 bg-sky-50 dark:bg-sky-950/40 px-3 py-2 text-[11px] font-semibold uppercase text-slate-500 dark:text-slate-400">
+        <div className="grid grid-cols-[2fr_repeat(7,1fr)_1.8fr] gap-2 border-b border-sky-100 dark:border-slate-700 bg-sky-50 dark:bg-sky-950/40 px-3 py-2 text-[11px] font-semibold uppercase text-slate-500 dark:text-slate-400">
           <span>Equipo</span>
           <span className="text-center">PJ</span>
           <span className="text-center">G</span>
@@ -392,7 +392,7 @@ function GroupTable({
         {teams.map((team, index) => (
           <div
             key={team.id}
-            className={`grid grid-cols-[2fr_repeat(7,1fr)_1.3fr] gap-2 px-3 py-2 text-xs text-slate-900 dark:text-slate-100 ${
+            className={`grid grid-cols-[2fr_repeat(7,1fr)_1.8fr] gap-2 px-3 py-2 text-xs text-slate-900 dark:text-slate-100 ${
               !started
                 ? 'bg-white dark:bg-slate-800'
                 : index === 0
@@ -420,19 +420,19 @@ function GroupTable({
             <span className="text-center font-semibold text-slate-900 dark:text-slate-100">{team.points}</span>
             <span className="text-center">
               {!started ? (
-                <span className="rounded-full bg-slate-100 dark:bg-slate-700 px-2 py-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400">
+                <span className="whitespace-nowrap rounded-full bg-slate-100 dark:bg-slate-700 px-2 py-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400">
                   Por definir
                 </span>
               ) : index < 2 ? (
-                <span className="rounded-full bg-emerald-100 dark:bg-emerald-900/30 px-2 py-1 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">
+                <span className="whitespace-nowrap rounded-full bg-emerald-100 dark:bg-emerald-900/30 px-2 py-1 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">
                   Directo
                 </span>
               ) : index === 2 && qualifiedThirdIds.has(team.id) ? (
-                <span className="rounded-full bg-sky-100 dark:bg-sky-900/40 px-2 py-1 text-[10px] font-semibold text-sky-700 dark:text-sky-400">
+                <span className="whitespace-nowrap rounded-full bg-sky-100 dark:bg-sky-900/40 px-2 py-1 text-[10px] font-semibold text-sky-700 dark:text-sky-400">
                   Mejor tercero
                 </span>
               ) : (
-                <span className="rounded-full bg-slate-100 dark:bg-slate-700 px-2 py-1 text-[10px] font-semibold text-slate-600 dark:text-slate-400">
+                <span className="whitespace-nowrap rounded-full bg-slate-100 dark:bg-slate-700 px-2 py-1 text-[10px] font-semibold text-slate-600 dark:text-slate-400">
                   Eliminado
                 </span>
               )}
