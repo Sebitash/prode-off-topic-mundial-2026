@@ -59,7 +59,7 @@ function NextMatchCountdown({ match }: { match: Match }) {
   if (!countdown) return null
 
   return (
-    <div className="rounded-lg bg-gradient-to-r from-sky-600 to-sky-700 dark:from-sky-900 dark:to-slate-800 p-6 text-white shadow-md">
+    <div className="flex flex-col items-center rounded-lg bg-gradient-to-r from-sky-600 to-sky-700 dark:from-sky-900 dark:to-slate-800 p-6 text-center text-white shadow-md">
       <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-sky-100">⏱ Próximo partido</p>
       <p className="mb-3 flex items-center gap-2 text-lg font-bold">
         <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[match.home_team] || 'xx'] || 'xx'} w-6 h-6 rounded`}></span>
@@ -135,9 +135,12 @@ export default function DashboardPage() {
   const displayName = `${user.nombre} ${user.apellido}`
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="relative min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <DashboardNav displayName={displayName} isAdmin={user.is_admin} />
-      <div className="mx-auto max-w-6xl px-4 py-8 space-y-8">
+      <div className="relative overflow-hidden">
+      <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
+      <div className="absolute -bottom-32 left-0 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-8 space-y-8">
         <div className="rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/30 px-4 py-3 text-sm text-sky-800 dark:text-sky-400">
           <p>
             <span className="font-semibold">Novedad:</span> ahora podés cambiar entre tema claro ☀️ y oscuro 🌙 con el botón al lado de "Logout", arriba a la derecha.
@@ -210,6 +213,7 @@ export default function DashboardPage() {
         </div>
 
         <p className="text-center text-xs text-gray-400 dark:text-slate-500">Creado por Juan Sebastian Makkos · Sin fines de lucro</p>
+      </div>
       </div>
     </div>
   )

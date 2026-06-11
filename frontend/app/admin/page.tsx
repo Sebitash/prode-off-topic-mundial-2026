@@ -281,9 +281,12 @@ export default function AdminPage() {
   if (!authorized) return null
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="relative min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <DashboardNav displayName={displayName} isAdmin />
-      <div className="mx-auto max-w-6xl px-4 py-8 space-y-8">
+      <div className="relative overflow-hidden">
+      <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
+      <div className="absolute -bottom-32 left-0 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-8 space-y-8">
         <div>
           <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">Panel de Administración</h1>
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
@@ -317,6 +320,7 @@ export default function AdminPage() {
         </div>
 
         <p className="text-center text-xs text-gray-400 dark:text-slate-500">Creado por Juan Sebastian Makkos · Sin fines de lucro</p>
+      </div>
       </div>
     </div>
   )
