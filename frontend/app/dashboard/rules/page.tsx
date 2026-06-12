@@ -29,6 +29,12 @@ const maxPoints = [
   { label: 'Puntos Máximos Totales', points: '312', detail: 'Total posible' },
 ]
 
+const prizes = [
+  { place: '🥇 Primer lugar', prize: 'Gift card de $100.000 en Adidas' },
+  { place: '🥈 Segundo lugar', prize: 'Fernet + Coca 2,5L + six-pack de cerveza' },
+  { place: '🥉 Tercer lugar', prize: 'Fernet + Coca 2,5L' },
+]
+
 const importantRules = [
   {
     title: 'Puntaje por Partido (Aplica a Todos los Partidos)',
@@ -241,6 +247,24 @@ export default function RulesPage() {
               </p>
             </div>
           ))}
+        </div>
+
+        <div className="rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-slate-900">
+            🏆 Premios
+          </h2>
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            {prizes.map((item) => (
+              <div key={item.place} className="rounded-xl border border-sky-100 bg-sky-50 px-4 py-4 text-center">
+                <p className="text-sm font-semibold text-slate-900">
+                  {item.place}
+                </p>
+                <p className="mt-2 text-sm text-slate-700">
+                  {item.prize}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
