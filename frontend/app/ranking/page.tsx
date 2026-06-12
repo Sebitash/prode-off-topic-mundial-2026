@@ -14,6 +14,12 @@ interface RankingEntry {
   total_predictions: number
 }
 
+const prizes = [
+  { place: '🥇 Primer lugar', prize: 'Gift card de $100.000 en Adidas' },
+  { place: '🥈 Segundo lugar', prize: 'Fernet 750cc + Coca 2,5L + six-pack de cerveza' },
+  { place: '🥉 Tercer lugar', prize: 'Fernet 750cc + Coca 2,5L' },
+]
+
 export default function RankingPage() {
   const router = useRouter()
   const [ranking, setRanking] = useState<RankingEntry[]>([])
@@ -69,6 +75,18 @@ export default function RankingPage() {
         <div>
           <h1 className="text-3xl font-semibold text-slate-900">Ranking</h1>
           <p className="mt-2 text-sm text-slate-600">Posiciones actuales de todos los participantes</p>
+        </div>
+
+        <div className="mt-6 rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-slate-900">🏆 Premios</h2>
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            {prizes.map((item) => (
+              <div key={item.place} className="rounded-xl border border-sky-100 bg-sky-50 px-4 py-4 text-center">
+                <p className="text-sm font-semibold text-slate-900">{item.place}</p>
+                <p className="mt-2 text-sm text-slate-700">{item.prize}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="mt-6 rounded-2xl border border-sky-200 bg-white p-6 shadow-sm">

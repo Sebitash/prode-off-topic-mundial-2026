@@ -77,15 +77,6 @@ export default function DashboardPage() {
       <div className="mx-auto max-w-6xl px-4 py-8 space-y-8">
         <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           <p>Ante cualquier problema o bug, por favor comunicarse con Sebastian al 1134947413 o sebastian.makkos1@gmail.com</p>
-          <p className="mt-1">
-            🏆 ¡Ya están definidos los premios para el Top 3! Primer puesto: gift card de $100.000 en Adidas.
-            Segundo puesto: Fernet 750cc + Coca 2,5L + six-pack de cerveza. Tercer puesto: Fernet 750cc + Coca 2,5L. Más info
-            en{' '}
-            <Link href="/dashboard/rules" className="font-semibold underline">
-              Reglas
-            </Link>
-            .
-          </p>
         </div>
 
         <div>
