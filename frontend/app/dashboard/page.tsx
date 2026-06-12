@@ -79,7 +79,7 @@ export default function DashboardPage() {
           <p>Ante cualquier problema o bug, por favor comunicarse con Sebastian al 1134947413 o sebastian.makkos1@gmail.com</p>
           <p className="mt-1">
             🏆 ¡Ya están definidos los premios para el Top 3! Primer puesto: gift card de $100.000 en Adidas.
-            Segundo puesto: Fernet + Coca 2,5L + six-pack de cerveza. Tercer puesto: Fernet + Coca 2,5L. Más info
+            Segundo puesto: Fernet 750cc + Coca 2,5L + six-pack de cerveza. Tercer puesto: Fernet 750cc + Coca 2,5L. Más info
             en{' '}
             <Link href="/dashboard/rules" className="font-semibold underline">
               Reglas

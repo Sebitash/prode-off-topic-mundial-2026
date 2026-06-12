@@ -31,8 +31,8 @@ const maxPoints = [
 
 const prizes = [
   { place: '🥇 Primer lugar', prize: 'Gift card de $100.000 en Adidas' },
-  { place: '🥈 Segundo lugar', prize: 'Fernet + Coca 2,5L + six-pack de cerveza' },
-  { place: '🥉 Tercer lugar', prize: 'Fernet + Coca 2,5L' },
+  { place: '🥈 Segundo lugar', prize: 'Fernet 750cc + Coca 2,5L + six-pack de cerveza' },
+  { place: '🥉 Tercer lugar', prize: 'Fernet 750cc + Coca 2,5L' },
 ]
 
 const importantRules = [
