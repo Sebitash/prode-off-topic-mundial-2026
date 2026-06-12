@@ -185,7 +185,7 @@ export default function DashboardPage() {
 
         <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 text-sm text-amber-800 dark:text-amber-400">
           <p>Ante cualquier problema o bug, por favor comunicarse con Sebastian a sebastian.makkos2@gmail.com</p>
-          <p className="mt-1">¡Muy pronto se sumará un premio para el top 3 (o el equivalente en plata)!</p>
+          <p className="mt-1">¡Ya están definidos los premios para el top 3! Mirá los detalles en la pestaña de Ranking.</p>
         </div>
 
         <div>

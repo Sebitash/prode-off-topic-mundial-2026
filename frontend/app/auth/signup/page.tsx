@@ -100,6 +100,10 @@ export default function SignUpPage() {
         </div>
 
         <form onSubmit={handleSignUp} className="space-y-6">
+          <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 text-sm text-amber-800 dark:text-amber-400">
+            ⚠️ Por favor, ingresá tu nombre y apellido real y respetuoso. Las cuentas con nombres ofensivos o inapropiados serán eliminadas.
+          </div>
+
           {error && (
             <div className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 px-4 py-3 text-sm text-rose-600 dark:text-rose-400">
               {error}
