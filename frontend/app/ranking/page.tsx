@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import DashboardNav from '@/components/ui/DashboardNav'
 import { API_URL } from '@/lib/config'
 import { getCache, setCache } from '@/lib/dataCache'
+import { FLAG_CODES, TEAM_TO_CODE, TEAM_TO_GROUP, isGroupStage, formatDate } from '@/components/matches/ResultsTabs'
 
 interface RankingEntry {
   user_id: string
@@ -13,6 +14,95 @@ interface RankingEntry {
   email: string
   total_points: number
   total_predictions: number
+  exact_scores: number
+  correct_results: number
+}
+
+interface UserPrediction {
+  id: string
+  match_id: string
+  predicted_home_score: number
+  predicted_away_score: number
+  points: number
+  home_team: string
+  away_team: string
+  match_date: string
+  status: 'scheduled' | 'live' | 'finished'
+  home_score: number | null
+  away_score: number | null
+  stage: string
+}
+
+function UserPredictionsModal({
+  user,
+  predictions,
+  loading,
+  onClose,
+}: {
+  user: RankingEntry
+  predictions: UserPrediction[]
+  loading: boolean
+  onClose: () => void
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={onClose}>
+      <div
+        className="max-h-[80vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            Predicciones de {user.nombre} {user.apellido}
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Cerrar"
+            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-lg font-semibold text-slate-500 dark:text-slate-400 transition hover:bg-slate-100 dark:bg-slate-700"
+          >
+            ✕
+          </button>
+        </div>
+
+        {loading ? (
+          <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">Cargando predicciones...</p>
+        ) : predictions.length > 0 ? (
+          <div className="mt-4 space-y-2">
+            {predictions.map((pred) => (
+              <div
+                key={pred.id}
+                className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/60 p-3"
+              >
+                <div className="flex-1">
+                  <p className="text-xs text-slate-400 dark:text-slate-500">
+                    {isGroupStage(pred.stage) ? `Grupo ${TEAM_TO_GROUP[pred.home_team] || '?'}` : pred.stage} · {formatDate(pred.match_date)}
+                  </p>
+                  <p className="mt-1 flex items-center gap-2 text-sm font-medium text-slate-900 dark:text-slate-100">
+                    <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[pred.home_team] || 'xx'] || 'xx'} w-5 h-5 rounded`}></span>
+                    {pred.home_team} vs {pred.away_team}
+                    <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[pred.away_team] || 'xx'] || 'xx'} w-5 h-5 rounded`}></span>
+                  </p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    Pronóstico: {pred.predicted_home_score} - {pred.predicted_away_score}
+                    {pred.status === 'finished' && pred.home_score !== null && pred.away_score !== null && (
+                      <> · Resultado: {pred.home_score} - {pred.away_score}</>
+                    )}
+                  </p>
+                </div>
+                <span className="flex-shrink-0 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white">
+                  {pred.points} pts
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">
+            Todavía no hay predicciones visibles para este participante.
+          </p>
+        )}
+      </div>
+    </div>
+  )
 }
 
 export default function RankingPage() {
@@ -22,6 +112,24 @@ export default function RankingPage() {
   const [currentUserId, setCurrentUserId] = useState('')
   const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(ranking.length === 0)
+  const [selectedUser, setSelectedUser] = useState<RankingEntry | null>(null)
+  const [userPredictions, setUserPredictions] = useState<UserPrediction[]>([])
+  const [predictionsLoading, setPredictionsLoading] = useState(false)
+
+  const openUserPredictions = (entry: RankingEntry) => {
+    setSelectedUser(entry)
+    setUserPredictions([])
+    setPredictionsLoading(true)
+
+    const token = localStorage.getItem('token')
+    fetch(`${API_URL}/api/predictions/user/${entry.user_id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => (res.ok ? res.json() : { predictions: [] }))
+      .then((data) => setUserPredictions(data.predictions || []))
+      .catch(console.error)
+      .finally(() => setPredictionsLoading(false))
+  }
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -96,6 +204,9 @@ export default function RankingPage() {
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Fernet 750cl + Coca Cola 2,5L</p>
             </div>
           </div>
+          <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
+            ⚖️ En caso de empate en puntos, desempata quien haya acertado más marcadores exactos. Si persiste el empate, desempata la cantidad total de pronósticos realizados.
+          </p>
         </div>
 
         <div className="mt-6 rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
@@ -107,13 +218,19 @@ export default function RankingPage() {
                   <th className="px-4 py-3">POS</th>
                   <th className="px-4 py-3">PARTICIPANTE</th>
                   <th className="px-4 py-3 text-center">PREDICCIONES</th>
+                  <th className="px-4 py-3 text-center">MARCADOR</th>
+                  <th className="px-4 py-3 text-center">RESULTADO</th>
                   <th className="px-4 py-3 text-center">TOTAL</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                 {ranking.length > 0 ? (
                   ranking.map((entry, index) => (
-                    <tr key={entry.user_id} className={entry.user_id === currentUserId ? 'bg-sky-50 dark:bg-sky-950/40' : ''}>
+                    <tr
+                      key={entry.user_id}
+                      onClick={() => openUserPredictions(entry)}
+                      className={`cursor-pointer transition hover:bg-sky-50 dark:hover:bg-slate-700/60 ${entry.user_id === currentUserId ? 'bg-sky-50 dark:bg-sky-950/40' : ''}`}
+                    >
                       <td className="px-4 py-4 font-semibold text-slate-700 dark:text-slate-300">
                         <div className="flex items-center gap-2">
                           {index === 0 ? '🏆' : index === 1 ? '🥈' : index === 2 ? '🥉' : null}
@@ -134,12 +251,14 @@ export default function RankingPage() {
                         </div>
                       </td>
                       <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.total_predictions}</td>
+                      <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.exact_scores}</td>
+                      <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.correct_results}</td>
                       <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.total_points}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                    <td colSpan={6} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                       No hay rankings disponibles aún. ¡Comenzá a hacer predicciones!
                     </td>
                   </tr>
@@ -152,6 +271,14 @@ export default function RankingPage() {
         <p className="mt-8 text-center text-xs text-gray-400 dark:text-slate-500">Creado por Juan Sebastian Makkos · Sin fines de lucro</p>
       </div>
       </div>
+      {selectedUser && (
+        <UserPredictionsModal
+          user={selectedUser}
+          predictions={userPredictions}
+          loading={predictionsLoading}
+          onClose={() => setSelectedUser(null)}
+        />
+      )}
     </div>
   )
 }

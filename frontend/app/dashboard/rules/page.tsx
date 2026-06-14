@@ -73,6 +73,10 @@ const importantRules = [
     title: 'Partido por el Tercer Puesto',
     text: 'Suma puntos igual que cualquier otro partido de eliminatorias: 3 puntos por acertar el ganador, +2 por el resultado exacto.',
   },
+  {
+    title: 'Desempate',
+    text: 'Si dos o más participantes terminan con el mismo puntaje total, se ordena primero a quien haya acertado más marcadores exactos (resultado justo, ej: 2-1 = 2-1). Si persiste el empate, se ordena por la cantidad total de pronósticos realizados.',
+  },
 ]
 
 export default function RulesPage() {

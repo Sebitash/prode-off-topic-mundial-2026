@@ -20,9 +20,11 @@ function getToken(): string | null {
 
 function AdminMatchRow({
   match,
+  groupLabel,
   onSaved,
 }: {
   match: Match
+  groupLabel: string
   onSaved: (updated: Match) => void
 }) {
   const [homeScore, setHomeScore] = useState(match.home_score ?? 0)
@@ -153,6 +155,9 @@ function AdminMatchRow({
 
       <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 dark:border-slate-700 pt-3 text-xs text-slate-500 dark:text-slate-400 md:flex-row md:items-center md:justify-between">
         <span>
+          <span className="mr-2 rounded-full bg-sky-100 dark:bg-sky-900/40 px-2 py-1 text-[10px] font-semibold text-sky-700 dark:text-sky-400">
+            {groupLabel}
+          </span>
           {formatDate(match.match_date)}
           {match.status === 'finished' && match.home_penalties != null && match.away_penalties != null && (
             <span className="ml-2 font-semibold text-slate-600 dark:text-slate-400">
@@ -243,31 +248,13 @@ export default function AdminPage() {
     setMatches((prev) => prev.map((m) => (m.id === updated.id ? { ...m, ...updated } : m)))
   }
 
-  const { groupStages, knockoutStages } = useMemo(() => {
-    const group: Record<string, Match[]> = {}
-    const knockout: Record<string, Match[]> = {}
-
-    matches.forEach((match) => {
-      if (isGroupStage(match.stage)) {
-        const groupLetter = TEAM_TO_GROUP[match.home_team] || 'Otros'
-        if (!group[groupLetter]) group[groupLetter] = []
-        group[groupLetter].push(match)
-      } else {
-        if (!knockout[match.stage]) knockout[match.stage] = []
-        knockout[match.stage].push(match)
-      }
-    })
-
-    const sortByDate = (list: Match[]) =>
-      list.sort((a, b) => new Date(a.match_date).getTime() - new Date(b.match_date).getTime())
-
-    Object.values(group).forEach(sortByDate)
-    Object.values(knockout).forEach(sortByDate)
-
-    return {
-      groupStages: Object.entries(group).sort(([a], [b]) => a.localeCompare(b)),
-      knockoutStages: Object.entries(knockout),
-    }
+  const sortedMatches = useMemo(() => {
+    return [...matches]
+      .sort((a, b) => new Date(a.match_date).getTime() - new Date(b.match_date).getTime())
+      .map((match) => ({
+        match,
+        groupLabel: isGroupStage(match.stage) ? `Grupo ${TEAM_TO_GROUP[match.home_team] || '?'}` : match.stage,
+      }))
   }, [matches])
 
   if (loading) {
@@ -295,28 +282,13 @@ export default function AdminPage() {
           </p>
         </div>
 
-        <div className="grid gap-6">
-          {groupStages.map(([groupLetter, matchList]) => (
-            <div key={groupLetter} className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Grupo {groupLetter}</h2>
-              <div className="mt-4 grid gap-4">
-                {matchList.map((match) => (
-                  <AdminMatchRow key={match.id} match={match} onSaved={handleSaved} />
-                ))}
-              </div>
-            </div>
-          ))}
-
-          {knockoutStages.map(([stage, matchList]) => (
-            <div key={stage} className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{stage}</h2>
-              <div className="mt-4 grid gap-4">
-                {matchList.map((match) => (
-                  <AdminMatchRow key={match.id} match={match} onSaved={handleSaved} />
-                ))}
-              </div>
-            </div>
-          ))}
+        <div className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Todos los partidos (por fecha)</h2>
+          <div className="mt-4 grid gap-4">
+            {sortedMatches.map(({ match, groupLabel }) => (
+              <AdminMatchRow key={match.id} match={match} groupLabel={groupLabel} onSaved={handleSaved} />
+            ))}
+          </div>
         </div>
 
         <p className="text-center text-xs text-gray-400 dark:text-slate-500">Creado por Juan Sebastian Makkos · Sin fines de lucro</p>

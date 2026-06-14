@@ -26,6 +26,29 @@ export const getUserPredictions = async (req, res) => {
   }
 };
 
+// GET /api/predictions/user/:userId — predicciones de cualquier usuario para
+// partidos ya cerrados o finalizados (para verlas en el ranking)
+export const getPredictionsByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const result = await query(
+      `SELECT p.*, m.home_team, m.away_team, m.match_date, m.status, m.home_score, m.away_score, m.stage
+       FROM predictions p
+       JOIN matches m ON p.match_id = m.id
+       WHERE p.user_id = $1
+         AND (m.status = 'finished' OR m.match_date <= NOW() + INTERVAL '1 hour')
+       ORDER BY m.match_date ASC`,
+      [userId]
+    );
+
+    res.json({ predictions: result.rows });
+  } catch (error) {
+    console.error('getPredictionsByUserId Error:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
 // POST /api/predictions — crear o actualizar predicción
 export const upsertPrediction = async (req, res) => {
   const userId = req.user.id;
