@@ -184,6 +184,13 @@ export default function RankingPage() {
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">Posiciones actuales de todos los participantes</p>
         </div>
 
+        <div className="mt-6 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-400">
+          🆕 <strong>Nueva regla para la fase eliminatoria:</strong> a partir de dieciseisavos de final, sumás +1 punto extra
+          si tu pronóstico acierta el marcador final de uno de los dos equipos (ej: predijiste 2-1 y el resultado real
+          fue 2-0, acertaste el "2" del local). No se acumula con el bonus de resultado exacto. Mirá el detalle
+          completo en la pestaña de Reglas.
+        </div>
+
         <div className="mt-6 rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Premios</h2>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Premios para el top 3 del ranking final</p>
@@ -191,7 +198,7 @@ export default function RankingPage() {
             <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-4 text-center">
               <p className="text-2xl">🥇</p>
               <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">1° Puesto</p>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Gift card 100k Adidas</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Gift card 100k Adidas + six pack de cerveza</p>
             </div>
             <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 p-4 text-center">
               <p className="text-2xl">🥈</p>

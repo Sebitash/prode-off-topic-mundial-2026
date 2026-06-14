@@ -28,6 +28,11 @@ const knockoutScoring = [
     points: '+2 puntos',
     detail: 'Puntos adicionales si además acertás el marcador exacto del partido (ej: 2-1).',
   },
+  {
+    label: 'Bonus por marcador de un equipo (nuevo)',
+    points: '+1 punto',
+    detail: 'Punto adicional si acertás el marcador final de UNO de los dos equipos (ej: predijiste 2-1 y el resultado real fue 2-0, acertaste el "2" del local). No se suma si ya acertaste el resultado exacto completo.',
+  },
 ]
 
 const scoringExamples = [
@@ -39,6 +44,7 @@ const scoringExamples = [
 const knockoutScoringExamples = [
   'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Argentina 1-1 (gana penales) → 5 pts ✓',
   'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Argentina gana 2-0 → 3 pts (acertaste el ganador, pero no el 1-1)',
+  'Real: Brasil 2-1 | Tu pronóstico: Brasil 2-0 → 4 pts (ganador +3 y marcador del local "2" +1)',
   'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Brasil gana → 0 pts ✗',
 ]
 
@@ -51,7 +57,11 @@ const maxPoints = [
 const importantRules = [
   {
     title: 'Puntaje por Partido',
-    text: 'En fase de grupos: 2 puntos por acertar el ganador, +1 punto extra si además acertás el resultado exacto (máximo 3 pts). En fase eliminatoria: 3 puntos por acertar el ganador, +2 puntos extra si además acertás el resultado exacto (máximo 5 pts). Si el partido termina empatado y se define por penales, el ganador de la definición por penales es el "ganador" del partido a los efectos de estos puntos, y el resultado exacto que vale el bonus es el marcador del tiempo reglamentario (el empate, ej: 1-1), no el resultado de los penales.',
+    text: 'En fase de grupos: 2 puntos por acertar el ganador, +1 punto extra si además acertás el resultado exacto (máximo 3 pts). En fase eliminatoria: 3 puntos por acertar el ganador, +2 puntos extra si además acertás el resultado exacto (máximo 5 pts), y +1 punto extra si acertás el marcador final de uno de los dos equipos (este bonus no se acumula con el de resultado exacto). Si el partido termina empatado y se define por penales, el ganador de la definición por penales es el "ganador" del partido a los efectos de estos puntos, y el resultado exacto que vale el bonus es el marcador del tiempo reglamentario (el empate, ej: 1-1), no el resultado de los penales.',
+  },
+  {
+    title: 'Nueva Regla en Eliminatorias: Bonus de Marcador',
+    text: 'A partir de la fase eliminatoria (incluye el partido por el tercer puesto), si tu pronóstico acierta el marcador final de UNO de los dos equipos (por ejemplo, predijiste 2-1 y el resultado real fue 2-0: acertaste el "2" del local), sumás +1 punto extra. Este bonus no se suma si ya acertaste el resultado exacto completo, ya que ese caso suma el bonus de +2.',
   },
   {
     title: 'Pronóstico de Penales en Eliminatorias',
@@ -207,7 +217,8 @@ export default function RulesPage() {
             </h3>
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
               Sistema de puntos reforzado respecto a la fase de grupos: 3 puntos por acertar el ganador, +2 puntos
-              extra por el resultado exacto.
+              extra por el resultado exacto, y +1 punto extra (nuevo) si acertás el marcador final de uno de los dos
+              equipos.
             </p>
             <div className="mt-4 grid gap-3">
               {knockoutScoring.map((row) => (
