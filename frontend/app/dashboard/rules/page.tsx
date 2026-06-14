@@ -85,7 +85,7 @@ const importantRules = [
   },
   {
     title: 'Desempate',
-    text: 'Si dos o más participantes terminan con el mismo puntaje total, se ordena primero a quien haya acertado más marcadores exactos (resultado justo, ej: 2-1 = 2-1). Si persiste el empate, se ordena por la cantidad total de pronósticos realizados.',
+    text: 'Si dos o más participantes terminan con el mismo puntaje total, se ordena primero a quien haya acertado más marcadores exactos (resultado justo, ej: 2-1 = 2-1). Si persiste el empate, se ordena por quien haya acertado más veces el marcador de un solo equipo (bonus de eliminatorias). Si aún persiste el empate, se ordena por la cantidad total de pronósticos realizados.',
   },
 ]
 

@@ -15,6 +15,7 @@ interface RankingEntry {
   total_points: number
   total_predictions: number
   exact_scores: number
+  score_bonus: number
   correct_results: number
 }
 
@@ -212,7 +213,7 @@ export default function RankingPage() {
             </div>
           </div>
           <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
-            ⚖️ En caso de empate en puntos, desempata quien haya acertado más marcadores exactos. Si persiste el empate, desempata la cantidad total de pronósticos realizados.
+            ⚖️ En caso de empate en puntos, desempata quien haya acertado más marcadores exactos. Si persiste el empate, desempata quien haya acertado más veces el marcador de un solo equipo (bonus de eliminatorias). Si aún persiste el empate, desempata la cantidad total de pronósticos realizados.
           </p>
         </div>
 
@@ -226,6 +227,7 @@ export default function RankingPage() {
                   <th className="px-4 py-3">PARTICIPANTE</th>
                   <th className="px-4 py-3 text-center">PREDICCIONES</th>
                   <th className="px-4 py-3 text-center">MARCADOR</th>
+                  <th className="px-4 py-3 text-center">BONUS</th>
                   <th className="px-4 py-3 text-center">RESULTADO</th>
                   <th className="px-4 py-3 text-center">TOTAL</th>
                 </tr>
@@ -259,13 +261,14 @@ export default function RankingPage() {
                       </td>
                       <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.total_predictions}</td>
                       <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.exact_scores}</td>
+                      <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.score_bonus}</td>
                       <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.correct_results}</td>
                       <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.total_points}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                    <td colSpan={7} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                       No hay rankings disponibles aún. ¡Comenzá a hacer predicciones!
                     </td>
                   </tr>
