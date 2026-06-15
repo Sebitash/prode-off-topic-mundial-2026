@@ -42,6 +42,9 @@ la pestaña de Reglas.
 👀 Además, en el Ranking podés tocar a cualquier participante para ver su
 historial de pronósticos y el puntaje que sacó en cada partido.
 
+🆕 También hay una nueva pestaña "Historial": ahí podés ver, partido por
+partido, qué pronosticó cada participante y cuántos puntos sacó.
+
 ⏰ Recordá que las predicciones de cada partido se cierran 1 hora antes de su
 inicio, ¡no te quedes sin pronosticar!
 
