@@ -25,6 +25,10 @@ interface Match {
   match_date: string
 }
 
+interface RankingEntry {
+  user_id: string
+}
+
 function CountdownUnit({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex min-w-[56px] flex-col items-center rounded-lg bg-white/10 px-3 py-2">
@@ -112,6 +116,7 @@ export default function DashboardPage() {
   const [predictedMatchIds, setPredictedMatchIds] = useState<Set<string>>(
     () => new Set(Object.keys(getCache<Record<string, unknown>>('predictions') || {}))
   )
+  const [ranking, setRanking] = useState<RankingEntry[]>(() => getCache<RankingEntry[]>('ranking') || [])
   const [loading, setLoading] = useState(!user)
   const [now, setNow] = useState(() => Date.now())
 
@@ -133,8 +138,9 @@ export default function DashboardPage() {
       fetch(`${API_URL}/api/user/me`, { headers }),
       fetch(`${API_URL}/api/matches?status=scheduled`, { headers }),
       fetch(`${API_URL}/api/predictions`, { headers }),
+      fetch(`${API_URL}/api/ranking`, { headers }),
     ])
-      .then(async ([userRes, matchesRes, predictionsRes]) => {
+      .then(async ([userRes, matchesRes, predictionsRes, rankingRes]) => {
         if (userRes.status === 401) {
           localStorage.removeItem('token')
           localStorage.removeItem('user')
@@ -151,6 +157,13 @@ export default function DashboardPage() {
         if (predictionsRes.ok) {
           const predictionsData = await predictionsRes.json()
           setPredictedMatchIds(new Set((predictionsData.predictions || []).map((p: { match_id: string }) => p.match_id)))
+        }
+
+        if (rankingRes.ok) {
+          const rankingData = await rankingRes.json()
+          const rows = rankingData.ranking || []
+          setCache('ranking', rows)
+          setRanking(rows)
         }
       })
       .catch(console.error)
@@ -169,6 +182,8 @@ export default function DashboardPage() {
 
   const displayName = `${user.nombre} ${user.apellido}`
   const upcomingMatches = matches.filter((m) => new Date(m.match_date).getTime() > now).slice(0, 5)
+  const myPosition = ranking.findIndex((entry) => entry.user_id === user.id)
+  const totalParticipants = ranking.length
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
@@ -180,6 +195,13 @@ export default function DashboardPage() {
         <div className="rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/30 px-4 py-3 text-sm text-sky-800 dark:text-sky-400">
           <p>
             <span className="font-semibold">Novedad:</span> ahora podés cambiar entre tema claro ☀️ y oscuro 🌙 con el botón al lado de "Logout", arriba a la derecha.
+          </p>
+        </div>
+
+        <div className="rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-400">
+          <p>
+            🆕 <span className="font-semibold">Nuevo:</span> ya está disponible el{' '}
+            <Link href="/historial" className="font-semibold underline">Historial</Link>, donde podés ver los partidos finalizados y qué puntaje sacó cada participante.
           </p>
         </div>
 
@@ -197,7 +219,7 @@ export default function DashboardPage() {
 
         {upcomingMatches.length > 0 && <NextMatchCountdown matches={upcomingMatches} />}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-2">Tus Predicciones</h3>
             <p className="text-3xl font-bold text-blue-600">{user.total_predictions}</p>
@@ -208,6 +230,13 @@ export default function DashboardPage() {
             <p className="text-3xl font-bold text-green-600">{user.total_points}</p>
             <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Puntos acumulados</p>
           </div>
+          <Link href="/ranking" className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 transition hover:shadow-lg">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-2">Tu Posición</h3>
+            <p className="text-3xl font-bold text-purple-600">{myPosition >= 0 ? `#${myPosition + 1}` : '-'}</p>
+            <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
+              {totalParticipants > 0 ? `de ${totalParticipants} participantes` : 'Ver ranking'}
+            </p>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

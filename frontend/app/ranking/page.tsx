@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import DashboardNav from '@/components/ui/DashboardNav'
 import { API_URL } from '@/lib/config'
 import { getCache, setCache } from '@/lib/dataCache'
@@ -196,6 +197,11 @@ export default function RankingPage() {
         <div>
           <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">Ranking</h1>
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">Posiciones actuales de todos los participantes</p>
+        </div>
+
+        <div className="mt-6 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/30 px-4 py-3 text-sm text-sky-800 dark:text-sky-400">
+          🆕 <strong>Nuevo:</strong> ya está disponible el{' '}
+          <Link href="/historial" className="font-semibold underline">Historial</Link>, donde podés ver los partidos finalizados y qué puntaje sacó cada participante.
         </div>
 
         <div className="mt-6 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-400">
