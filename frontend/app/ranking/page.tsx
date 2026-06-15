@@ -106,6 +106,8 @@ function UserPredictionsModal({
   )
 }
 
+const PAGE_SIZE = 25
+
 export default function RankingPage() {
   const router = useRouter()
   const [ranking, setRanking] = useState<RankingEntry[]>(() => getCache<RankingEntry[]>('ranking') || [])
@@ -116,6 +118,9 @@ export default function RankingPage() {
   const [selectedUser, setSelectedUser] = useState<RankingEntry | null>(null)
   const [userPredictions, setUserPredictions] = useState<UserPrediction[]>([])
   const [predictionsLoading, setPredictionsLoading] = useState(false)
+  const [page, setPage] = useState(0)
+  const totalPages = Math.max(1, Math.ceil(ranking.length / PAGE_SIZE))
+  const pagedRanking = ranking.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE)
 
   const openUserPredictions = (entry: RankingEntry) => {
     setSelectedUser(entry)
@@ -141,11 +146,13 @@ export default function RankingPage() {
       return
     }
 
+    let userId = ''
     if (storedUser) {
       const u = JSON.parse(storedUser)
       setDisplayName(`${u.nombre} ${u.apellido}`)
       setCurrentUserId(u.id)
       setIsAdmin(!!u.is_admin)
+      userId = u.id
     }
 
     fetch(`${API_URL}/api/ranking`, {
@@ -158,8 +165,14 @@ export default function RankingPage() {
           return
         }
         const data = await res.json()
-        setCache('ranking', data.ranking || [])
-        setRanking(data.ranking || [])
+        const rows = data.ranking || []
+        setCache('ranking', rows)
+        setRanking(rows)
+
+        const myIndex = rows.findIndex((entry: RankingEntry) => entry.user_id === userId)
+        if (myIndex >= 0) {
+          setPage(Math.floor(myIndex / PAGE_SIZE))
+        }
       })
       .catch(console.error)
       .finally(() => setLoading(false))
@@ -219,6 +232,31 @@ export default function RankingPage() {
 
         <div className="mt-6 rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Tabla de Posiciones</h2>
+
+          {totalPages > 1 && (
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                disabled={page === 0}
+                className="rounded-full border border-sky-300 dark:border-slate-600 px-4 py-2 text-xs font-semibold text-sky-700 dark:text-sky-400 transition hover:bg-sky-50 dark:bg-sky-950/40 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                ← Anterior
+              </button>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Página {page + 1} de {totalPages}
+              </p>
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                disabled={page >= totalPages - 1}
+                className="rounded-full border border-sky-300 dark:border-slate-600 px-4 py-2 text-xs font-semibold text-sky-700 dark:text-sky-400 transition hover:bg-sky-50 dark:bg-sky-950/40 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Siguiente →
+              </button>
+            </div>
+          )}
+
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 dark:bg-slate-800/60 text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -233,8 +271,10 @@ export default function RankingPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-                {ranking.length > 0 ? (
-                  ranking.map((entry, index) => (
+                {pagedRanking.length > 0 ? (
+                  pagedRanking.map((entry, localIndex) => {
+                    const index = page * PAGE_SIZE + localIndex
+                    return (
                     <tr
                       key={entry.user_id}
                       onClick={() => openUserPredictions(entry)}
@@ -265,7 +305,8 @@ export default function RankingPage() {
                       <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.correct_results}</td>
                       <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.total_points}</td>
                     </tr>
-                  ))
+                    )
+                  })
                 ) : (
                   <tr>
                     <td colSpan={7} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
@@ -276,6 +317,30 @@ export default function RankingPage() {
               </tbody>
             </table>
           </div>
+
+          {totalPages > 1 && (
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                disabled={page === 0}
+                className="rounded-full border border-sky-300 dark:border-slate-600 px-4 py-2 text-xs font-semibold text-sky-700 dark:text-sky-400 transition hover:bg-sky-50 dark:bg-sky-950/40 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                ← Anterior
+              </button>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Página {page + 1} de {totalPages}
+              </p>
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                disabled={page >= totalPages - 1}
+                className="rounded-full border border-sky-300 dark:border-slate-600 px-4 py-2 text-xs font-semibold text-sky-700 dark:text-sky-400 transition hover:bg-sky-50 dark:bg-sky-950/40 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Siguiente →
+              </button>
+            </div>
+          )}
         </div>
 
         <p className="mt-8 text-center text-xs text-gray-400 dark:text-slate-500">Creado por Juan Sebastian Makkos · Sin fines de lucro</p>

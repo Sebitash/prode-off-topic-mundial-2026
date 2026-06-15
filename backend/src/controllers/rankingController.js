@@ -17,8 +17,7 @@ export const getRanking = async (req, res) => {
        FROM login_users lu
        LEFT JOIN predictions p ON lu.id = p.user_id
        GROUP BY lu.id, lu.nombre, lu.apellido, lu.email
-       ORDER BY total_points DESC, exact_scores DESC, score_bonus DESC, total_predictions DESC
-       LIMIT 50`
+       ORDER BY total_points DESC, exact_scores DESC, score_bonus DESC, total_predictions DESC`
     );
 
     res.json({ ranking: result.rows });
