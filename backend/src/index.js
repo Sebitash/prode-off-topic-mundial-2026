@@ -35,6 +35,7 @@ app.listen(PORT, () => {
   POST /api/auth/login
   GET  /api/matches
   GET  /api/predictions
+  GET  /api/predictions/history
   POST /api/predictions
   GET  /api/ranking
   GET  /api/user/me`);

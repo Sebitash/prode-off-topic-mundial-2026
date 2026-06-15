@@ -83,6 +83,9 @@ export default function DashboardNav({ displayName, isAdmin = false }: { display
             <Link href="/ranking" className={linkClassName('/ranking')}>
               Ranking
             </Link>
+            <Link href="/historial" className={linkClassName('/historial')}>
+              Historial
+            </Link>
             {isAdmin && (
               <Link href="/admin" className={linkClassName('/admin')}>
                 Admin
@@ -129,6 +132,9 @@ export default function DashboardNav({ displayName, isAdmin = false }: { display
             </Link>
             <Link href="/ranking" className={mobileLinkClassName('/ranking')}>
               Ranking
+            </Link>
+            <Link href="/historial" className={mobileLinkClassName('/historial')}>
+              Historial
             </Link>
             {isAdmin && (
               <Link href="/admin" className={mobileLinkClassName('/admin')}>

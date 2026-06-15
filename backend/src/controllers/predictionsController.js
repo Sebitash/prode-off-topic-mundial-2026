@@ -49,6 +49,62 @@ export const getPredictionsByUserId = async (req, res) => {
   }
 };
 
+// GET /api/predictions/history — predicciones de todos los participantes para
+// los partidos ya finalizados, agrupadas por partido (para la pestaña de Historial)
+export const getMatchHistory = async (req, res) => {
+  try {
+    const result = await query(
+      `SELECT m.id as match_id, m.home_team, m.away_team, m.home_score, m.away_score,
+              m.home_penalties, m.away_penalties, m.match_date, m.stage,
+              p.user_id, p.predicted_home_score, p.predicted_away_score,
+              p.predicted_penalty_winner, p.points, lu.nombre, lu.apellido
+       FROM matches m
+       JOIN predictions p ON p.match_id = m.id
+       JOIN login_users lu ON lu.id = p.user_id
+       WHERE m.status = 'finished'
+       ORDER BY m.match_date DESC, p.points DESC, lu.nombre ASC`
+    );
+
+    const matches = [];
+    const matchesById = new Map();
+
+    for (const row of result.rows) {
+      let match = matchesById.get(row.match_id);
+      if (!match) {
+        match = {
+          id: row.match_id,
+          home_team: row.home_team,
+          away_team: row.away_team,
+          home_score: row.home_score,
+          away_score: row.away_score,
+          home_penalties: row.home_penalties,
+          away_penalties: row.away_penalties,
+          match_date: row.match_date,
+          stage: row.stage,
+          predictions: [],
+        };
+        matchesById.set(row.match_id, match);
+        matches.push(match);
+      }
+
+      match.predictions.push({
+        user_id: row.user_id,
+        nombre: row.nombre,
+        apellido: row.apellido,
+        predicted_home_score: row.predicted_home_score,
+        predicted_away_score: row.predicted_away_score,
+        predicted_penalty_winner: row.predicted_penalty_winner,
+        points: row.points,
+      });
+    }
+
+    res.json({ matches });
+  } catch (error) {
+    console.error('getMatchHistory Error:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
 // POST /api/predictions — crear o actualizar predicción
 export const upsertPrediction = async (req, res) => {
   const userId = req.user.id;
