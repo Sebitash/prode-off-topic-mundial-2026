@@ -212,7 +212,7 @@ export default function RankingPage() {
             <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-4 text-center">
               <p className="text-2xl">🥇</p>
               <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">1° Puesto</p>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Gift card 100k Adidas + six pack de cerveza</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Gift card 100k Adidas</p>
             </div>
             <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 p-4 text-center">
               <p className="text-2xl">🥈</p>
