@@ -73,6 +73,10 @@ export default function PredictionsPage() {
     )
   }
 
+  const nextOpenMatch = matches.find(
+    (m) => m.status === 'scheduled' && new Date(m.match_date).getTime() - Date.now() > 60 * 60 * 1000
+  )
+
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <DashboardNav displayName={displayName} isAdmin={isAdmin} />
@@ -80,6 +84,17 @@ export default function PredictionsPage() {
       <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
       <div className="absolute -bottom-32 left-0 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-8">
+        {nextOpenMatch && (
+          <div className="mb-4 flex justify-end">
+            <button
+              type="button"
+              onClick={() => setHighlightMatchId(nextOpenMatch.id)}
+              className="flex items-center gap-2 rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-sky-700 active:scale-95"
+            >
+              ⚽ Ir al próximo partido →
+            </button>
+          </div>
+        )}
         <ResultsTabs
           matches={matches}
           userId={userId}
