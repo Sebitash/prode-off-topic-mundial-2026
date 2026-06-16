@@ -4,20 +4,64 @@ import { query } from '../config/db.js';
 export const getRanking = async (req, res) => {
   try {
     const result = await query(
-      `SELECT
-         lu.id as user_id,
-         lu.nombre,
-         lu.apellido,
-         lu.email,
-         COALESCE(SUM(p.points), 0) as total_points,
-         COUNT(p.id) as total_predictions,
-         COALESCE(SUM(CASE WHEN p.points IN (3, 5) THEN 1 ELSE 0 END), 0) as exact_scores,
-         COALESCE(SUM(CASE WHEN p.points IN (1, 4) THEN 1 ELSE 0 END), 0) as score_bonus,
-         COALESCE(SUM(CASE WHEN p.points >= 2 THEN 1 ELSE 0 END), 0) as correct_results
-       FROM login_users lu
-       LEFT JOIN predictions p ON lu.id = p.user_id
-       GROUP BY lu.id, lu.nombre, lu.apellido, lu.email
-       ORDER BY total_points DESC, exact_scores DESC, score_bonus DESC, total_predictions DESC`
+      `WITH last_match AS (
+         SELECT id FROM matches WHERE status = 'finished' ORDER BY updated_at DESC LIMIT 1
+       ),
+       user_points AS (
+         SELECT
+           lu.id as user_id,
+           lu.nombre,
+           lu.apellido,
+           lu.email,
+           COALESCE(SUM(p.points), 0) as total_points,
+           COUNT(p.id) as total_predictions,
+           COALESCE(SUM(CASE WHEN p.points IN (3, 5) THEN 1 ELSE 0 END), 0) as exact_scores,
+           COALESCE(SUM(CASE WHEN p.points IN (1, 4) THEN 1 ELSE 0 END), 0) as score_bonus,
+           COALESCE(SUM(CASE WHEN p.points >= 2 THEN 1 ELSE 0 END), 0) as correct_results,
+           COALESCE(SUM(
+             CASE WHEN (SELECT id FROM last_match) IS NULL OR p.match_id != (SELECT id FROM last_match)
+               THEN p.points ELSE 0 END
+           ), 0) as prev_total_points,
+           COALESCE(SUM(
+             CASE WHEN (SELECT id FROM last_match) IS NULL OR p.match_id != (SELECT id FROM last_match)
+               THEN CASE WHEN p.points IN (3, 5) THEN 1 ELSE 0 END
+             ELSE 0 END
+           ), 0) as prev_exact_scores,
+           COALESCE(SUM(
+             CASE WHEN (SELECT id FROM last_match) IS NULL OR p.match_id != (SELECT id FROM last_match)
+               THEN CASE WHEN p.points IN (1, 4) THEN 1 ELSE 0 END
+             ELSE 0 END
+           ), 0) as prev_score_bonus,
+           COUNT(CASE WHEN (SELECT id FROM last_match) IS NULL OR p.match_id != (SELECT id FROM last_match)
+             THEN p.id END) as prev_total_predictions
+         FROM login_users lu
+         LEFT JOIN predictions p ON lu.id = p.user_id
+         GROUP BY lu.id, lu.nombre, lu.apellido, lu.email
+       ),
+       ranked AS (
+         SELECT
+           *,
+           ROW_NUMBER() OVER (
+             ORDER BY total_points DESC, exact_scores DESC, score_bonus DESC, total_predictions DESC
+           ) as current_rank,
+           ROW_NUMBER() OVER (
+             ORDER BY prev_total_points DESC, prev_exact_scores DESC, prev_score_bonus DESC, prev_total_predictions DESC
+           ) as previous_rank
+         FROM user_points
+       )
+       SELECT
+         user_id,
+         nombre,
+         apellido,
+         email,
+         total_points,
+         total_predictions,
+         exact_scores,
+         score_bonus,
+         correct_results,
+         (previous_rank - current_rank)::integer as rank_change
+       FROM ranked
+       ORDER BY current_rank`
     );
 
     res.json({ ranking: result.rows });

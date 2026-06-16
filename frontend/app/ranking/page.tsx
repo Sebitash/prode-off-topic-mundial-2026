@@ -18,6 +18,7 @@ interface RankingEntry {
   exact_scores: number
   score_bonus: number
   correct_results: number
+  rank_change: number
 }
 
 interface UserPrediction {
@@ -290,6 +291,13 @@ export default function RankingPage() {
                         <div className="flex items-center gap-2">
                           {index === 0 ? '🏆' : index === 1 ? '🥈' : index === 2 ? '🥉' : null}
                           <span>{index + 1}</span>
+                          {entry.rank_change > 0 ? (
+                            <span className="text-[10px] font-bold text-emerald-500">▲{entry.rank_change}</span>
+                          ) : entry.rank_change < 0 ? (
+                            <span className="text-[10px] font-bold text-red-500">▼{Math.abs(entry.rank_change)}</span>
+                          ) : (
+                            <span className="text-[10px] font-bold text-slate-400">—</span>
+                          )}
                         </div>
                       </td>
                       <td className="px-4 py-4">
