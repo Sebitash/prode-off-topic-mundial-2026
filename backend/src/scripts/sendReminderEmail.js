@@ -41,10 +41,6 @@ hasta último momento.
 📊 Fijate cómo estás en el Ranking y cuánto le sacás (o te sacan) los demás.
 Todavía hay mucho torneo por delante, las posiciones van a cambiar.
 
-📋 En "Historial" podés ver partido por partido qué pronosticó cada uno y
-cuántos puntos se llevaron en la primera fecha. Ideal para ver quién estuvo
-fino y quién la pifió.
-
 Ingresá en: https://prodemundial-2026-sm.up.railway.app
 
 ¡Vamos que se puede!
