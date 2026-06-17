@@ -26,31 +26,28 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const GMAIL_USER = process.env.GMAIL_USER;
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
 
-const EMAIL_SUBJECT = '⚽ Recordatorio - Prode Mundial 2026: ¡cargá tus pronósticos!';
+const EMAIL_SUBJECT = '⚽ Prode Mundial 2026 - ¡Mañana arranca la segunda fecha!';
 
 const EMAIL_BODY = `
-El Mundial 2026 ya está en marcha y todavía estás a tiempo de cargar (o
-completar) tus pronósticos para los próximos partidos del Prode.
+¡Mañana arranca la segunda fecha del Mundial 2026! Los equipos ya jugaron su
+primer partido, así que sabés cómo vienen parados... ¿estás listo para acertar?
 
-🏆 Ya están definidos los premios para el top 3 del ranking final: mirá los
-detalles en la pestaña de Ranking.
+Si todavía no completaste tus pronósticos para la segunda vuelta, este es el
+momento. No te quedes afuera de los puntos que puede sacar el resto.
 
-🆕 Hay una regla nueva para la fase eliminatoria: vas a sumar un punto extra
-si acertás el marcador de uno de los dos equipos. Mirá el detalle completo en
-la pestaña de Reglas.
+⏰ Recordá que cada partido se cierra 1 hora antes de su inicio: no esperés
+hasta último momento.
 
-👀 Además, en el Ranking podés tocar a cualquier participante para ver su
-historial de pronósticos y el puntaje que sacó en cada partido.
+📊 Fijate cómo estás en el Ranking y cuánto le sacás (o te sacan) los demás.
+Todavía hay mucho torneo por delante, las posiciones van a cambiar.
 
-🆕 También hay una nueva pestaña "Historial": ahí podés ver, partido por
-partido, qué pronosticó cada participante y cuántos puntos sacó.
-
-⏰ Recordá que las predicciones de cada partido se cierran 1 hora antes de su
-inicio, ¡no te quedes sin pronosticar!
+📋 En "Historial" podés ver partido por partido qué pronosticó cada uno y
+cuántos puntos se llevaron en la primera fecha. Ideal para ver quién estuvo
+fino y quién la pifió.
 
 Ingresá en: https://prodemundial-2026-sm.up.railway.app
 
-¡Suerte!
+¡Vamos que se puede!
 `.trim();
 
 const main = async () => {
