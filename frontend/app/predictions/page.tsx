@@ -85,15 +85,13 @@ export default function PredictionsPage() {
       <div className="absolute -bottom-32 left-0 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-8">
         {nextOpenMatch && (
-          <div className="mb-4 flex justify-end">
-            <button
-              type="button"
-              onClick={() => setHighlightMatchId(nextOpenMatch.id)}
-              className="flex items-center gap-2 rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-sky-700 active:scale-95"
-            >
-              ⚽ Ir al próximo partido →
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => setHighlightMatchId(nextOpenMatch.id)}
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-sky-700 active:scale-95"
+          >
+            ⚽ Ir al próximo partido →
+          </button>
         )}
         <ResultsTabs
           matches={matches}

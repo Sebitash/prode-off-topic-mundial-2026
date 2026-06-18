@@ -10,6 +10,8 @@ import {
   TEAM_TO_GROUP,
   isGroupStage,
   formatDate,
+  ScoreStepper,
+  CollapsibleSection,
   type Match,
 } from '@/components/matches/ResultsTabs'
 
@@ -109,21 +111,9 @@ function AdminMatchRow({
 
         <div className="flex flex-col items-center gap-2">
           <div className="flex items-center justify-center gap-3">
-            <input
-              type="number"
-              min="0"
-              value={homeScore}
-              onChange={(e) => setHomeScore(parseInt(e.target.value) || 0)}
-              className="h-10 w-14 rounded-lg border border-slate-200 dark:border-slate-700 text-center text-sm"
-            />
+            <ScoreStepper value={homeScore} onChange={setHomeScore} label={match.home_team} />
             <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">vs</span>
-            <input
-              type="number"
-              min="0"
-              value={awayScore}
-              onChange={(e) => setAwayScore(parseInt(e.target.value) || 0)}
-              className="h-10 w-14 rounded-lg border border-slate-200 dark:border-slate-700 text-center text-sm"
-            />
+            <ScoreStepper value={awayScore} onChange={setAwayScore} label={match.away_team} />
           </div>
           {showPenalties && (
             <div className="flex items-center justify-center gap-2">
@@ -257,6 +247,9 @@ export default function AdminPage() {
       }))
   }, [matches])
 
+  const unsavedMatches = sortedMatches.filter(({ match }) => match.home_score === null || match.away_score === null)
+  const savedMatches = sortedMatches.filter(({ match }) => match.home_score !== null && match.away_score !== null)
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex items-center justify-center">
@@ -282,14 +275,25 @@ export default function AdminPage() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Todos los partidos (por fecha)</h2>
-          <div className="mt-4 grid gap-4">
-            {sortedMatches.map(({ match, groupLabel }) => (
+        <CollapsibleSection title={`Sin resultado (${unsavedMatches.length})`} defaultOpen>
+          {unsavedMatches.length > 0 ? (
+            unsavedMatches.map(({ match, groupLabel }) => (
               <AdminMatchRow key={match.id} match={match} groupLabel={groupLabel} onSaved={handleSaved} />
-            ))}
-          </div>
-        </div>
+            ))
+          ) : (
+            <p className="text-sm text-slate-500 dark:text-slate-400">No quedan partidos sin resultado.</p>
+          )}
+        </CollapsibleSection>
+
+        <CollapsibleSection title={`Con resultado guardado (${savedMatches.length})`}>
+          {savedMatches.length > 0 ? (
+            savedMatches.map(({ match, groupLabel }) => (
+              <AdminMatchRow key={match.id} match={match} groupLabel={groupLabel} onSaved={handleSaved} />
+            ))
+          ) : (
+            <p className="text-sm text-slate-500 dark:text-slate-400">Todavía no guardaste ningún resultado.</p>
+          )}
+        </CollapsibleSection>
 
         <p className="text-center text-xs text-gray-400 dark:text-slate-500">Creado por Juan Sebastian Makkos · Sin fines de lucro</p>
       </div>
