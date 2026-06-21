@@ -361,6 +361,10 @@ export default function RankingPage() {
           <Link href="/historial" className="font-semibold underline">Historial</Link>, donde podés ver los partidos finalizados y qué puntaje sacó cada participante.
         </div>
 
+        <div className="mt-6 rounded-lg border border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950/30 px-4 py-3 text-sm text-violet-800 dark:text-violet-400">
+          ✏️ <strong>Nuevo:</strong> ya podés editar tu nombre y apellido para que aparezcan como quieras en esta tabla. Tocá el ✏️ que está al lado de tu nombre, arriba a la derecha.
+        </div>
+
         <div className="mt-6 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-400">
           🆕 <strong>Nueva regla para la fase eliminatoria:</strong> a partir de dieciseisavos de final, sumás +1 punto extra
           si tu pronóstico acierta el marcador final de uno de los dos equipos (ej: predijiste 2-1 y el resultado real
@@ -427,9 +431,6 @@ export default function RankingPage() {
                   <th className="px-4 py-3">POS</th>
                   <th className="px-4 py-3">PARTICIPANTE</th>
                   <th className="px-4 py-3 text-center">PREDICCIONES</th>
-                  <th className="hidden px-4 py-3 text-center sm:table-cell">MARCADOR</th>
-                  <th className="hidden px-4 py-3 text-center sm:table-cell">BONUS</th>
-                  <th className="hidden px-4 py-3 text-center sm:table-cell">RESULTADO</th>
                   <th className="px-4 py-3 text-center">TOTAL</th>
                 </tr>
               </thead>
@@ -470,16 +471,13 @@ export default function RankingPage() {
                         </div>
                       </td>
                       <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.total_predictions}</td>
-                      <td className="hidden px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100 sm:table-cell">{entry.exact_scores}</td>
-                      <td className="hidden px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100 sm:table-cell">{entry.score_bonus}</td>
-                      <td className="hidden px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100 sm:table-cell">{entry.correct_results}</td>
                       <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.total_points}</td>
                     </tr>
                     )
                   })
                 ) : (
                   <tr>
-                    <td colSpan={7} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                    <td colSpan={4} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                       No hay rankings disponibles aún. ¡Comenzá a hacer predicciones!
                     </td>
                   </tr>
