@@ -36,71 +36,225 @@ interface UserPrediction {
   stage: string
 }
 
-function UserPredictionsModal({
+type Phase = 'group' | 'knockout'
+
+interface PhaseStats {
+  predictions: number
+  exact: number
+  correctResults: number
+  bonus: number
+  totalPoints: number
+}
+
+function isKnockoutPrediction(pred: UserPrediction) {
+  return !isGroupStage(pred.stage)
+}
+
+function computePhaseStats(predictions: UserPrediction[], phase: Phase): PhaseStats {
+  const filtered = predictions.filter((p) => (phase === 'group' ? isGroupStage(p.stage) : isKnockoutPrediction(p)))
+
+  return filtered.reduce<PhaseStats>(
+    (acc, pred) => {
+      const exact = phase === 'group' ? pred.points === 3 : pred.points === 5
+      const bonus = phase === 'knockout' && (pred.points === 1 || pred.points === 4)
+      const correctResult = phase === 'group' ? pred.points >= 2 : pred.points >= 3
+
+      return {
+        predictions: acc.predictions + 1,
+        exact: acc.exact + (exact ? 1 : 0),
+        correctResults: acc.correctResults + (correctResult ? 1 : 0),
+        bonus: acc.bonus + (bonus ? 1 : 0),
+        totalPoints: acc.totalPoints + pred.points,
+      }
+    },
+    { predictions: 0, exact: 0, correctResults: 0, bonus: 0, totalPoints: 0 }
+  )
+}
+
+function PlayerSummaryModal({
   user,
   predictions,
   loading,
   onClose,
+  onViewPhase,
 }: {
   user: RankingEntry
   predictions: UserPrediction[]
   loading: boolean
   onClose: () => void
+  onViewPhase: (phase: Phase) => void
 }) {
+  const groupStats = computePhaseStats(predictions, 'group')
+  const knockoutStats = computePhaseStats(predictions, 'knockout')
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={onClose}>
       <div
-        className="max-h-[80vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl"
+        className="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between gap-4">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            Predicciones de {user.nombre} {user.apellido}
+            {user.nombre} {user.apellido}
           </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Cerrar"
-            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-lg font-semibold text-slate-500 dark:text-slate-400 transition hover:bg-slate-100 dark:bg-slate-700"
+            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-lg font-semibold text-slate-500 dark:text-slate-400 transition hover:bg-slate-100 dark:hover:bg-slate-700"
           >
             ✕
           </button>
         </div>
 
         {loading ? (
-          <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">Cargando predicciones...</p>
-        ) : predictions.length > 0 ? (
-          <div className="mt-4 space-y-2">
-            {predictions.map((pred) => (
-              <div
-                key={pred.id}
-                className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/60 p-3"
-              >
-                <div className="flex-1">
-                  <p className="text-xs text-slate-400 dark:text-slate-500">
-                    {isGroupStage(pred.stage) ? `Grupo ${TEAM_TO_GROUP[pred.home_team] || '?'}` : pred.stage} · {formatDate(pred.match_date)}
-                  </p>
-                  <p className="mt-1 flex items-center gap-2 text-sm font-medium text-slate-900 dark:text-slate-100">
-                    <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[pred.home_team] || 'xx'] || 'xx'} w-5 h-5 rounded`}></span>
-                    {pred.home_team} vs {pred.away_team}
-                    <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[pred.away_team] || 'xx'] || 'xx'} w-5 h-5 rounded`}></span>
-                  </p>
-                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                    Pronóstico: {pred.predicted_home_score} - {pred.predicted_away_score}
-                    {pred.status === 'finished' && pred.home_score !== null && pred.away_score !== null && (
-                      <> · Resultado: {pred.home_score} - {pred.away_score}</>
-                    )}
-                  </p>
+          <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">Cargando estadísticas...</p>
+        ) : (
+          <div className="mt-4 space-y-4">
+            <div className="rounded-xl border border-sky-200 dark:border-slate-700 p-4">
+              <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Fase de Grupos</h3>
+              <div className="mt-2 grid grid-cols-3 gap-2 text-center">
+                <div>
+                  <p className="text-lg font-bold text-sky-700 dark:text-sky-400">{groupStats.exact}</p>
+                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Marcador</p>
                 </div>
-                <span className="flex-shrink-0 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white">
-                  {pred.points} pts
-                </span>
+                <div>
+                  <p className="text-lg font-bold text-sky-700 dark:text-sky-400">{groupStats.correctResults}</p>
+                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Resultados</p>
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-emerald-600">{groupStats.totalPoints}</p>
+                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Total</p>
+                </div>
               </div>
-            ))}
+              <button
+                type="button"
+                onClick={() => onViewPhase('group')}
+                className="mt-3 w-full rounded-full bg-sky-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-sky-700"
+              >
+                Ver predicciones de fase de grupos →
+              </button>
+            </div>
+
+            <div className="rounded-xl border border-sky-200 dark:border-slate-700 p-4">
+              <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Fase Eliminatoria</h3>
+              <div className="mt-2 grid grid-cols-4 gap-2 text-center">
+                <div>
+                  <p className="text-lg font-bold text-sky-700 dark:text-sky-400">{knockoutStats.exact}</p>
+                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Marcador</p>
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-sky-700 dark:text-sky-400">{knockoutStats.correctResults}</p>
+                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Resultados</p>
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-amber-600">{knockoutStats.bonus}</p>
+                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Goles</p>
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-emerald-600">{knockoutStats.totalPoints}</p>
+                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Total</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => onViewPhase('knockout')}
+                className="mt-3 w-full rounded-full bg-sky-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-sky-700"
+              >
+                Ver predicciones de fase eliminatoria →
+              </button>
+            </div>
           </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function PhasePredictionsModal({
+  user,
+  predictions,
+  phase,
+  onBack,
+  onClose,
+}: {
+  user: RankingEntry
+  predictions: UserPrediction[]
+  phase: Phase
+  onBack: () => void
+  onClose: () => void
+}) {
+  const filtered = predictions.filter((p) => (phase === 'group' ? isGroupStage(p.stage) : isKnockoutPrediction(p)))
+  const totalPoints = filtered.reduce((sum, p) => sum + p.points, 0)
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={onClose}>
+      <div
+        className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onBack}
+              aria-label="Volver"
+              className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-lg text-slate-500 dark:text-slate-400 transition hover:bg-slate-100 dark:hover:bg-slate-700"
+            >
+              ←
+            </button>
+            <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+              {phase === 'group' ? 'Fase de Grupos' : 'Fase Eliminatoria'} · {user.nombre} {user.apellido}
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Cerrar"
+            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-lg font-semibold text-slate-500 dark:text-slate-400 transition hover:bg-slate-100 dark:hover:bg-slate-700"
+          >
+            ✕
+          </button>
+        </div>
+
+        {filtered.length > 0 ? (
+          <>
+            <div className="mt-4 space-y-2">
+              {filtered.map((pred) => (
+                <div
+                  key={pred.id}
+                  className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/60 p-3"
+                >
+                  <div className="flex-1">
+                    <p className="text-xs text-slate-400 dark:text-slate-500">
+                      {isGroupStage(pred.stage) ? `Grupo ${TEAM_TO_GROUP[pred.home_team] || '?'}` : pred.stage} · {formatDate(pred.match_date)}
+                    </p>
+                    <p className="mt-1 flex items-center gap-2 text-sm font-medium text-slate-900 dark:text-slate-100">
+                      <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[pred.home_team] || 'xx'] || 'xx'} w-5 h-5 rounded`}></span>
+                      {pred.home_team} vs {pred.away_team}
+                      <span className={`fi fi-${FLAG_CODES[TEAM_TO_CODE[pred.away_team] || 'xx'] || 'xx'} w-5 h-5 rounded`}></span>
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      Pronóstico: {pred.predicted_home_score} - {pred.predicted_away_score}
+                      {pred.status === 'finished' && pred.home_score !== null && pred.away_score !== null && (
+                        <> · Resultado: {pred.home_score} - {pred.away_score}</>
+                      )}
+                    </p>
+                  </div>
+                  <span className="flex-shrink-0 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white">
+                    {pred.points} pts
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 flex items-center justify-between rounded-lg bg-sky-50 dark:bg-sky-950/40 px-4 py-3 text-sm font-semibold text-sky-800 dark:text-sky-400">
+              <span>Total {phase === 'group' ? 'fase de grupos' : 'fase eliminatoria'}</span>
+              <span>{totalPoints} pts</span>
+            </div>
+          </>
         ) : (
           <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">
-            Todavía no hay predicciones visibles para este participante.
+            Todavía no hay predicciones visibles para esta fase.
           </p>
         )}
       </div>
@@ -120,12 +274,14 @@ export default function RankingPage() {
   const [selectedUser, setSelectedUser] = useState<RankingEntry | null>(null)
   const [userPredictions, setUserPredictions] = useState<UserPrediction[]>([])
   const [predictionsLoading, setPredictionsLoading] = useState(false)
+  const [phaseModal, setPhaseModal] = useState<Phase | null>(null)
   const [page, setPage] = useState(0)
   const totalPages = Math.max(1, Math.ceil(ranking.length / PAGE_SIZE))
   const pagedRanking = ranking.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE)
 
   const openUserPredictions = (entry: RankingEntry) => {
     setSelectedUser(entry)
+    setPhaseModal(null)
     setUserPredictions([])
     setPredictionsLoading(true)
 
@@ -270,10 +426,10 @@ export default function RankingPage() {
                 <tr>
                   <th className="px-4 py-3">POS</th>
                   <th className="px-4 py-3">PARTICIPANTE</th>
-                  <th className="px-4 py-3 text-center">PREDICCIONES</th>
-                  <th className="px-4 py-3 text-center">MARCADOR</th>
-                  <th className="px-4 py-3 text-center">BONUS</th>
-                  <th className="px-4 py-3 text-center">RESULTADO</th>
+                  <th className="hidden px-4 py-3 text-center sm:table-cell">PREDICCIONES</th>
+                  <th className="hidden px-4 py-3 text-center sm:table-cell">MARCADOR</th>
+                  <th className="hidden px-4 py-3 text-center sm:table-cell">BONUS</th>
+                  <th className="hidden px-4 py-3 text-center sm:table-cell">RESULTADO</th>
                   <th className="px-4 py-3 text-center">TOTAL</th>
                 </tr>
               </thead>
@@ -313,10 +469,10 @@ export default function RankingPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.total_predictions}</td>
-                      <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.exact_scores}</td>
-                      <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.score_bonus}</td>
-                      <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.correct_results}</td>
+                      <td className="hidden px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100 sm:table-cell">{entry.total_predictions}</td>
+                      <td className="hidden px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100 sm:table-cell">{entry.exact_scores}</td>
+                      <td className="hidden px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100 sm:table-cell">{entry.score_bonus}</td>
+                      <td className="hidden px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100 sm:table-cell">{entry.correct_results}</td>
                       <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.total_points}</td>
                     </tr>
                     )
@@ -360,12 +516,25 @@ export default function RankingPage() {
         <p className="mt-8 text-center text-xs text-gray-400 dark:text-slate-500">Creado por Juan Sebastian Makkos · Sin fines de lucro</p>
       </div>
       </div>
-      {selectedUser && (
-        <UserPredictionsModal
+      {selectedUser && !phaseModal && (
+        <PlayerSummaryModal
           user={selectedUser}
           predictions={userPredictions}
           loading={predictionsLoading}
           onClose={() => setSelectedUser(null)}
+          onViewPhase={(phase) => setPhaseModal(phase)}
+        />
+      )}
+      {selectedUser && phaseModal && (
+        <PhasePredictionsModal
+          user={selectedUser}
+          predictions={userPredictions}
+          phase={phaseModal}
+          onBack={() => setPhaseModal(null)}
+          onClose={() => {
+            setPhaseModal(null)
+            setSelectedUser(null)
+          }}
         />
       )}
     </div>

@@ -149,6 +149,7 @@ export default function DashboardNav({ displayName, isAdmin = false }: { display
   }
 
   return (
+    <>
     <nav className="border-b border-sky-200/60 bg-white/80 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900/80">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <div className="flex items-center space-x-8">
@@ -285,8 +286,8 @@ export default function DashboardNav({ displayName, isAdmin = false }: { display
           </div>
         </div>
       )}
-
-      {editOpen && <EditNameModal onClose={() => setEditOpen(false)} />}
     </nav>
+    {editOpen && <EditNameModal onClose={() => setEditOpen(false)} />}
+    </>
   )
 }
