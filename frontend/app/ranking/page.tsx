@@ -116,11 +116,11 @@ function PlayerSummaryModal({
               <div className="mt-2 grid grid-cols-3 gap-2 text-center">
                 <div>
                   <p className="text-lg font-bold text-sky-700 dark:text-sky-400">{groupStats.exact}</p>
-                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Marcador</p>
+                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Marcador (+1)</p>
                 </div>
                 <div>
                   <p className="text-lg font-bold text-sky-700 dark:text-sky-400">{groupStats.correctResults}</p>
-                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Resultados</p>
+                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Resultados (+2)</p>
                 </div>
                 <div>
                   <p className="text-lg font-bold text-emerald-600">{groupStats.totalPoints}</p>
@@ -141,15 +141,15 @@ function PlayerSummaryModal({
               <div className="mt-2 grid grid-cols-4 gap-2 text-center">
                 <div>
                   <p className="text-lg font-bold text-sky-700 dark:text-sky-400">{knockoutStats.exact}</p>
-                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Marcador</p>
+                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Marcador (+2)</p>
                 </div>
                 <div>
                   <p className="text-lg font-bold text-sky-700 dark:text-sky-400">{knockoutStats.correctResults}</p>
-                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Resultados</p>
+                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Resultados (+3)</p>
                 </div>
                 <div>
                   <p className="text-lg font-bold text-amber-600">{knockoutStats.bonus}</p>
-                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Goles</p>
+                  <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">Bonus (+1)</p>
                 </div>
                 <div>
                   <p className="text-lg font-bold text-emerald-600">{knockoutStats.totalPoints}</p>
