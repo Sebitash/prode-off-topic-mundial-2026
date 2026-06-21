@@ -192,12 +192,6 @@ export default function DashboardPage() {
       <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
       <div className="absolute -bottom-32 left-0 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-8 space-y-8">
-        <div className="rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/30 px-4 py-3 text-sm text-sky-800 dark:text-sky-400">
-          <p>
-            <span className="font-semibold">Novedad:</span> ahora podés cambiar entre tema claro ☀️ y oscuro 🌙 con el botón al lado de "Logout", arriba a la derecha.
-          </p>
-        </div>
-
         <div className="rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-400">
           <p>
             🆕 <span className="font-semibold">Nuevo:</span> ya está disponible el{' '}
@@ -207,7 +201,6 @@ export default function DashboardPage() {
 
         <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 text-sm text-amber-800 dark:text-amber-400">
           <p>Ante cualquier problema o bug, por favor comunicarse con Sebastian a sebastian.makkos2@gmail.com</p>
-          <p className="mt-1">¡Ya están definidos los premios para el top 3! Mirá los detalles en la pestaña de Ranking.</p>
         </div>
 
         <div>
