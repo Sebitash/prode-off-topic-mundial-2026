@@ -38,7 +38,8 @@ app.listen(PORT, () => {
   GET  /api/predictions/history
   POST /api/predictions
   GET  /api/ranking
-  GET  /api/user/me`);
+  GET  /api/user/me
+  PATCH /api/user/me`);
 });
 
 export default app;

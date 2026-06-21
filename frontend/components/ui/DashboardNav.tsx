@@ -4,11 +4,121 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useTheme } from '@/lib/theme-context'
+import { API_URL } from '@/lib/config'
+
+function EditNameModal({ onClose }: { onClose: () => void }) {
+  const stored = typeof window !== 'undefined' ? localStorage.getItem('user') : null
+  const current = stored ? JSON.parse(stored) : { nombre: '', apellido: '' }
+  const [nombre, setNombre] = useState(current.nombre || '')
+  const [apellido, setApellido] = useState(current.apellido || '')
+  const [error, setError] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!nombre.trim() || !apellido.trim()) {
+      setError('Completá nombre y apellido')
+      return
+    }
+
+    setSaving(true)
+    setError('')
+
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`${API_URL}/api/user/me`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ nombre: nombre.trim(), apellido: apellido.trim() }),
+      })
+      const data = await res.json()
+
+      if (!res.ok) throw new Error(data.error || 'No se pudo actualizar el nombre')
+
+      const storedUser = localStorage.getItem('user')
+      if (storedUser) {
+        const u = JSON.parse(storedUser)
+        localStorage.setItem('user', JSON.stringify({ ...u, nombre: data.user.nombre, apellido: data.user.apellido }))
+      }
+
+      window.location.reload()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo actualizar el nombre')
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={onClose}>
+      <form
+        onSubmit={handleSubmit}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl"
+      >
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Editar nombre</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Cerrar"
+            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-lg font-semibold text-slate-500 dark:text-slate-400 transition hover:bg-slate-100 dark:hover:bg-slate-700"
+          >
+            ✕
+          </button>
+        </div>
+        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          Así vas a aparecer en el saludo de Inicio y en la tabla de Ranking.
+        </p>
+
+        <div className="mt-4 space-y-3">
+          <div>
+            <label className="text-xs font-semibold text-slate-600 dark:text-slate-400">Nombre</label>
+            <input
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              maxLength={50}
+              className="mt-1 w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-slate-600 dark:text-slate-400">Apellido</label>
+            <input
+              value={apellido}
+              onChange={(e) => setApellido(e.target.value)}
+              maxLength={50}
+              className="mt-1 w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100"
+            />
+          </div>
+        </div>
+
+        {error && <p className="mt-3 text-xs font-semibold text-rose-600 dark:text-rose-400">{error}</p>}
+
+        <div className="mt-5 flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full border border-slate-300 dark:border-slate-600 px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 transition hover:bg-slate-50 dark:hover:bg-slate-700"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            disabled={saving}
+            className="rounded-full bg-sky-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-sky-700 disabled:opacity-50"
+          >
+            {saving ? 'Guardando...' : 'Guardar'}
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}
 
 export default function DashboardNav({ displayName, isAdmin = false }: { displayName: string; isAdmin?: boolean }) {
   const router = useRouter()
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [editOpen, setEditOpen] = useState(false)
   const { theme, toggleTheme } = useTheme()
 
   useEffect(() => {
@@ -94,8 +204,17 @@ export default function DashboardNav({ displayName, isAdmin = false }: { display
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="hidden text-xs text-slate-500 dark:text-slate-400 md:inline">
+          <span className="hidden items-center gap-1 text-xs text-slate-500 dark:text-slate-400 md:inline-flex">
             {displayName}
+            <button
+              type="button"
+              onClick={() => setEditOpen(true)}
+              aria-label="Editar nombre"
+              title="Editar nombre"
+              className="rounded-full p-1 transition hover:bg-sky-50 dark:hover:bg-slate-800"
+            >
+              ✏️
+            </button>
           </span>
           <button
             type="button"
@@ -143,7 +262,18 @@ export default function DashboardNav({ displayName, isAdmin = false }: { display
             )}
           </div>
           <div className="mt-3 flex items-center justify-between border-t border-sky-100 pt-3 text-xs text-slate-500 dark:border-slate-700 dark:text-slate-400">
-            <p>{displayName}</p>
+            <p className="flex items-center gap-1">
+              {displayName}
+              <button
+                type="button"
+                onClick={() => setEditOpen(true)}
+                aria-label="Editar nombre"
+                title="Editar nombre"
+                className="rounded-full p-1 transition hover:bg-sky-50 dark:hover:bg-slate-800"
+              >
+                ✏️
+              </button>
+            </p>
             <button
               type="button"
               onClick={toggleTheme}
@@ -155,6 +285,8 @@ export default function DashboardNav({ displayName, isAdmin = false }: { display
           </div>
         </div>
       )}
+
+      {editOpen && <EditNameModal onClose={() => setEditOpen(false)} />}
     </nav>
   )
 }
