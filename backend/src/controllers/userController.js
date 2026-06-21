@@ -38,6 +38,33 @@ export const getMe = async (req, res) => {
   }
 };
 
+// PATCH /api/user/me — actualiza el nombre y apellido del usuario autenticado
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const nombre = (req.body.nombre || '').trim();
+    const apellido = (req.body.apellido || '').trim();
+
+    if (!nombre) {
+      return res.status(400).json({ error: 'El nombre es obligatorio' });
+    }
+
+    if (nombre.length > 50 || apellido.length > 50) {
+      return res.status(400).json({ error: 'Nombre y apellido deben tener menos de 50 caracteres' });
+    }
+
+    const result = await query(
+      'UPDATE login_users SET nombre = $1, apellido = $2 WHERE id = $3 RETURNING id, nombre, apellido',
+      [nombre, apellido, userId]
+    );
+
+    res.json({ user: result.rows[0] });
+  } catch (error) {
+    console.error('updateProfile Error:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
 // PATCH /api/user/theme — actualiza la preferencia de tema (light/dark) del usuario
 export const updateTheme = async (req, res) => {
   try {

@@ -199,6 +199,12 @@ export default function DashboardPage() {
           </p>
         </div>
 
+        <div className="rounded-lg border border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950/30 px-4 py-3 text-sm text-violet-800 dark:text-violet-400">
+          <p>
+            ✏️ <span className="font-semibold">Nuevo:</span> ya podés editar tu nombre y apellido para que aparezcan como quieras en el Ranking. Tocá el ✏️ que está al lado de tu nombre, arriba a la derecha.
+          </p>
+        </div>
+
         <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 text-sm text-amber-800 dark:text-amber-400">
           <p>Ante cualquier problema o bug, por favor comunicarse con Sebastian a sebastian.makkos2@gmail.com</p>
         </div>
