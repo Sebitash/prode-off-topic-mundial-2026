@@ -45,8 +45,8 @@ export const updateProfile = async (req, res) => {
     const nombre = (req.body.nombre || '').trim();
     const apellido = (req.body.apellido || '').trim();
 
-    if (!nombre || !apellido) {
-      return res.status(400).json({ error: 'Nombre y apellido son obligatorios' });
+    if (!nombre) {
+      return res.status(400).json({ error: 'El nombre es obligatorio' });
     }
 
     if (nombre.length > 50 || apellido.length > 50) {

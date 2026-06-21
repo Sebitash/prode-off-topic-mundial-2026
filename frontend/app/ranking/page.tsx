@@ -426,7 +426,7 @@ export default function RankingPage() {
                 <tr>
                   <th className="px-4 py-3">POS</th>
                   <th className="px-4 py-3">PARTICIPANTE</th>
-                  <th className="hidden px-4 py-3 text-center sm:table-cell">PREDICCIONES</th>
+                  <th className="px-4 py-3 text-center">PREDICCIONES</th>
                   <th className="hidden px-4 py-3 text-center sm:table-cell">MARCADOR</th>
                   <th className="hidden px-4 py-3 text-center sm:table-cell">BONUS</th>
                   <th className="hidden px-4 py-3 text-center sm:table-cell">RESULTADO</th>
@@ -469,7 +469,7 @@ export default function RankingPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="hidden px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100 sm:table-cell">{entry.total_predictions}</td>
+                      <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.total_predictions}</td>
                       <td className="hidden px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100 sm:table-cell">{entry.exact_scores}</td>
                       <td className="hidden px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100 sm:table-cell">{entry.score_bonus}</td>
                       <td className="hidden px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100 sm:table-cell">{entry.correct_results}</td>

@@ -16,8 +16,8 @@ function EditNameModal({ onClose }: { onClose: () => void }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!nombre.trim() || !apellido.trim()) {
-      setError('Completá nombre y apellido')
+    if (!nombre.trim()) {
+      setError('Completá el nombre')
       return
     }
 
@@ -81,7 +81,7 @@ function EditNameModal({ onClose }: { onClose: () => void }) {
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-slate-600 dark:text-slate-400">Apellido</label>
+            <label className="text-xs font-semibold text-slate-600 dark:text-slate-400">Apellido (opcional)</label>
             <input
               value={apellido}
               onChange={(e) => setApellido(e.target.value)}
