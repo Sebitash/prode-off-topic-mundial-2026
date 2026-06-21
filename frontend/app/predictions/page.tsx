@@ -26,6 +26,7 @@ export default function PredictionsPage() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(matches.length === 0)
   const [highlightMatchId, setHighlightMatchId] = useState<string | null>(null)
+  const [highlightNonce, setHighlightNonce] = useState(0)
 
   useEffect(() => {
     setHighlightMatchId(new URLSearchParams(window.location.search).get('match'))
@@ -87,7 +88,10 @@ export default function PredictionsPage() {
         {nextOpenMatch && (
           <button
             type="button"
-            onClick={() => setHighlightMatchId(nextOpenMatch.id)}
+            onClick={() => {
+              setHighlightMatchId(nextOpenMatch.id)
+              setHighlightNonce((n) => n + 1)
+            }}
             className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-sky-700 active:scale-95"
           >
             ⚽ Ir al próximo partido →
@@ -100,6 +104,7 @@ export default function PredictionsPage() {
           title="Tus Predicciones"
           description="Completá tus pronósticos para la fase de grupos y la fase eliminatoria. Las predicciones cierran 1 hora antes del inicio de cada partido. Los cruces de eliminatorias 'Por definir' se habilitan cuando se conocen los equipos."
           highlightMatchId={highlightMatchId}
+          highlightNonce={highlightNonce}
         />
         <p className="mt-8 text-center text-xs text-gray-400 dark:text-slate-500">Creado por Juan Sebastian Makkos · Sin fines de lucro</p>
       </div>

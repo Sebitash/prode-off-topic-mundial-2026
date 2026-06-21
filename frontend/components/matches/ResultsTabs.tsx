@@ -861,6 +861,7 @@ export default function ResultsTabs({
   title = 'Resultados y Cronograma',
   description = 'Sigue los resultados reales del Mundial 2026',
   highlightMatchId = null,
+  highlightNonce = 0,
 }: {
   matches: Match[]
   userId: string
@@ -869,6 +870,7 @@ export default function ResultsTabs({
   title?: string
   description?: string
   highlightMatchId?: string | null
+  highlightNonce?: number
 }) {
   const [activePrimary, setActivePrimary] = useState<'group' | 'knockout'>('group')
   const [activeSecondary, setActiveSecondary] = useState('Resultados')
@@ -945,7 +947,7 @@ export default function ResultsTabs({
     if (!match) return
     setActivePrimary(isGroupStage(match.stage) ? 'group' : 'knockout')
     setActiveSecondary('Resultados')
-  }, [highlightMatchId, matches])
+  }, [highlightMatchId, highlightNonce, matches])
 
   // Hacemos scroll hasta el partido destacado una vez que su sección esté abierta.
   useEffect(() => {
@@ -954,7 +956,7 @@ export default function ResultsTabs({
       document.getElementById(`match-${highlightMatchId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }, 300)
     return () => clearTimeout(timer)
-  }, [highlightMatchId, activePrimary, matches])
+  }, [highlightMatchId, highlightNonce, activePrimary, matches])
 
   useEffect(() => {
     if (!allowPredict) return
