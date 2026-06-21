@@ -459,7 +459,7 @@ function GroupTable({
 }
 
 
-function CollapsibleSection({
+export function CollapsibleSection({
   title,
   defaultOpen = false,
   children,
@@ -541,7 +541,7 @@ function statusStyles(status: Match['status'], locked: boolean, allowPredict: bo
 
 const MAX_SCORE = 20
 
-function ScoreStepper({
+export function ScoreStepper({
   value,
   onChange,
   label,
