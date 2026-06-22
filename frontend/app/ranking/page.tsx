@@ -184,7 +184,9 @@ function PhasePredictionsModal({
   onBack: () => void
   onClose: () => void
 }) {
-  const filtered = predictions.filter((p) => (phase === 'group' ? isGroupStage(p.stage) : isKnockoutPrediction(p)))
+  const filtered = predictions
+    .filter((p) => (phase === 'group' ? isGroupStage(p.stage) : isKnockoutPrediction(p)))
+    .sort((a, b) => new Date(b.match_date).getTime() - new Date(a.match_date).getTime())
   const totalPoints = filtered.reduce((sum, p) => sum + p.points, 0)
 
   return (
@@ -217,6 +219,13 @@ function PhasePredictionsModal({
           </button>
         </div>
 
+        {filtered.length > 0 && (
+          <div className="mt-4 flex items-center justify-between rounded-lg bg-sky-50 dark:bg-sky-950/40 px-4 py-3 text-sm font-semibold text-sky-800 dark:text-sky-400">
+            <span>Total {phase === 'group' ? 'fase de grupos' : 'fase eliminatoria'}</span>
+            <span>{totalPoints} pts</span>
+          </div>
+        )}
+
         {filtered.length > 0 ? (
           <>
             <div className="mt-4 space-y-2">
@@ -246,10 +255,6 @@ function PhasePredictionsModal({
                   </span>
                 </div>
               ))}
-            </div>
-            <div className="mt-4 flex items-center justify-between rounded-lg bg-sky-50 dark:bg-sky-950/40 px-4 py-3 text-sm font-semibold text-sky-800 dark:text-sky-400">
-              <span>Total {phase === 'group' ? 'fase de grupos' : 'fase eliminatoria'}</span>
-              <span>{totalPoints} pts</span>
             </div>
           </>
         ) : (
