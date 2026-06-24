@@ -31,8 +31,11 @@ function AdminMatchRow({
 }) {
   const [homeScore, setHomeScore] = useState(match.home_score ?? 0)
   const [awayScore, setAwayScore] = useState(match.away_score ?? 0)
-  const [homePenalties, setHomePenalties] = useState<number | ''>(match.home_penalties ?? '')
-  const [awayPenalties, setAwayPenalties] = useState<number | ''>(match.away_penalties ?? '')
+  const [penaltyWinner, setPenaltyWinner] = useState<'home' | 'away' | null>(
+    match.home_penalties != null && match.away_penalties != null
+      ? (match.home_penalties > match.away_penalties ? 'home' : 'away')
+      : null
+  )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -88,17 +91,13 @@ function AdminMatchRow({
       return
     }
 
-    if (homePenalties === '' || awayPenalties === '') {
-      setError('Si el partido termina en penales, ingresá el resultado de la definición')
+    if (!penaltyWinner) {
+      setError('Si el partido termina en penales, elegí quién ganó la definición')
       return
     }
 
-    if (homePenalties === awayPenalties) {
-      setError('Los penales no pueden terminar empatados')
-      return
-    }
-
-    updateResult(homeScore, awayScore, { home: homePenalties, away: awayPenalties })
+    const penalties = penaltyWinner === 'home' ? { home: 1, away: 0 } : { home: 0, away: 1 }
+    updateResult(homeScore, awayScore, penalties)
   }
 
   return (
@@ -116,23 +115,28 @@ function AdminMatchRow({
             <ScoreStepper value={awayScore} onChange={setAwayScore} label={match.away_team} />
           </div>
           {showPenalties && (
-            <div className="flex items-center justify-center gap-2">
-              <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500">Penales</span>
-              <input
-                type="number"
-                min="0"
-                value={homePenalties}
-                onChange={(e) => setHomePenalties(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
-                className="h-8 w-12 rounded-lg border border-slate-200 dark:border-slate-700 text-center text-xs"
-              />
-              <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">-</span>
-              <input
-                type="number"
-                min="0"
-                value={awayPenalties}
-                onChange={(e) => setAwayPenalties(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
-                className="h-8 w-12 rounded-lg border border-slate-200 dark:border-slate-700 text-center text-xs"
-              />
+            <div className="flex flex-col items-center gap-1">
+              <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500">¿Quién gana en penales?</span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPenaltyWinner('home')}
+                  className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
+                    penaltyWinner === 'home' ? 'bg-sky-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
+                  }`}
+                >
+                  {match.home_team}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPenaltyWinner('away')}
+                  className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
+                    penaltyWinner === 'away' ? 'bg-sky-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
+                  }`}
+                >
+                  {match.away_team}
+                </button>
+              </div>
             </div>
           )}
         </div>

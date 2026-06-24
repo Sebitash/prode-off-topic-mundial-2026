@@ -26,20 +26,21 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const GMAIL_USER = process.env.GMAIL_USER;
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
 
-const EMAIL_SUBJECT = '⚽ Prode Mundial 2026 - ¡Mañana arranca la segunda fecha!';
+const EMAIL_SUBJECT = '⚽ Prode Mundial 2026 - ¡Hoy arranca la última fecha de la fase de grupos!';
 
 const EMAIL_BODY = `
-¡Mañana arranca la segunda fecha del Mundial 2026! Los equipos ya jugaron su
-primer partido, así que sabés cómo vienen parados... ¿estás listo para acertar?
+¡Hoy arranca la última fecha de la fase de grupos! Después de estos partidos
+ya se definen los clasificados a la fase eliminatoria, así que es tu última
+chance de sumar puntos antes de que empiece la eliminación directa.
 
-Si todavía no completaste tus pronósticos para la segunda vuelta, este es el
-momento. No te quedes afuera de los puntos que puede sacar el resto.
+Si todavía no completaste tus pronósticos para esta fecha, hacelo ya: cada
+partido cierra 1 hora antes de su inicio.
 
-⏰ Recordá que cada partido se cierra 1 hora antes de su inicio: no esperés
-hasta último momento.
+🆕 Ahora podés cambiar tu nombre y apellido como aparecen en el Ranking:
+tocá el ícono de lápiz que está al lado de tu nombre, arriba a la derecha.
 
-📊 Fijate cómo estás en el Ranking y cuánto le sacás (o te sacan) los demás.
-Todavía hay mucho torneo por delante, las posiciones van a cambiar.
+📊 Con esta fecha se cierra la fase de grupos: revisá el Ranking para ver
+cómo quedás antes de que arranque la fase eliminatoria.
 
 Ingresá en: https://prodemundial-2026-sm.up.railway.app
 
