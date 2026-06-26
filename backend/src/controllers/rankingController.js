@@ -4,8 +4,10 @@ import { query } from '../config/db.js';
 export const getRanking = async (req, res) => {
   try {
     const result = await query(
-      `WITH last_match AS (
-         SELECT id FROM matches WHERE status = 'finished' ORDER BY updated_at DESC LIMIT 1
+      `WITH last_batch AS (
+         SELECT id FROM matches
+         WHERE status = 'finished'
+           AND updated_at >= (SELECT MAX(updated_at) FROM matches WHERE status = 'finished') - INTERVAL '10 minutes'
        ),
        user_points AS (
          SELECT
@@ -19,20 +21,19 @@ export const getRanking = async (req, res) => {
            COALESCE(SUM(CASE WHEN p.points IN (1, 4) THEN 1 ELSE 0 END), 0) as score_bonus,
            COALESCE(SUM(CASE WHEN p.points >= 2 THEN 1 ELSE 0 END), 0) as correct_results,
            COALESCE(SUM(
-             CASE WHEN (SELECT id FROM last_match) IS NULL OR p.match_id != (SELECT id FROM last_match)
-               THEN p.points ELSE 0 END
+             CASE WHEN p.match_id NOT IN (SELECT id FROM last_batch) THEN p.points ELSE 0 END
            ), 0) as prev_total_points,
            COALESCE(SUM(
-             CASE WHEN (SELECT id FROM last_match) IS NULL OR p.match_id != (SELECT id FROM last_match)
+             CASE WHEN p.match_id NOT IN (SELECT id FROM last_batch)
                THEN CASE WHEN p.points IN (3, 5) THEN 1 ELSE 0 END
              ELSE 0 END
            ), 0) as prev_exact_scores,
            COALESCE(SUM(
-             CASE WHEN (SELECT id FROM last_match) IS NULL OR p.match_id != (SELECT id FROM last_match)
+             CASE WHEN p.match_id NOT IN (SELECT id FROM last_batch)
                THEN CASE WHEN p.points IN (1, 4) THEN 1 ELSE 0 END
              ELSE 0 END
            ), 0) as prev_score_bonus,
-           COUNT(CASE WHEN (SELECT id FROM last_match) IS NULL OR p.match_id != (SELECT id FROM last_match)
+           COUNT(CASE WHEN p.match_id NOT IN (SELECT id FROM last_batch)
              THEN p.id END) as prev_total_predictions
          FROM login_users lu
          LEFT JOIN predictions p ON lu.id = p.user_id
