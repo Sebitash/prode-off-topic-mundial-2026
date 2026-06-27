@@ -89,6 +89,29 @@ const importantRules = [
   },
 ]
 
+const specialCases = [
+  {
+    question: 'Predije que ganaba un equipo (sin empate) y el partido real terminó empatado pero se definió por penales',
+    answer: 'Contás como ganador acertado si tu equipo elegido fue el que se quedó con la serie de penales: lo que importa es quién avanza, no si el marcador fue literalmente un empate.',
+    example: 'Real: Brasil 1-1 (gana penales Brasil) | Tu pronóstico: Brasil 2-0 → 3 pts (ganador) + el bonus de gol si algún número coincide con el resultado real (en este caso ninguno coincide, así que 3 pts en total).',
+  },
+  {
+    question: 'Predije un empate con ganador de penales, pero el partido real se decidió en los 90\'/120\' (no hubo penales)',
+    answer: 'Tu elección de penales NO se usa: un pronóstico de empate solo "cuenta" como tal si el partido real también termina empatado. Si el partido real lo gana un equipo en tiempo de juego, tu pronóstico pasa a valer como empate y no coincide con ningún ganador real → 0 puntos por ganador, sin importar a quién elegiste en los penales.',
+    example: 'Real: México 2-1 | Tu pronóstico: Empate 1-1 (penales: México) → 0 pts de ganador. Como el "1" del visitante coincide con el resultado real, sumás +1 pt de bonus de gol → 1 pt en total.',
+  },
+  {
+    question: 'Predije el marcador exacto del empate, pero elegí mal el ganador de los penales',
+    answer: 'Sumás el bonus de resultado exacto igual (vale por el marcador del tiempo reglamentario, no depende de los penales), pero no los puntos de "ganador", porque ese sí depende de tu elección de penales.',
+    example: 'Real: Argentina 1-1 (gana penales Argentina) | Tu pronóstico: Empate 1-1 (penales: el rival) → +2 pts (resultado exacto) y 0 pts de ganador → 2 pts en total (en vez de los 5 que hubieras sacado acertando también los penales).',
+  },
+  {
+    question: '¿El bonus de gol (+1, eliminatorias) se suma aunque erré el ganador?',
+    answer: 'Sí, es independiente: alcanza con acertar el marcador final de uno de los dos equipos, sin importar si acertaste el ganador. Solo no se suma si ya cobraste el bonus de resultado exacto completo (para no duplicar).',
+    example: 'Real: Francia 3-1 (vs. Alemania) | Tu pronóstico: Francia 0-1 → le erraste el ganador (pronosticaste que ganaba Alemania) y el marcador no es exacto, pero el "1" del visitante coincide con el real → 0 pts de ganador + 0 de exacto + 1 pt de bonus de gol = 1 pt en total.',
+  },
+]
+
 export default function RulesPage() {
   const [displayName, setDisplayName] = useState('')
   const [isAdmin, setIsAdmin] = useState(false)
@@ -288,6 +311,30 @@ export default function RulesPage() {
                 </p>
                 <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
                   {rule.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            ❓ Casos Especiales: ¿Gano puntos o no?
+          </h3>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+            Las dudas más comunes sobre cómo se calculan los puntos, sobre todo con los pronósticos de penales en eliminatorias.
+          </p>
+          <div className="mt-4 grid gap-3">
+            {specialCases.map((item) => (
+              <div key={item.question} className="rounded-lg border border-sky-100 dark:border-slate-700 bg-sky-50 dark:bg-sky-950/40 px-3 py-3">
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  {item.question}
+                </p>
+                <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
+                  {item.answer}
+                </p>
+                <p className="mt-2 text-xs text-slate-500 dark:text-slate-500 italic">
+                  {item.example}
                 </p>
               </div>
             ))}

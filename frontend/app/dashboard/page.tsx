@@ -192,6 +192,14 @@ export default function DashboardPage() {
       <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
       <div className="absolute -bottom-32 left-0 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-8 space-y-8">
+        <div className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 px-4 py-3 text-sm text-rose-800 dark:text-rose-400">
+          <p>
+            🚨 <span className="font-semibold">¡Atención!</span> Mañana 28 de junio arranca la fase eliminatoria del Mundial.
+            No te olvides de cargar tus{' '}
+            <Link href="/predictions" className="font-semibold underline">pronósticos</Link> antes de que cierren.
+          </p>
+        </div>
+
         <div className="rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-400">
           <p>
             🆕 <span className="font-semibold">Nuevo:</span> ya está disponible el{' '}
