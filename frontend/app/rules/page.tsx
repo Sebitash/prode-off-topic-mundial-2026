@@ -69,7 +69,7 @@ const importantRules = [
   },
   {
     title: 'Plazos de Pronósticos',
-    text: 'Las predicciones de cada partido se cierran 1 hora antes de su inicio. Pasado ese momento no se aceptan cambios.',
+    text: 'Las predicciones de cada partido se cierran 30 minutos antes de su inicio. Pasado ese momento no se aceptan cambios.',
   },
   {
     title: 'Pronósticos Incompletos',

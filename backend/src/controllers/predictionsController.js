@@ -1,5 +1,8 @@
 import { query } from '../config/db.js';
 
+// Las predicciones se cierran 30 minutos antes del inicio de cada partido.
+const LOCK_WINDOW_MS = 30 * 60 * 1000;
+
 function isGroupStage(stage) {
   const value = (stage || '').toLowerCase();
   return value.includes('group') || value.includes('grupo');
@@ -37,7 +40,7 @@ export const getPredictionsByUserId = async (req, res) => {
        FROM predictions p
        JOIN matches m ON p.match_id = m.id
        WHERE p.user_id = $1
-         AND (m.status = 'finished' OR m.match_date <= NOW() + INTERVAL '1 hour')
+         AND (m.status = 'finished' OR m.match_date <= NOW() + INTERVAL '30 minutes')
        ORDER BY m.match_date ASC`,
       [userId]
     );
@@ -127,9 +130,9 @@ export const upsertPrediction = async (req, res) => {
 
     const match = matchResult.rows[0];
     const kickoff = new Date(match.match_date).getTime();
-    const oneHourBeforeMs = kickoff - 60 * 60 * 1000;
-    if (match.status !== 'scheduled' || Date.now() >= oneHourBeforeMs) {
-      return res.status(400).json({ error: 'Las predicciones para este partido están cerradas (cierran 1 hora antes del inicio)' });
+    const lockAtMs = kickoff - LOCK_WINDOW_MS;
+    if (match.status !== 'scheduled' || Date.now() >= lockAtMs) {
+      return res.status(400).json({ error: 'Las predicciones para este partido están cerradas (cierran 30 minutos antes del inicio)' });
     }
 
     // El ganador de penales solo se pronostica si el resultado predicho es
@@ -177,9 +180,9 @@ export const deletePrediction = async (req, res) => {
 
     const match = matchResult.rows[0];
     const kickoff = new Date(match.match_date).getTime();
-    const oneHourBeforeMs = kickoff - 60 * 60 * 1000;
-    if (match.status !== 'scheduled' || Date.now() >= oneHourBeforeMs) {
-      return res.status(400).json({ error: 'Las predicciones para este partido están cerradas (cierran 1 hora antes del inicio)' });
+    const lockAtMs = kickoff - LOCK_WINDOW_MS;
+    if (match.status !== 'scheduled' || Date.now() >= lockAtMs) {
+      return res.status(400).json({ error: 'Las predicciones para este partido están cerradas (cierran 30 minutos antes del inicio)' });
     }
 
     await query('DELETE FROM predictions WHERE user_id = $1 AND match_id = $2', [userId, matchId]);

@@ -34,7 +34,7 @@ ya se definen los clasificados a la fase eliminatoria, así que es tu última
 chance de sumar puntos antes de que empiece la eliminación directa.
 
 Si todavía no completaste tus pronósticos para esta fecha, hacelo ya: cada
-partido cierra 1 hora antes de su inicio.
+partido cierra 30 minutos antes de su inicio.
 
 🆕 Ahora podés cambiar tu nombre y apellido como aparecen en el Ranking:
 tocá el ícono de lápiz que está al lado de tu nombre, arriba a la derecha.

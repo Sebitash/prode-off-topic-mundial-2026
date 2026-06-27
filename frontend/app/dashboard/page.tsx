@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import DashboardNav from '@/components/ui/DashboardNav'
-import { FLAG_CODES, TEAM_TO_CODE } from '@/components/matches/ResultsTabs'
+import { FLAG_CODES, TEAM_TO_CODE, LOCK_WINDOW_MS } from '@/components/matches/ResultsTabs'
 import { API_URL } from '@/lib/config'
 import { getCache, setCache } from '@/lib/dataCache'
 
@@ -61,8 +61,8 @@ function NextMatchCountdown({ matches }: { matches: Match[] }) {
     seconds: Math.floor((diff / 1000) % 60),
   }
 
-  const predictionsClosed = countdown.totalMs <= 60 * 60 * 1000
-  const closingTime = new Date(targetTime - 60 * 60 * 1000)
+  const predictionsClosed = countdown.totalMs <= LOCK_WINDOW_MS
+  const closingTime = new Date(targetTime - LOCK_WINDOW_MS)
 
   return (
     <div className="flex flex-col items-center rounded-lg bg-gradient-to-r from-sky-600 to-sky-700 dark:from-sky-900 dark:to-slate-800 p-6 text-center text-white shadow-md">
@@ -268,7 +268,7 @@ export default function DashboardPage() {
               <div className="space-y-3">
                 {upcomingMatches.map((match) => {
                   const predicted = predictedMatchIds.has(match.id)
-                  const locked = Date.now() >= new Date(match.match_date).getTime() - 60 * 60 * 1000
+                  const locked = Date.now() >= new Date(match.match_date).getTime() - LOCK_WINDOW_MS
 
                   return (
                   <div key={match.id} className="flex items-center justify-between gap-3 p-3 bg-gray-50 dark:bg-slate-800/60 rounded-lg">
