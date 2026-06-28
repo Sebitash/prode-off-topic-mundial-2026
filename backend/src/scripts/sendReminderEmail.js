@@ -26,21 +26,19 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const GMAIL_USER = process.env.GMAIL_USER;
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
 
-const EMAIL_SUBJECT = '⚽ Prode Mundial 2026 - ¡Hoy arranca la última fecha de la fase de grupos!';
+const EMAIL_SUBJECT = '⚽ Prode Mundial 2026 - ¡El sábado termina la fase de grupos!';
 
 const EMAIL_BODY = `
-¡Hoy arranca la última fecha de la fase de grupos! Después de estos partidos
-ya se definen los clasificados a la fase eliminatoria, así que es tu última
-chance de sumar puntos antes de que empiece la eliminación directa.
+Este sábado termina la fase de grupos. Si todavía no cargaste tus
+pronósticos para los últimos partidos, hacelo ahora antes de que se cierren:
+cada partido cierra 1 hora antes de su inicio.
 
-Si todavía no completaste tus pronósticos para esta fecha, hacelo ya: cada
-partido cierra 1 hora antes de su inicio.
+🔥 El domingo arranca la fase eliminatoria: a partir de ahí cada partido es
+sin vuelta atrás, y entra en juego el punto extra por acertar el marcador de
+uno de los dos equipos.
 
-🆕 Ahora podés cambiar tu nombre y apellido como aparecen en el Ranking:
-tocá el ícono de lápiz que está al lado de tu nombre, arriba a la derecha.
-
-📊 Con esta fecha se cierra la fase de grupos: revisá el Ranking para ver
-cómo quedás antes de que arranque la fase eliminatoria.
+📊 Revisá el Ranking para ver cómo quedás antes de que arranque la
+eliminación directa.
 
 Ingresá en: https://prodemundial-2026-sm.up.railway.app
 

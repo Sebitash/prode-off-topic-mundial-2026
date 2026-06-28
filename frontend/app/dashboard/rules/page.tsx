@@ -45,6 +45,7 @@ const knockoutScoringExamples = [
   'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Argentina 1-1 (gana penales) → 5 pts ✓',
   'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Argentina gana 2-0 → 3 pts (acertaste el ganador, pero no el 1-1)',
   'Real: Brasil 2-1 | Tu pronóstico: Brasil 2-0 → 4 pts (ganador +3 y marcador del local "2" +1)',
+  'Real: Sudáfrica 0-1 Canadá | Tu pronóstico: Sudáfrica 2-1 Canadá → 1 pt (te equivocaste de ganador, pero acertaste el "1" de Canadá)',
   'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Brasil gana → 0 pts ✗',
 ]
 
