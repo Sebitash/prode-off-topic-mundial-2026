@@ -541,6 +541,9 @@ function statusStyles(status: Match['status'], locked: boolean, allowPredict: bo
 
 const MAX_SCORE = 20
 
+// Las predicciones se cierran 30 minutos antes del inicio de cada partido.
+export const LOCK_WINDOW_MS = 30 * 60 * 1000
+
 export function ScoreStepper({
   value,
   onChange,
@@ -610,7 +613,7 @@ function ResultRow({
 
   const isFinished = match.status === 'finished'
   const tbd = isTBD(match)
-  const locked = Date.now() >= new Date(match.match_date).getTime() - 60 * 60 * 1000
+  const locked = Date.now() >= new Date(match.match_date).getTime() - LOCK_WINDOW_MS
   const canPredict = allowPredict && !isFinished && !locked && !tbd
   const isSaved = !!prediction
   const showPenaltyPicker = homeScore === awayScore && !isGroupStage(match.stage)
@@ -819,7 +822,7 @@ function ResultRow({
             {statusLabel(match.status, locked, allowPredict, tbd)}
           </span>
           {allowPredict && locked && !isFinished && !tbd && (
-            <span className="text-slate-400 dark:text-slate-500">Las predicciones cierran 1h antes del partido</span>
+            <span className="text-slate-400 dark:text-slate-500">Las predicciones cierran 30 min antes del partido</span>
           )}
           {canPredict && (
             isSaved ? (

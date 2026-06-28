@@ -31,7 +31,7 @@ const EMAIL_SUBJECT = '⚽ Prode Mundial 2026 - ¡El sábado termina la fase de 
 const EMAIL_BODY = `
 Este sábado termina la fase de grupos. Si todavía no cargaste tus
 pronósticos para los últimos partidos, hacelo ahora antes de que se cierren:
-cada partido cierra 1 hora antes de su inicio.
+cada partido cierra 30 minutos antes de su inicio.
 
 🔥 El domingo arranca la fase eliminatoria: a partir de ahí cada partido es
 sin vuelta atrás, y entra en juego el punto extra por acertar el marcador de

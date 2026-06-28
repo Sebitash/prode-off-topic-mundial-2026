@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import DashboardNav from '@/components/ui/DashboardNav'
-import ResultsTabs from '@/components/matches/ResultsTabs'
+import ResultsTabs, { LOCK_WINDOW_MS } from '@/components/matches/ResultsTabs'
 import { API_URL } from '@/lib/config'
 import { getCache, setCache } from '@/lib/dataCache'
 
@@ -75,7 +75,7 @@ export default function PredictionsPage() {
   }
 
   const nextOpenMatch = matches.find(
-    (m) => m.status === 'scheduled' && new Date(m.match_date).getTime() - Date.now() > 60 * 60 * 1000
+    (m) => m.status === 'scheduled' && new Date(m.match_date).getTime() - Date.now() > LOCK_WINDOW_MS
   )
 
   return (
@@ -102,7 +102,7 @@ export default function PredictionsPage() {
           userId={userId}
           showSecondaryTabs={false}
           title="Tus Predicciones"
-          description="Completá tus pronósticos para la fase de grupos y la fase eliminatoria. Las predicciones cierran 1 hora antes del inicio de cada partido. Los cruces de eliminatorias 'Por definir' se habilitan cuando se conocen los equipos."
+          description="Completá tus pronósticos para la fase de grupos y la fase eliminatoria. Las predicciones cierran 30 minutos antes del inicio de cada partido. Los cruces de eliminatorias 'Por definir' se habilitan cuando se conocen los equipos."
           highlightMatchId={highlightMatchId}
           highlightNonce={highlightNonce}
         />

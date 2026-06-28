@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import DashboardNav from '@/components/ui/DashboardNav'
-import { FLAG_CODES, TEAM_TO_CODE } from '@/components/matches/ResultsTabs'
+import { FLAG_CODES, TEAM_TO_CODE, LOCK_WINDOW_MS } from '@/components/matches/ResultsTabs'
 import { API_URL } from '@/lib/config'
 import { getCache, setCache } from '@/lib/dataCache'
 
@@ -61,8 +61,8 @@ function NextMatchCountdown({ matches }: { matches: Match[] }) {
     seconds: Math.floor((diff / 1000) % 60),
   }
 
-  const predictionsClosed = countdown.totalMs <= 60 * 60 * 1000
-  const closingTime = new Date(targetTime - 60 * 60 * 1000)
+  const predictionsClosed = countdown.totalMs <= LOCK_WINDOW_MS
+  const closingTime = new Date(targetTime - LOCK_WINDOW_MS)
 
   return (
     <div className="flex flex-col items-center rounded-lg bg-gradient-to-r from-sky-600 to-sky-700 dark:from-sky-900 dark:to-slate-800 p-6 text-center text-white shadow-md">
@@ -192,6 +192,14 @@ export default function DashboardPage() {
       <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
       <div className="absolute -bottom-32 left-0 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-8 space-y-8">
+        <div className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 px-4 py-3 text-sm text-rose-800 dark:text-rose-400">
+          <p>
+            🚨 <span className="font-semibold">¡Atención!</span> Mañana 28 de junio arranca la fase eliminatoria del Mundial.
+            No te olvides de cargar tus{' '}
+            <Link href="/predictions" className="font-semibold underline">pronósticos</Link> antes de que cierren.
+          </p>
+        </div>
+
         <div className="rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-400">
           <p>
             🆕 <span className="font-semibold">Nuevo:</span> ya está disponible el{' '}
@@ -260,7 +268,7 @@ export default function DashboardPage() {
               <div className="space-y-3">
                 {upcomingMatches.map((match) => {
                   const predicted = predictedMatchIds.has(match.id)
-                  const locked = Date.now() >= new Date(match.match_date).getTime() - 60 * 60 * 1000
+                  const locked = Date.now() >= new Date(match.match_date).getTime() - LOCK_WINDOW_MS
 
                   return (
                   <div key={match.id} className="flex items-center justify-between gap-3 p-3 bg-gray-50 dark:bg-slate-800/60 rounded-lg">
