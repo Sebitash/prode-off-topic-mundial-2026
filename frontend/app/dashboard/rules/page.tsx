@@ -26,12 +26,12 @@ const knockoutScoring = [
   {
     label: 'Bonus por resultado exacto',
     points: '+2 puntos',
-    detail: 'Puntos adicionales si además acertás el marcador exacto del partido (ej: 2-1).',
+    detail: 'Puntos adicionales si además acertás el marcador exacto del partido (ej: 2-1). Se suman acertes o no el ganador (por ejemplo, si pronosticaste mal quién se queda con la serie de penales).',
   },
   {
     label: 'Bonus por marcador de un equipo (nuevo)',
     points: '+1 punto',
-    detail: 'Punto adicional si acertás el marcador final de UNO de los dos equipos (ej: predijiste 2-1 y el resultado real fue 2-0, acertaste el "2" del local). No se suma si ya acertaste el resultado exacto completo.',
+    detail: 'Punto adicional si acertás el marcador final de UNO de los dos equipos (ej: predijiste 2-1 y el resultado real fue 2-0, acertaste el "2" del local). No se suma si ya acertaste el resultado exacto completo. Se suma acertes o no el ganador.',
   },
 ]
 
@@ -47,6 +47,8 @@ const knockoutScoringExamples = [
   'Real: Brasil 2-1 | Tu pronóstico: Brasil 2-0 → 4 pts (ganador +3 y marcador del local "2" +1)',
   'Real: Sudáfrica 0-1 Canadá | Tu pronóstico: Sudáfrica 2-1 Canadá → 1 pt (te equivocaste de ganador, pero acertaste el "1" de Canadá)',
   'Real: Argentina 2-2 (gana Argentina por penales) | Tu pronóstico: Argentina 2-2 (gana Brasil por penales) → 2 pts (acertaste el resultado exacto 2-2, pero le erraste al ganador de la serie de penales)',
+  'Real: Argentina 3-1 Brasil | Tu pronóstico: Argentina 2-1 Brasil → 4 pts (acertaste el ganador +3 y el "1" de Brasil, el equipo perdedor, +1)',
+  'Real: Argentina 2-0 Brasil (sin penales) | Tu pronóstico: Empate 0-0 (ganaba Argentina por penales) → 1 pt (el partido no llegó a penales y le erraste al desarrollo, pero acertaste el "0" de Brasil)',
   'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Brasil gana → 0 pts ✗',
 ]
 
