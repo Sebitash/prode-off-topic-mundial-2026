@@ -67,7 +67,7 @@ function EditNameModal({ onClose }: { onClose: () => void }) {
           </button>
         </div>
         <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-          Así vas a aparecer en el saludo de Inicio y en la tabla de Ranking.
+          Así vas a aparecer en el saludo de Inicio y en la tabla de Posiciones.
         </p>
 
         <div className="mt-4 space-y-3">
@@ -192,7 +192,7 @@ export default function DashboardNav({ displayName, isAdmin = false }: { display
               Tus Predicciones
             </Link>
             <Link href="/ranking" className={linkClassName('/ranking')}>
-              Ranking
+              Posiciones
             </Link>
             <Link href="/historial" className={linkClassName('/historial')}>
               Historial
@@ -251,7 +251,7 @@ export default function DashboardNav({ displayName, isAdmin = false }: { display
               Tus Predicciones
             </Link>
             <Link href="/ranking" className={mobileLinkClassName('/ranking')}>
-              Ranking
+              Posiciones
             </Link>
             <Link href="/historial" className={mobileLinkClassName('/historial')}>
               Historial

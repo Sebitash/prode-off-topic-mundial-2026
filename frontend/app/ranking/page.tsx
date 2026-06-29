@@ -357,7 +357,7 @@ export default function RankingPage() {
       <div className="absolute -bottom-32 left-0 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-8">
         <div>
-          <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">Ranking</h1>
+          <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">Posiciones</h1>
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">Posiciones actuales de todos los participantes</p>
         </div>
 

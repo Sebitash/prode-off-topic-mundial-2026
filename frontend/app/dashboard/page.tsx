@@ -202,7 +202,7 @@ export default function DashboardPage() {
 
         <div className="rounded-lg border border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950/30 px-4 py-3 text-sm text-violet-800 dark:text-violet-400">
           <p>
-            ✏️ <span className="font-semibold">Nuevo:</span> ya podés editar tu nombre y apellido para que aparezcan como quieras en el Ranking. Tocá el ✏️ que está al lado de tu nombre, arriba a la derecha.
+            ✏️ <span className="font-semibold">Nuevo:</span> ya podés editar tu nombre y apellido para que aparezcan como quieras en Posiciones. Tocá el ✏️ que está al lado de tu nombre, arriba a la derecha.
           </p>
         </div>
 
@@ -252,7 +252,7 @@ export default function DashboardPage() {
                 Mis predicciones
               </Link>
               <Link href="/ranking" className="block w-full bg-purple-600 text-white py-3 px-4 rounded-lg hover:bg-purple-700 transition-colors text-center">
-                Ver Ranking
+                Ver Posiciones
               </Link>
             </div>
           </div>

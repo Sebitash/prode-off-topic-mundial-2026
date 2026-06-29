@@ -24,7 +24,7 @@ export default function PublicNav({ linkClassName }: { linkClassName?: string })
           <Link href="/" className={resolveClassName('/')}>Reglas del Juego</Link>
           <Link href="/matches" className={resolveClassName('/matches')}>Resultados</Link>
           <Link href="/predictions" className={resolveClassName('/predictions')}>Tus Predicciones</Link>
-          <Link href="/ranking" className={resolveClassName('/ranking')}>Ranking</Link>
+          <Link href="/ranking" className={resolveClassName('/ranking')}>Posiciones</Link>
         </div>
         <div className="flex items-center gap-2">
           <Link

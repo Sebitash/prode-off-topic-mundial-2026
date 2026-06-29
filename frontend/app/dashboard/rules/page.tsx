@@ -144,7 +144,7 @@ export default function RulesPage() {
               href="/ranking"
               className="rounded-full border border-sky-300 dark:border-slate-600 px-4 py-2 text-xs font-semibold text-sky-700 dark:text-sky-400 transition hover:-translate-y-0.5 hover:bg-sky-50 dark:bg-sky-950/40"
             >
-              Ranking
+              Posiciones
             </Link>
           </div>
         </div>
