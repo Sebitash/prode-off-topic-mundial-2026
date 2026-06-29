@@ -200,13 +200,6 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <div className="rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-400">
-          <p>
-            🆕 <span className="font-semibold">Nuevo:</span> ya está disponible el{' '}
-            <Link href="/historial" className="font-semibold underline">Historial</Link>, donde podés ver los partidos finalizados y qué puntaje sacó cada participante.
-          </p>
-        </div>
-
         <div className="rounded-lg border border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950/30 px-4 py-3 text-sm text-violet-800 dark:text-violet-400">
           <p>
             ✏️ <span className="font-semibold">Nuevo:</span> ya podés editar tu nombre y apellido para que aparezcan como quieras en el Ranking. Tocá el ✏️ que está al lado de tu nombre, arriba a la derecha.
