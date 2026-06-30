@@ -14,12 +14,16 @@ interface RankingEntry {
   apellido: string
   email: string
   total_points: number
+  group_points: number
+  knockout_points: number
   total_predictions: number
   exact_scores: number
   score_bonus: number
   correct_results: number
   rank_change: number
 }
+
+type RankingTab = 'general' | 'group' | 'knockout'
 
 interface UserPrediction {
   id: string
@@ -331,9 +335,17 @@ export default function RankingPage() {
   const [userPredictions, setUserPredictions] = useState<UserPrediction[]>([])
   const [predictionsLoading, setPredictionsLoading] = useState(false)
   const [phaseModal, setPhaseModal] = useState<Phase | null>(null)
+  const [rankingTab, setRankingTab] = useState<RankingTab>('general')
   const [page, setPage] = useState(0)
-  const totalPages = Math.max(1, Math.ceil(ranking.length / PAGE_SIZE))
-  const pagedRanking = ranking.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE)
+
+  const sortedRanking = [...ranking].sort((a, b) => {
+    const apts = rankingTab === 'group' ? a.group_points : rankingTab === 'knockout' ? a.knockout_points : a.total_points
+    const bpts = rankingTab === 'group' ? b.group_points : rankingTab === 'knockout' ? b.knockout_points : b.total_points
+    if (bpts !== apts) return bpts - apts
+    return b.exact_scores - a.exact_scores
+  })
+  const totalPages = Math.max(1, Math.ceil(sortedRanking.length / PAGE_SIZE))
+  const pagedRanking = sortedRanking.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE)
 
   const openUserPredictions = (entry: RankingEntry) => {
     setSelectedUser(entry)
@@ -443,7 +455,25 @@ export default function RankingPage() {
         </div>
 
         <div className="mt-6 rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Tabla de Posiciones</h2>
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Tabla de Posiciones</h2>
+            <div className="flex rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700/50 p-1 text-xs font-semibold">
+              {(['general', 'group', 'knockout'] as RankingTab[]).map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => { setRankingTab(tab); setPage(0) }}
+                  className={`rounded-full px-3 py-1.5 transition ${
+                    rankingTab === tab
+                      ? 'bg-white dark:bg-slate-800 text-sky-700 dark:text-sky-400 shadow-sm'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                  }`}
+                >
+                  {tab === 'general' ? 'General' : tab === 'group' ? 'Grupos' : 'Eliminatoria'}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {totalPages > 1 && (
             <div className="mt-4 flex items-center justify-between gap-3">
@@ -493,12 +523,14 @@ export default function RankingPage() {
                         <div className="flex items-center gap-2">
                           {index === 0 ? '🏆' : index === 1 ? '🥈' : index === 2 ? '🥉' : null}
                           <span>{index + 1}</span>
-                          {entry.rank_change > 0 ? (
-                            <span className="text-[10px] font-bold text-emerald-500">▲{entry.rank_change}</span>
-                          ) : entry.rank_change < 0 ? (
-                            <span className="text-[10px] font-bold text-red-500">▼{Math.abs(entry.rank_change)}</span>
-                          ) : (
-                            <span className="text-[10px] font-bold text-slate-400">—</span>
+                          {rankingTab === 'general' && (
+                            entry.rank_change > 0 ? (
+                              <span className="text-[10px] font-bold text-emerald-500">▲{entry.rank_change}</span>
+                            ) : entry.rank_change < 0 ? (
+                              <span className="text-[10px] font-bold text-red-500">▼{Math.abs(entry.rank_change)}</span>
+                            ) : (
+                              <span className="text-[10px] font-bold text-slate-400">—</span>
+                            )
                           )}
                         </div>
                       </td>
@@ -516,7 +548,9 @@ export default function RankingPage() {
                         </div>
                       </td>
                       <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.total_predictions}</td>
-                      <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">{entry.total_points}</td>
+                      <td className="px-4 py-4 text-center font-semibold text-slate-900 dark:text-slate-100">
+                        {rankingTab === 'group' ? entry.group_points : rankingTab === 'knockout' ? entry.knockout_points : entry.total_points}
+                      </td>
                     </tr>
                     )
                   })

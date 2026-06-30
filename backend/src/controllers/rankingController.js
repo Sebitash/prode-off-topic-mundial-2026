@@ -16,6 +16,8 @@ export const getRanking = async (req, res) => {
            lu.apellido,
            lu.email,
            COALESCE(SUM(p.points), 0) as total_points,
+           COALESCE(SUM(CASE WHEN LOWER(m.stage) LIKE '%group%' OR LOWER(m.stage) LIKE '%grupo%' THEN p.points ELSE 0 END), 0) as group_points,
+           COALESCE(SUM(CASE WHEN m.stage IS NOT NULL AND NOT (LOWER(m.stage) LIKE '%group%' OR LOWER(m.stage) LIKE '%grupo%') THEN p.points ELSE 0 END), 0) as knockout_points,
            COUNT(p.id) as total_predictions,
            COALESCE(SUM(CASE WHEN p.points IN (3, 5) THEN 1 ELSE 0 END), 0) as exact_scores,
            COALESCE(SUM(CASE WHEN p.points IN (1, 4) THEN 1 ELSE 0 END), 0) as score_bonus,
@@ -37,6 +39,7 @@ export const getRanking = async (req, res) => {
              THEN p.id END) as prev_total_predictions
          FROM login_users lu
          LEFT JOIN predictions p ON lu.id = p.user_id
+         LEFT JOIN matches m ON p.match_id = m.id
          GROUP BY lu.id, lu.nombre, lu.apellido, lu.email
        ),
        ranked AS (
@@ -56,6 +59,8 @@ export const getRanking = async (req, res) => {
          apellido,
          email,
          total_points,
+         group_points,
+         knockout_points,
          total_predictions,
          exact_scores,
          score_bonus,
