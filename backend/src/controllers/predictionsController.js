@@ -14,7 +14,7 @@ export const getUserPredictions = async (req, res) => {
     const userId = req.user.id;
 
     const result = await query(
-      `SELECT p.*, m.home_team, m.away_team, m.match_date, m.status, m.home_score, m.away_score, m.stage
+      `SELECT p.*, m.home_team, m.away_team, m.match_date, m.status, m.home_score, m.away_score, m.home_penalties, m.away_penalties, m.stage
        FROM predictions p
        JOIN matches m ON p.match_id = m.id
        WHERE p.user_id = $1
