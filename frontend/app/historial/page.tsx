@@ -63,7 +63,7 @@ function MatchHistoryCard({ match, currentUserId, defaultOpen = false }: { match
             {match.home_team} {match.home_score} - {match.away_score} {match.away_team}
             {match.home_penalties != null && match.away_penalties != null && (
               <span className="ml-2 text-xs font-normal text-slate-500 dark:text-slate-400">
-                (pen. {match.home_penalties}-{match.away_penalties})
+                (pen. {match.home_penalties > match.away_penalties ? match.home_team : match.away_team})
               </span>
             )}
           </p>

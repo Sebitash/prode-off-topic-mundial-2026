@@ -42,14 +42,17 @@ const scoringExamples = [
 ]
 
 const knockoutScoringExamples = [
-  'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Argentina 1-1 (gana penales) → 5 pts ✓',
-  'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Argentina gana 2-0 → 3 pts (acertaste el ganador, pero no el 1-1)',
-  'Real: Brasil 2-1 | Tu pronóstico: Brasil 2-0 → 4 pts (ganador +3 y marcador del local "2" +1)',
-  'Real: Sudáfrica 0-1 Canadá | Tu pronóstico: Sudáfrica 2-1 Canadá → 1 pt (te equivocaste de ganador, pero acertaste el "1" de Canadá)',
-  'Real: Argentina 2-2 (gana Argentina por penales) | Tu pronóstico: Argentina 2-2 (gana Brasil por penales) → 2 pts (acertaste el resultado exacto 2-2, pero le erraste al ganador de la serie de penales)',
-  'Real: Argentina 3-1 Brasil | Tu pronóstico: Argentina 2-1 Brasil → 4 pts (acertaste el ganador +3 y el "1" de Brasil, el equipo perdedor, +1)',
-  'Real: Argentina 2-0 Brasil (sin penales) | Tu pronóstico: Empate 0-0 (ganaba Argentina por penales) → 1 pt (el partido no llegó a penales y le erraste al desarrollo, pero acertaste el "0" de Brasil)',
-  'Real: Argentina 1-1 (gana penales) | Tu pronóstico: Brasil gana → 0 pts ✗',
+  '⭐ 5 pts — Real: Argentina 2-1 Brasil | Pronóstico: Argentina 2-1 Brasil → ganador +3, marcador exacto +2 = 5 pts',
+  '⭐ 5 pts — Real: Argentina 1-1 Brasil (gana Argentina en penales) | Pronóstico: 1-1, gana Argentina en penales → ganador +3, marcador 1-1 exacto +2 = 5 pts',
+  '4 pts — Real: Argentina 3-1 Brasil | Pronóstico: Argentina 2-1 Brasil → ganador +3, el "1" de Brasil coincide +1 = 4 pts',
+  '4 pts — Real: Argentina 1-1 Brasil (gana Argentina en penales) | Pronóstico: Argentina 2-1 (sin prever penales) → acertaste el ganador +3, el "1" de Brasil coincide +1 = 4 pts',
+  '3 pts — Real: Argentina 1-1 Brasil (gana Argentina en penales) | Pronóstico: 0-0, gana Argentina en penales → ganador +3 = 3 pts (el 0-0 ≠ 1-1, ningún gol coincide)',
+  '3 pts — Real: Argentina 1-1 Brasil (gana Argentina en penales) | Pronóstico: Argentina 2-0 (sin penales) → acertaste el ganador igual +3 = 3 pts (pero ningún gol coincide)',
+  '2 pts — Real: Argentina 2-2 Brasil (gana Argentina en penales) | Pronóstico: 2-2, gana Brasil en penales → marcador exacto 2-2 +2 = 2 pts (ganador incorrecto)',
+  '1 pt — Real: Argentina 3-1 Brasil | Pronóstico: Argentina 0-1 Brasil (gana Brasil) → el "1" de Brasil coincide +1 = 1 pt (ganador incorrecto)',
+  '1 pt — Real: Argentina 2-0 Brasil | Pronóstico: 1-1, gana Argentina en penales → el "0" de Brasil coincide +1 = 1 pt (partido sin penales, tu pronóstico de empate no vale como ganador)',
+  '0 pts — Real: Argentina 3-0 Brasil | Pronóstico: 1-1, gana Argentina en penales → 0 pts (no hubo penales, tu empate no coincide con el 3-0, y ningún gol tampoco)',
+  '0 pts — Real: Argentina 3-0 Brasil | Pronóstico: Argentina 1-2 Brasil (gana Brasil) → 0 pts (ganador incorrecto y ningún gol coincide)',
 ]
 
 const maxPoints = [

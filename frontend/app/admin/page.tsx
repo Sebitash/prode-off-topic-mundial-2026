@@ -155,7 +155,7 @@ function AdminMatchRow({
           {formatDate(match.match_date)}
           {match.status === 'finished' && match.home_penalties != null && match.away_penalties != null && (
             <span className="ml-2 font-semibold text-slate-600 dark:text-slate-400">
-              · Penales {match.home_penalties}-{match.away_penalties}
+              · Penales: {match.home_penalties > match.away_penalties ? match.home_team : match.away_team}
             </span>
           )}
         </span>
