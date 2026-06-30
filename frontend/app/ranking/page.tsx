@@ -26,6 +26,7 @@ interface UserPrediction {
   match_id: string
   predicted_home_score: number
   predicted_away_score: number
+  predicted_penalty_winner: 'home' | 'away' | null
   points: number
   home_team: string
   away_team: string
@@ -33,10 +34,47 @@ interface UserPrediction {
   status: 'scheduled' | 'live' | 'finished'
   home_score: number | null
   away_score: number | null
+  home_penalties: number | null
+  away_penalties: number | null
   stage: string
 }
 
 type Phase = 'group' | 'knockout'
+
+function explainPoints(pred: UserPrediction): string | null {
+  if (pred.status !== 'finished' || pred.home_score === null || pred.away_score === null) return null
+
+  const isGroup = isGroupStage(pred.stage)
+  const winnerPts = isGroup ? 2 : 3
+  const exactPts = isGroup ? 1 : 2
+
+  let actualWinner: 'home' | 'away' | 'draw'
+  if (pred.home_score > pred.away_score) actualWinner = 'home'
+  else if (pred.home_score < pred.away_score) actualWinner = 'away'
+  else if (pred.home_penalties != null && pred.away_penalties != null && pred.home_penalties !== pred.away_penalties)
+    actualWinner = pred.home_penalties > pred.away_penalties ? 'home' : 'away'
+  else actualWinner = 'draw'
+
+  let predictedWinner: 'home' | 'away' | 'draw'
+  if (pred.predicted_home_score > pred.predicted_away_score) predictedWinner = 'home'
+  else if (pred.predicted_home_score < pred.predicted_away_score) predictedWinner = 'away'
+  else if (pred.predicted_penalty_winner) predictedWinner = pred.predicted_penalty_winner
+  else predictedWinner = 'draw'
+
+  const gotWinner = predictedWinner === actualWinner
+  const exactScore = pred.predicted_home_score === pred.home_score && pred.predicted_away_score === pred.away_score
+  const partialScore = !isGroup && !exactScore && (pred.predicted_home_score === pred.home_score || pred.predicted_away_score === pred.away_score)
+  const penaltyBonus = !isGroup && pred.home_penalties != null && pred.away_penalties != null
+    && pred.predicted_home_score === pred.predicted_away_score && pred.predicted_penalty_winner != null
+
+  const parts: string[] = []
+  if (gotWinner) parts.push(`ganador +${winnerPts}`)
+  if (exactScore) parts.push(`exacto +${exactPts}`)
+  if (partialScore) parts.push('parcial +1')
+  if (penaltyBonus) parts.push('bonus penales +1')
+
+  return parts.length > 0 ? parts.join(', ') : 'sin coincidencias'
+}
 
 interface PhaseStats {
   predictions: number
@@ -245,12 +283,23 @@ function PhasePredictionsModal({
                     </p>
                     <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                       Pronóstico: {pred.predicted_home_score} - {pred.predicted_away_score}
+                      {pred.predicted_penalty_winner && (
+                        <> (pen. {pred.predicted_penalty_winner === 'home' ? pred.home_team : pred.away_team})</>
+                      )}
                       {pred.status === 'finished' && pred.home_score !== null && pred.away_score !== null && (
-                        <> · Resultado: {pred.home_score} - {pred.away_score}</>
+                        <> · Resultado: {pred.home_score} - {pred.away_score}
+                        {pred.home_penalties != null && pred.away_penalties != null && (
+                          <> (pen. {pred.home_penalties > pred.away_penalties ? pred.home_team : pred.away_team})</>
+                        )}</>
                       )}
                     </p>
+                    {pred.status === 'finished' && (
+                      <p className="mt-0.5 text-[10px] text-slate-400 dark:text-slate-500">
+                        {explainPoints(pred)}
+                      </p>
+                    )}
                   </div>
-                  <span className="flex-shrink-0 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white">
+                  <span className={`flex-shrink-0 rounded-lg px-3 py-2 text-xs font-semibold text-white ${pred.points === 0 ? 'bg-slate-400 dark:bg-slate-600' : 'bg-emerald-600'}`}>
                     {pred.points} pts
                   </span>
                 </div>
