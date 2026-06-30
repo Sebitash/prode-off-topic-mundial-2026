@@ -21,17 +21,22 @@ const knockoutScoring = [
   {
     label: 'Acertar el ganador',
     points: '3 puntos',
-    detail: 'Por predecir correctamente quién gana el partido (o el empate). Si el partido se define por penales, cuenta como "ganador" el equipo que se queda con la serie de penales.',
+    detail: 'Por predecir correctamente quién gana el partido. Si el partido se define por penales, cuenta como "ganador" el equipo que avanza. Importante: si predijiste empate + equipo A gana penales, y el partido terminó con equipo A ganando en tiempo regular (sin ir a penales), igual sumás los 3 pts de ganador.',
   },
   {
     label: 'Bonus por resultado exacto',
     points: '+2 puntos',
-    detail: 'Puntos adicionales si además acertás el marcador exacto del partido (ej: 2-1). Se suman acertes o no el ganador (por ejemplo, si pronosticaste mal quién se queda con la serie de penales).',
+    detail: 'Puntos adicionales si además acertás el marcador exacto del partido (ej: 2-1). Se suman acertés o no el ganador.',
   },
   {
-    label: 'Bonus por marcador de un equipo (nuevo)',
+    label: 'Bonus por marcador de un equipo',
     points: '+1 punto',
-    detail: 'Punto adicional si acertás el marcador final de UNO de los dos equipos (ej: predijiste 2-1 y el resultado real fue 2-0, acertaste el "2" del local). No se suma si ya acertaste el resultado exacto completo. Se suma acertes o no el ganador.',
+    detail: 'Punto adicional si acertás el marcador final de UNO de los dos equipos (ej: predijiste 2-1 y el resultado real fue 2-0, acertaste el "2" del local). No se suma si ya acertaste el resultado exacto completo. Se suma acertés o no el ganador.',
+  },
+  {
+    label: 'Bonus por predecir penales',
+    points: '+1 punto',
+    detail: 'Punto adicional si el partido se definió por penales Y vos predijiste empate con pick de ganador de penales. Se suma sin importar si acertaste el marcador exacto o el ganador de la serie.',
   },
 ]
 
@@ -63,16 +68,24 @@ const maxPoints = [
 
 const importantRules = [
   {
-    title: 'Puntaje por Partido',
-    text: 'En fase de grupos: 2 puntos por acertar el ganador, +1 punto extra si además acertás el resultado exacto (máximo 3 pts). En fase eliminatoria: 3 puntos por acertar el ganador, +2 puntos extra si además acertás el resultado exacto (máximo 5 pts), y +1 punto extra si acertás el marcador final de uno de los dos equipos (este bonus no se acumula con el de resultado exacto). Si el partido termina empatado y se define por penales, el ganador de la definición por penales es el "ganador" del partido a los efectos de estos puntos, y el resultado exacto que vale el bonus es el marcador del tiempo reglamentario (el empate, ej: 1-1), no el resultado de los penales.',
+    title: 'Puntaje — Fase de Grupos',
+    text: '2 puntos por acertar el ganador (o empate), +1 punto extra si además acertás el resultado exacto. Máximo 3 pts por partido.',
   },
   {
-    title: 'Nueva Regla en Eliminatorias: Bonus de Marcador',
-    text: 'A partir de la fase eliminatoria (incluye el partido por el tercer puesto), si tu pronóstico acierta el marcador final de UNO de los dos equipos (por ejemplo, predijiste 2-1 y el resultado real fue 2-0: acertaste el "2" del local), sumás +1 punto extra. Este bonus no se suma si ya acertaste el resultado exacto completo, ya que ese caso suma el bonus de +2.',
+    title: 'Puntaje — Fase Eliminatoria',
+    text: '3 puntos por acertar el ganador, +2 puntos extra si acertás el resultado exacto, +1 punto si acertás el marcador de uno de los dos equipos (sin haber acertado el exacto completo), +1 punto si el partido fue a penales y predijiste empate. Máximo 5 pts en partidos sin penales, 6 pts en partidos con penales.',
   },
   {
-    title: 'Pronóstico de Penales en Eliminatorias',
-    text: 'Si en un partido de eliminatorias predecís un empate (ej: 1-1), vas a tener que elegir además quién pensás que gana la definición por penales. Si el partido real también termina empatado en los 90\' y se define por penales, ese pronóstico cuenta como tu "ganador" a los efectos del puntaje (3 pts).',
+    title: 'Pronóstico de Penales: Ganador',
+    text: 'Si predijiste empate + equipo A gana penales, sumás los 3 pts de ganador si equipo A ganó el partido por cualquier vía: en tiempo regular o en penales. Lo que importa es quién avanza.',
+  },
+  {
+    title: 'Pronóstico de Penales: Marcador Exacto',
+    text: 'El bonus de resultado exacto (+2) se calcula sobre el marcador del tiempo reglamentario, no el resultado de los penales. Si el partido termina 1-1 y se define por penales, el marcador exacto que cuenta es 1-1.',
+  },
+  {
+    title: 'Bonus por Predecir Penales',
+    text: '+1 punto si el partido se definió por penales Y vos predijiste empate con pick de ganador de penales. Se suma sin importar si acertaste el ganador de penales o el marcador exacto.',
   },
   {
     title: 'Plazos de Pronósticos',
@@ -80,19 +93,19 @@ const importantRules = [
   },
   {
     title: 'Pronósticos Incompletos',
-    text: 'Si no completas pronósticos para algún partido: 0 puntos para esos partidos. No hay penalización adicional.',
+    text: 'Si no completás pronósticos para algún partido: 0 puntos para esos partidos. No hay penalización adicional.',
   },
   {
     title: 'Partidos "Por Definir"',
-    text: 'Los cruces de la fase eliminatoria se completan a medida que se conocen los clasificados de cada llave. Mientras el cruce figure como "Por definir" todavía no se puede cargar un pronóstico para ese partido.',
+    text: 'Los cruces de la fase eliminatoria se completan a medida que se conocen los clasificados de cada llave. Mientras el cruce figure como "Por definir" todavía no se puede cargar un pronóstico.',
   },
   {
     title: 'Partido por el Tercer Puesto',
-    text: 'Suma puntos igual que cualquier otro partido de eliminatorias: 3 puntos por acertar el ganador, +2 por el resultado exacto.',
+    text: 'Suma puntos igual que cualquier otro partido de eliminatorias: 3 pts por ganador, +2 por exacto, +1 por marcador parcial, +1 por predecir penales si aplica.',
   },
   {
     title: 'Desempate',
-    text: 'Si dos o más participantes terminan con el mismo puntaje total, se ordena primero a quien haya acertado más marcadores exactos (resultado justo, ej: 2-1 = 2-1). Si persiste el empate, se ordena por quien haya acertado más veces el marcador de un solo equipo (bonus de eliminatorias). Si aún persiste el empate, se ordena por la cantidad total de pronósticos realizados.',
+    text: 'Si dos o más participantes terminan con el mismo puntaje total, se ordena primero a quien haya acertado más marcadores exactos. Si persiste el empate, por quien haya acertado más veces el marcador de un solo equipo. Si aún persiste, por la cantidad total de pronósticos realizados.',
   },
 ]
 

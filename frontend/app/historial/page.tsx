@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import DashboardNav from '@/components/ui/DashboardNav'
 import { API_URL } from '@/lib/config'
 import { getCache, setCache } from '@/lib/dataCache'
@@ -182,6 +183,13 @@ export default function HistorialPage() {
             <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">Historial</h1>
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
               Partidos finalizados y el puntaje que sacó cada participante
+            </p>
+          </div>
+
+          <div className="rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/30 px-4 py-3 text-sm text-orange-800 dark:text-orange-400">
+            <p>
+              🔔 <span className="font-semibold">Actualización de reglas:</span> se ajustaron dos reglas de puntuación de la fase eliminatoria y los puntajes fueron recalculados automáticamente.{' '}
+              <Link href="/dashboard/rules" className="font-semibold underline">Ver reglas actualizadas →</Link>
             </p>
           </div>
 

@@ -192,6 +192,13 @@ export default function DashboardPage() {
       <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
       <div className="absolute -bottom-32 left-0 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-8 space-y-8">
+        <div className="rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/30 px-4 py-3 text-sm text-orange-800 dark:text-orange-400">
+          <p>
+            🔔 <span className="font-semibold">Actualización de reglas:</span> se ajustaron dos reglas de puntuación de la fase eliminatoria y los puntajes fueron recalculados automáticamente.{' '}
+            <Link href="/dashboard/rules" className="font-semibold underline">Ver reglas actualizadas →</Link>
+          </p>
+        </div>
+
         <div className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 px-4 py-3 text-sm text-rose-800 dark:text-rose-400">
           <p>
             🚨 <span className="font-semibold">¡Atención!</span> Ya esta en juego la fase eliminatoria del Mundial.

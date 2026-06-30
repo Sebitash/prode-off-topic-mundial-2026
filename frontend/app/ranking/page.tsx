@@ -361,7 +361,12 @@ export default function RankingPage() {
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">Posiciones actuales de todos los participantes</p>
         </div>
 
-        <div className="mt-6 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/30 px-4 py-3 text-sm text-sky-800 dark:text-sky-400">
+        <div className="mt-6 rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/30 px-4 py-3 text-sm text-orange-800 dark:text-orange-400">
+          🔔 <strong>Actualización de reglas:</strong> se ajustaron dos reglas de puntuación de la fase eliminatoria y los puntajes fueron recalculados automáticamente.{' '}
+          <Link href="/dashboard/rules" className="font-semibold underline">Ver reglas actualizadas →</Link>
+        </div>
+
+        <div className="mt-4 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/30 px-4 py-3 text-sm text-sky-800 dark:text-sky-400">
           🆕 <strong>Nuevo:</strong> ya está disponible el{' '}
           <Link href="/historial" className="font-semibold underline">Historial</Link>, donde podés ver los partidos finalizados y qué puntaje sacó cada participante.
         </div>
