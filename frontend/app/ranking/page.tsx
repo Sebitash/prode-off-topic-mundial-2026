@@ -361,27 +361,6 @@ export default function RankingPage() {
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">Posiciones actuales de todos los participantes</p>
         </div>
 
-        <div className="mt-6 rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/30 px-4 py-3 text-sm text-orange-800 dark:text-orange-400">
-          🔔 <strong>Actualización de reglas:</strong> se ajustaron dos reglas de puntuación de la fase eliminatoria y los puntajes fueron recalculados automáticamente.{' '}
-          <Link href="/dashboard/rules" className="font-semibold underline">Ver reglas actualizadas →</Link>
-        </div>
-
-        <div className="mt-4 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/30 px-4 py-3 text-sm text-sky-800 dark:text-sky-400">
-          🆕 <strong>Nuevo:</strong> ya está disponible el{' '}
-          <Link href="/historial" className="font-semibold underline">Historial</Link>, donde podés ver los partidos finalizados y qué puntaje sacó cada participante.
-        </div>
-
-        <div className="mt-6 rounded-lg border border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950/30 px-4 py-3 text-sm text-violet-800 dark:text-violet-400">
-          ✏️ <strong>Nuevo:</strong> ya podés editar tu nombre y apellido para que aparezcan como quieras en esta tabla. Tocá el ✏️ que está al lado de tu nombre, arriba a la derecha.
-        </div>
-
-        <div className="mt-6 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-400">
-          🆕 <strong>Nueva regla para la fase eliminatoria:</strong> a partir de dieciseisavos de final, sumás +1 punto extra
-          si tu pronóstico acierta el marcador final de uno de los dos equipos (ej: predijiste 2-1 y el resultado real
-          fue 2-0, acertaste el "2" del local). No se acumula con el bonus de resultado exacto. Mirá el detalle
-          completo en la pestaña de Reglas.
-        </div>
-
         <div className="mt-6 rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Premios</h2>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Premios para el top 3 del ranking final</p>

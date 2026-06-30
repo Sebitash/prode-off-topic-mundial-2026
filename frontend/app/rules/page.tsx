@@ -47,16 +47,15 @@ const scoringExamples = [
 ]
 
 const knockoutScoringExamples = [
+  '⭐ 6 pts — Real: Argentina 1-1 Brasil (gana Argentina en penales) | Pronóstico: 1-1, gana Argentina en penales → ganador +3, marcador exacto +2, bonus penales +1 = 6 pts',
   '⭐ 5 pts — Real: Argentina 2-1 Brasil | Pronóstico: Argentina 2-1 Brasil → ganador +3, marcador exacto +2 = 5 pts',
-  '⭐ 5 pts — Real: Argentina 1-1 Brasil (gana Argentina en penales) | Pronóstico: 1-1, gana Argentina en penales → ganador +3, marcador 1-1 exacto +2 = 5 pts',
   '4 pts — Real: Argentina 3-1 Brasil | Pronóstico: Argentina 2-1 Brasil → ganador +3, el "1" de Brasil coincide +1 = 4 pts',
-  '4 pts — Real: Argentina 1-1 Brasil (gana Argentina en penales) | Pronóstico: Argentina 2-1 (sin prever penales) → acertaste el ganador +3, el "1" de Brasil coincide +1 = 4 pts',
-  '3 pts — Real: Argentina 1-1 Brasil (gana Argentina en penales) | Pronóstico: 0-0, gana Argentina en penales → ganador +3 = 3 pts (el 0-0 ≠ 1-1, ningún gol coincide)',
-  '3 pts — Real: Argentina 1-1 Brasil (gana Argentina en penales) | Pronóstico: Argentina 2-0 (sin penales) → acertaste el ganador igual +3 = 3 pts (pero ningún gol coincide)',
-  '2 pts — Real: Argentina 2-2 Brasil (gana Argentina en penales) | Pronóstico: 2-2, gana Brasil en penales → marcador exacto 2-2 +2 = 2 pts (ganador incorrecto)',
+  '4 pts — Real: Argentina 1-1 Brasil (gana Argentina en penales) | Pronóstico: 2-2, gana Argentina en penales → ganador +3, bonus penales +1 = 4 pts',
+  '4 pts — Real: Argentina 2-1 Brasil | Pronóstico: 2-2, gana Argentina en penales → ganador +3 (acertaste quién ganaba aunque no hubo penales), el "2" de Argentina coincide +1 = 4 pts',
+  '3 pts — Real: Argentina 1-1 Brasil (gana Argentina en penales) | Pronóstico: Argentina 2-0 (sin penales) → ganador +3 = 3 pts (acertaste el ganador pero sin bonus: ningún gol coincide y no predijiste penales)',
+  '3 pts — Real: Argentina 1-1 Brasil (gana Argentina en penales) | Pronóstico: 1-1, gana Brasil en penales → marcador exacto +2, bonus penales +1 = 3 pts (ganador incorrecto)',
   '1 pt — Real: Argentina 3-1 Brasil | Pronóstico: Argentina 0-1 Brasil (gana Brasil) → el "1" de Brasil coincide +1 = 1 pt (ganador incorrecto)',
-  '1 pt — Real: Argentina 2-0 Brasil | Pronóstico: 1-1, gana Argentina en penales → el "0" de Brasil coincide +1 = 1 pt (partido sin penales, tu pronóstico de empate no vale como ganador)',
-  '0 pts — Real: Argentina 3-0 Brasil | Pronóstico: 1-1, gana Argentina en penales → 0 pts (no hubo penales, tu empate no coincide con el 3-0, y ningún gol tampoco)',
+  '0 pts — Real: Argentina 3-0 Brasil | Pronóstico: 1-1, gana Brasil en penales → 0 pts (ganador incorrecto, ningún gol coincide, no hubo penales)',
   '0 pts — Real: Argentina 3-0 Brasil | Pronóstico: Argentina 1-2 Brasil (gana Brasil) → 0 pts (ganador incorrecto y ningún gol coincide)',
 ]
 
@@ -257,13 +256,6 @@ export default function RulesPage() {
                 ⚽ Si el partido se define por penales: el ganador de la serie de penales cuenta como "ganador" del
                 partido (3 pts), y el resultado exacto que vale el bonus de +2 es el marcador del tiempo
                 reglamentario, es decir, el empate (ej: 1-1), no el resultado de los penales.
-              </p>
-            </div>
-            <div className="mt-3 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3">
-              <p className="text-xs font-semibold text-amber-800 dark:text-amber-400 mb-1">⚠️ Caso especial: pronóstico de penales vs. resultado en tiempo regular</p>
-              <p className="text-xs text-amber-700 dark:text-amber-500">
-                Si predijiste empate + un equipo gana en penales, pero el partido se resolvió en tiempo regular (ej: 2-1), tu elección del ganador de penales <span className="font-semibold">no se considera</span> — tu pronóstico vale como "empate" y no coincide con ningún ganador → 0 pts de ganador.
-                En cambio, si predijiste que un equipo gana en tiempo regular y el partido terminó en penales pero ganó el mismo equipo, <span className="font-semibold">sí sumás los +3 pts de ganador</span>.
               </p>
             </div>
             <div className="mt-4 rounded-xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
