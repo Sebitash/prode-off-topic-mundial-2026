@@ -251,6 +251,13 @@ export default function RulesPage() {
                 reglamentario, es decir, el empate (ej: 1-1), no el resultado de los penales.
               </p>
             </div>
+            <div className="mt-3 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3">
+              <p className="text-xs font-semibold text-amber-800 dark:text-amber-400 mb-1">⚠️ Caso especial: pronóstico de penales vs. resultado en tiempo regular</p>
+              <p className="text-xs text-amber-700 dark:text-amber-500">
+                Si predijiste empate + un equipo gana en penales, pero el partido se resolvió en tiempo regular (ej: 2-1), tu elección del ganador de penales <span className="font-semibold">no se considera</span> — tu pronóstico vale como "empate" y no coincide con ningún ganador → 0 pts de ganador.
+                En cambio, si predijiste que un equipo gana en tiempo regular y el partido terminó en penales pero ganó el mismo equipo, <span className="font-semibold">sí sumás los +3 pts de ganador</span>.
+              </p>
+            </div>
             <div className="mt-4 rounded-xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
               <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                 📊 Ejemplos de Puntuación
