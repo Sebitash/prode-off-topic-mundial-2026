@@ -361,6 +361,11 @@ export default function RankingPage() {
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">Posiciones actuales de todos los participantes</p>
         </div>
 
+        <div className="mt-6 rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/30 px-4 py-3 text-sm text-orange-800 dark:text-orange-400">
+          🔔 <strong>Actualización de reglas:</strong> se ajustaron dos reglas de puntuación de la fase eliminatoria y los puntajes fueron recalculados automáticamente.{' '}
+          <Link href="/dashboard/rules" className="font-semibold underline">Ver reglas actualizadas →</Link>
+        </div>
+
         <div className="mt-6 rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Premios</h2>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Premios para el top 3 del ranking final</p>
