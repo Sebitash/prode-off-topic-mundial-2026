@@ -287,10 +287,12 @@ function PhasePredictionsModal({
                         <> (pen. {pred.predicted_penalty_winner === 'home' ? pred.home_team : pred.away_team})</>
                       )}
                       {pred.status === 'finished' && pred.home_score !== null && pred.away_score !== null && (
-                        <> · Resultado: {pred.home_score} - {pred.away_score}
-                        {pred.home_penalties != null && pred.away_penalties != null && (
-                          <> (pen. {pred.home_penalties > pred.away_penalties ? pred.home_team : pred.away_team})</>
-                        )}</>
+                        <span className="text-slate-800 dark:text-slate-200 font-medium">
+                          {' · '}Resultado: {pred.home_score} - {pred.away_score}
+                          {pred.home_penalties != null && pred.away_penalties != null && (
+                            <> (pen. {pred.home_penalties > pred.away_penalties ? pred.home_team : pred.away_team})</>
+                          )}
+                        </span>
                       )}
                     </p>
                     {pred.status === 'finished' && (
