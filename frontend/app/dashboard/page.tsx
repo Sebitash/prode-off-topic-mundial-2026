@@ -85,20 +85,8 @@ function NextMatchCountdown({ matches }: { matches: Match[] }) {
         <CountdownUnit value={countdown.seconds} label="Seg" />
       </div>
       <p className="mt-3 text-xs text-sky-100">
-        {new Date(targetTime).toLocaleString('es-AR', {
-          timeZone: 'America/Argentina/Buenos_Aires',
-          day: '2-digit',
-          month: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-        })} hs (ARG) · Las predicciones cierran a las{' '}
-        {closingTime.toLocaleString('es-AR', {
-          timeZone: 'America/Argentina/Buenos_Aires',
-          day: '2-digit',
-          month: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-        })} hs
+        {(() => { const d = new Date(targetTime - 3*60*60*1000); const p = (n: number) => String(n).padStart(2,'0'); return `${p(d.getUTCDate())}/${p(d.getUTCMonth()+1)} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}` })()} hs (ARG) · Las predicciones cierran a las{' '}
+        {(() => { const d = new Date(closingTime.getTime() - 3*60*60*1000); const p = (n: number) => String(n).padStart(2,'0'); return `${p(d.getUTCDate())}/${p(d.getUTCMonth()+1)} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}` })()} hs
       </p>
       {predictionsClosed && (
         <p className="mt-2 rounded-full bg-amber-400/20 px-3 py-1 text-xs font-semibold text-amber-200">
@@ -277,8 +265,7 @@ export default function DashboardPage() {
                     <div className="flex-1">
                       <p className="font-medium text-gray-900 dark:text-slate-100">{match.home_team} vs {match.away_team}</p>
                       <p className="text-xs text-gray-500 dark:text-slate-400">
-                        {new Date(match.match_date).toLocaleDateString('es-AR')}{' '}
-                        {new Date(match.match_date).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
+                        {(() => { const d = new Date(new Date(match.match_date).getTime() - 3*60*60*1000); const p = (n: number) => String(n).padStart(2,'0'); return `${p(d.getUTCDate())}/${p(d.getUTCMonth()+1)}/${d.getUTCFullYear()} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}` })()}
                       </p>
                     </div>
                     {locked ? (

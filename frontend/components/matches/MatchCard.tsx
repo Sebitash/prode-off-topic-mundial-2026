@@ -71,7 +71,7 @@ export default function MatchCard({ match, userId }: { match: Match; userId: str
           </span>
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          {new Date(match.match_date).toLocaleString()}
+          {(() => { const d = new Date(new Date(match.match_date).getTime() - 3*60*60*1000); const p = (n: number) => String(n).padStart(2,'0'); return `${p(d.getUTCDate())}/${p(d.getUTCMonth()+1)}/${d.getUTCFullYear()} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}` })()}
         </p>
       </div>
 

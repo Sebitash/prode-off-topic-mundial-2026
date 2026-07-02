@@ -510,17 +510,9 @@ export function isTBD(match: Match) {
 }
 
 export function formatDate(value: string) {
-  return new Date(value)
-    .toLocaleString('es-AR', {
-      timeZone: 'America/Argentina/Buenos_Aires',
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    })
-    .replace(',', '')
+  const d = new Date(new Date(value).getTime() - 3 * 60 * 60 * 1000)
+  const p = (n: number) => String(n).padStart(2, '0')
+  return `${p(d.getUTCDate())}/${p(d.getUTCMonth() + 1)}/${d.getUTCFullYear()} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}`
 }
 
 function statusLabel(status: Match['status'], locked: boolean, allowPredict: boolean, tbd: boolean) {

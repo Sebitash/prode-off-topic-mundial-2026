@@ -26,7 +26,7 @@ export default function PredictionCard({ prediction }: { prediction: Prediction 
             {match.home_team} vs {match.away_team}
           </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {new Date(match.match_date).toLocaleDateString()}
+            {(() => { const d = new Date(new Date(match.match_date).getTime() - 3*60*60*1000); const p = (n: number) => String(n).padStart(2,'0'); return `${p(d.getUTCDate())}/${p(d.getUTCMonth()+1)}/${d.getUTCFullYear()}` })()}
           </p>
         </div>
         {prediction.points !== null && (
