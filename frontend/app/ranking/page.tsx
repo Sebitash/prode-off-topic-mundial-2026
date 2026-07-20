@@ -430,28 +430,28 @@ export default function RankingPage() {
         </div>
 
         <div className="mt-6 rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Premios</h2>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Premios para el top 3 del ranking final</p>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Ganadores</h2>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Resultados finales del Prode Mundial 2026</p>
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-4 text-center">
               <p className="text-2xl">🥇</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">1° Puesto</p>
+              <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">Pedro Melissari</p>
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Gift card 100k Adidas</p>
             </div>
             <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 p-4 text-center">
               <p className="text-2xl">🥈</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">2° Puesto</p>
+              <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">Destructor de vibes</p>
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Fernet 750cl + Coca Cola 2,5L + six pack de cerveza</p>
             </div>
             <div className="rounded-xl border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/30 p-4 text-center">
               <p className="text-2xl">🥉</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">3° Puesto</p>
+              <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">Checherix</p>
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Fernet 750cl + Coca Cola 2,5L</p>
             </div>
           </div>
-          <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
-            ⚖️ En caso de empate en puntos, desempata quien haya acertado más marcadores exactos. Si persiste el empate, desempata quien haya acertado más veces el marcador de un solo equipo (bonus de eliminatorias). Si aún persiste el empate, desempata la cantidad total de pronósticos realizados.
-          </p>
+          <div className="mt-4 rounded-lg border border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950/30 px-4 py-3 text-xs text-violet-800 dark:text-violet-300">
+            Mención de honor para <span className="font-semibold">Zsofi Makkos</span>, quien por cuestiones familiares cedió su puesto al siguiente clasificado. ¡Gracias por participar y felicitaciones por el resultado!
+          </div>
         </div>
 
         <div className="mt-6 rounded-2xl border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">

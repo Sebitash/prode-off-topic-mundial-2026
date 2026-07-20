@@ -180,6 +180,19 @@ export default function DashboardPage() {
       <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
       <div className="absolute -bottom-32 left-0 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-8 space-y-8">
+        <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 text-sm text-amber-800 dark:text-amber-300">
+          <p className="font-semibold text-base">Ya tenemos ganadores del Prode Mundial 2026!</p>
+          <p className="mt-1">
+            🥇 <span className="font-semibold">Pedro Melissari</span> · 🥈 <span className="font-semibold">Destructor de vibes</span> · 🥉 <span className="font-semibold">Checherix</span>
+          </p>
+          <p className="mt-2 text-xs opacity-80">
+            Gracias a todos los que participaron por hacer este prode tan divertido. ¡Hasta la próxima!
+          </p>
+          <p className="mt-1">
+            <Link href="/ranking" className="text-xs font-semibold underline">Ver tabla de posiciones final →</Link>
+          </p>
+        </div>
+
         <div className="rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/30 px-4 py-3 text-sm text-orange-800 dark:text-orange-400">
           <p>
             🔔 <span className="font-semibold">Actualización de reglas:</span> se ajustaron dos reglas de puntuación de la fase eliminatoria y los puntajes fueron recalculados automáticamente.{' '}
