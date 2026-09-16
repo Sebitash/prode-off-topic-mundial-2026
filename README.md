@@ -1,5 +1,7 @@
 # Prode Mundial 2026 — Estados Unidos · Canada · Mexico
-> App de prode para el Mundial 2026. Desarrollada por Juan Sebastian Makkos y Mauricio Laganga.
+> App de prode para el Mundial 2026. Desarrollada por Juan Sebastian Makkos como proyecto personal de aprendizaje, sin fines de lucro.
+>
+> **Estado: proyecto finalizado.** Actualmente está deshabilitado, pero el código completo queda disponible para revisión.
 
 ---
 
@@ -31,7 +33,7 @@
 ### Nuevo Proyecto de Supabase
 - Se migró a un nuevo proyecto de Supabase (`uhxhqbqmlurlxtydvqad`).
 - La conexión al pool usa la IP directa del Session Pooler para evitar problemas de resolución DNS en entornos WSL.
-- **Nota para tu compañero:** configurar el `.env` en `backend/` con los valores del nuevo proyecto (ver sección abajo).
+- Configurar el `.env` en `backend/` con los valores del proyecto (ver sección abajo).
 
 ### Limpieza del repositorio
 - Se eliminaron carpetas redundantes de la raíz: `tests/`, `lib/`.
@@ -57,7 +59,7 @@ prode-off-topic-mundial-2026/
 │   ├── app/
 │   │   ├── auth/login/      # Página de login (usa backend)
 │   │   ├── auth/signup/     # Página de registro (usa backend)
-│   │   └── dashboard/       # Panel principal (WIP)
+│   │   └── dashboard/       # Panel principal
 │   └── package.json
 ├── supabase/
 │   ├── schema.sql           # Schema completo
@@ -78,7 +80,7 @@ git clone <repo-url>
 cd prode-off-topic-mundial-2026
 ```
 
-Crear el archivo **`backend/.env`** con estos valores (pedirle a Mauri o Sebas las keys):
+Crear el archivo **`backend/.env`** con estos valores:
 
 ```env
 # API externa de fútbol
@@ -166,8 +168,11 @@ Pendiente de definir plataforma (Railway, Render, Fly.io, etc.).
 
 ---
 
-## Próximos pasos (WIP)
-- [ ] Dashboard post-login con partidos y predicciones
-- [ ] API de partidos integrada con Football API
-- [ ] Lógica de puntuación y ranking
-- [ ] Login con Google (OAuth configurado en ambos lados)
+## Funcionalidades implementadas
+- [x] Dashboard post-login con partidos y predicciones
+- [x] API de partidos integrada con Football API
+- [x] Lógica de puntuación y ranking (con tabs de posiciones)
+- [x] Login con Google (OAuth configurado en ambos lados)
+- [x] Reglas de puntaje (resultado exacto, ganador/empate, penales)
+- [x] Premios y panel de administración
+- [x] Historial de predicciones
